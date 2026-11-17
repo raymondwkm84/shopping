@@ -1,1 +1,816 @@
-hello world
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>WA14 零食罐頭防伏管家 (純文字極輕量版)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tesseract.js for Live OCR Date Scanning (No Photo Saved) -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <!-- Html5-QRCode for Barcode Scanning -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "PingFang HK", "Microsoft JhengHei", sans-serif; background-color: #f3f4f6; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes scanline {
+      0% { top: 10%; }
+      50% { top: 85%; }
+      100% { top: 10%; }
+    }
+    .scan-laser {
+      position: absolute;
+      left: 5%;
+      width: 90%;
+      height: 2px;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: scanline 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="pb-24 text-gray-800 select-none">
+
+  <!-- Top Header -->
+  <header class="bg-emerald-600 text-white sticky top-0 z-30 shadow-md">
+    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+      <div>
+        <h1 class="text-lg font-bold tracking-tight flex items-center gap-1.5">
+          <span>🥫</span> 零食罐頭防伏管家
+        </h1>
+        <p class="text-[11px] text-emerald-100">純文字零相片 · 極省空間 · 英國 £ 版</p>
+      </div>
+      <button onclick="openSyncModal()" class="bg-emerald-700 hover:bg-emerald-800 active:scale-95 transition px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 border border-emerald-500">
+        <span>🔄 家庭碼:</span>
+        <span id="headerFamilyCode" class="font-mono font-bold text-amber-300">WA14HOME</span>
+      </button>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="max-w-md mx-auto px-4 pb-3">
+      <div class="relative">
+        <input type="text" id="searchInput" oninput="renderList()" placeholder="搜尋牌子、零食名、Tesco / Aldi、或「伏」..."
+          class="w-full pl-9 pr-8 py-2 rounded-xl text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-inner" />
+        <span class="absolute left-3 top-2.5 text-gray-400 text-sm">🔍</span>
+        <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute right-2.5 top-2 text-gray-400 hover:text-gray-600 text-sm">✕</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tabs & Stats -->
+  <main class="max-w-md mx-auto px-4 pt-3">
+    <div class="flex bg-gray-200 p-1 rounded-xl mb-3 text-sm font-medium">
+      <button id="tabStock" onclick="switchTab('stock')" class="flex-1 py-1.5 rounded-lg bg-white text-emerald-700 shadow-sm transition">
+        🏠 屋企存貨 (<span id="countStock">0</span>)
+      </button>
+      <button id="tabHistory" onclick="switchTab('history')" class="flex-1 py-1.5 rounded-lg text-gray-600 hover:text-gray-800 transition">
+        📝 食完/防伏紀錄 (<span id="countHistory">0</span>)
+      </button>
+    </div>
+
+    <!-- Quick Filter Pills (Only in Stock Tab) -->
+    <div id="filterPills" class="flex gap-2 overflow-x-auto no-scrollbar pb-2 mb-2 text-xs">
+      <button onclick="setFilter('all')" data-filter="all" class="filter-pill bg-emerald-600 text-white px-3 py-1 rounded-full whitespace-nowrap font-medium">全部存貨</button>
+      <button onclick="setFilter('expiring')" data-filter="expiring" class="filter-pill bg-white text-gray-600 border px-3 py-1 rounded-full whitespace-nowrap">⚠️ 就快過期 (14日內)</button>
+      <button onclick="setFilter('expired')" data-filter="expired" class="filter-pill bg-white text-gray-600 border px-3 py-1 rounded-full whitespace-nowrap">🚨 已過期</button>
+      <button onclick="setFilter('bad')" data-filter="bad" class="filter-pill bg-white text-gray-600 border px-3 py-1 rounded-full whitespace-nowrap">❌ 中伏負評</button>
+    </div>
+
+    <!-- Storage Footprint Indicator -->
+    <div class="bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5 mb-3 flex items-center justify-between text-[11px] text-emerald-800">
+      <span>💾 電話空間佔用：純文字模式（零相片）</span>
+      <span id="storageSize" class="font-mono font-bold">0.4 KB</span>
+    </div>
+
+    <!-- Inventory List Container -->
+    <div id="itemList" class="space-y-2.5"></div>
+  </main>
+
+  <!-- Floating Action Buttons -->
+  <div class="fixed bottom-4 left-0 right-0 z-20 px-4">
+    <div class="max-w-md mx-auto flex gap-2.5">
+      <button onclick="openAddModal(false)" class="flex-1 bg-white border-2 border-emerald-600 text-emerald-700 font-bold py-3 rounded-2xl shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 text-sm">
+        <span>✍️</span> 手動記低
+      </button>
+      <button onclick="openAddModal(true)" class="flex-[1.4] bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3 rounded-2xl shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 text-sm">
+        <span>⚡</span> 鏡頭直掃入貨
+      </button>
+    </div>
+  </div>
+
+  <!-- Add / Edit Item Modal -->
+  <div id="itemModal" class="fixed inset-0 bg-black/60 z-40 hidden flex items-end sm:items-center justify-center">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl max-h-[92vh] overflow-y-auto p-5 shadow-2xl">
+      <div class="flex justify-between items-center mb-3">
+        <h2 id="modalTitle" class="text-lg font-bold text-gray-800">⚡ 鏡頭直掃 / 新增貨品</h2>
+        <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-700 text-xl font-bold px-2">✕</button>
+      </div>
+
+      <!-- Live Camera Scanner Box (No Photo Captured) -->
+      <div id="scannerSection" class="mb-4 bg-gray-900 rounded-2xl overflow-hidden relative border-2 border-emerald-500">
+        <div class="flex bg-gray-800 text-xs text-white">
+          <button type="button" id="modeBarcodeBtn" onclick="startScanner('barcode')" class="flex-1 py-2 font-bold bg-emerald-600">1. 掃條碼 (Barcode)</button>
+          <button type="button" id="modeOcrBtn" onclick="startScanner('ocr')" class="flex-1 py-2 font-bold text-gray-300">2. 直掃罐底日期 (OCR)</button>
+        </div>
+
+        <div class="relative h-48 bg-black flex items-center justify-center overflow-hidden">
+          <!-- Barcode Reader Div -->
+          <div id="barcodeReader" class="w-full h-full"></div>
+          <!-- Live OCR Video Feed -->
+          <video id="ocrVideo" class="hidden w-full h-full object-cover" playsinline autoplay muted></video>
+          <canvas id="ocrCanvas" class="hidden"></canvas>
+          
+          <!-- Target Guide Box -->
+          <div id="ocrOverlay" class="hidden pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+            <div class="w-64 h-16 border-2 border-amber-400 rounded-lg relative bg-amber-400/10">
+              <div class="scan-laser"></div>
+            </div>
+            <p id="ocrStatusText" class="text-[11px] text-amber-300 bg-black/70 px-2.5 py-0.5 rounded-full mt-2">
+              對準罐底/袋背日期數字，自動識別中...
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-gray-800 px-3 py-1.5 flex justify-between items-center text-[11px] text-gray-300">
+          <span id="scanHint">提示：掃完條碼會自動跳去掃到期日</span>
+          <button type="button" onclick="stopAllScanners()" class="text-red-400 underline">關閉鏡頭</button>
+        </div>
+      </div>
+
+      <!-- Previous Purchase / Warning Alert Banner -->
+      <div id="historyWarningBanner" class="hidden mb-3 p-3 rounded-xl border text-xs"></div>
+
+      <!-- Form -->
+      <form id="itemForm" onsubmit="saveItem(event)" class="space-y-3">
+        <input type="hidden" id="editId" />
+        <input type="hidden" id="itemBarcode" />
+
+        <!-- Name & Quantity -->
+        <div class="flex gap-2">
+          <div class="flex-1">
+            <label class="block text-xs font-bold text-gray-600 mb-1">零食 / 罐頭名稱 *</label>
+            <input type="text" id="itemName" required oninput="checkPreviousHistory(this.value)" placeholder="例如：M&S 朱古力餅 / 午餐肉"
+              class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+          </div>
+          <div class="w-20">
+            <label class="block text-xs font-bold text-gray-600 mb-1">數量</label>
+            <input type="number" id="itemQty" value="1" min="0"
+              class="w-full border border-gray-300 rounded-xl px-2 py-2 text-sm text-center font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+          </div>
+        </div>
+
+        <!-- Expiry Date + Quick Buttons -->
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-xs font-bold text-gray-600">到期日 (Best Before / Use By) *</label>
+            <button type="button" onclick="startScanner('ocr')" class="text-[11px] text-emerald-600 font-bold underline">📷 照一照讀日期</button>
+          </div>
+          <input type="date" id="itemExpiry" required
+            class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none mb-1.5" />
+          <div class="flex gap-1.5 overflow-x-auto no-scrollbar text-[11px]">
+            <button type="button" onclick="addDaysToExpiry(3)" class="bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg font-medium">+3日</button>
+            <button type="button" onclick="addDaysToExpiry(14)" class="bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg font-medium">+2星期</button>
+            <button type="button" onclick="addMonthsToExpiry(1)" class="bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg font-medium">+1個月</button>
+            <button type="button" onclick="addMonthsToExpiry(6)" class="bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg font-medium">+6個月</button>
+            <button type="button" onclick="addMonthsToExpiry(12)" class="bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg font-medium">+1年</button>
+          </div>
+        </div>
+
+        <!-- Price (£) & Store (UK WA14) -->
+        <div class="flex gap-2">
+          <div class="w-28">
+            <label class="block text-xs font-bold text-gray-600 mb-1">買入價錢 (£)</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2 text-gray-500 text-sm font-bold">£</span>
+              <input type="number" step="0.01" id="itemPrice" placeholder="1.50"
+                class="w-full border border-gray-300 rounded-xl pl-7 pr-2 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+            </div>
+          </div>
+          <div class="flex-1">
+            <label class="block text-xs font-bold text-gray-600 mb-1">係邊買 (英國超市)</label>
+            <input type="text" id="itemStore" placeholder="揀下面或自己打..."
+              class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+          </div>
+        </div>
+        <!-- UK WA14 Store Quick Pills -->
+        <div class="flex gap-1.5 overflow-x-auto no-scrollbar text-[11px] pb-1">
+          <button type="button" onclick="setStore('Tesco')" class="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-full whitespace-nowrap">Tesco</button>
+          <button type="button" onclick="setStore('Sainsbury\'s')" class="bg-orange-50 text-orange-700 border border-orange-200 px-2.5 py-1 rounded-full whitespace-nowrap">Sainsbury's</button>
+          <button type="button" onclick="setStore('M&S')" class="bg-gray-100 text-gray-800 border border-gray-300 px-2.5 py-1 rounded-full whitespace-nowrap">M&S</button>
+          <button type="button" onclick="setStore('Waitrose')" class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-full whitespace-nowrap">Waitrose</button>
+          <button type="button" onclick="setStore('Aldi')" class="bg-sky-50 text-sky-700 border border-sky-200 px-2.5 py-1 rounded-full whitespace-nowrap">Aldi</button>
+          <button type="button" onclick="setStore('Lidl')" class="bg-yellow-50 text-yellow-800 border border-yellow-300 px-2.5 py-1 rounded-full whitespace-nowrap">Lidl</button>
+          <button type="button" onclick="setStore('Asda')" class="bg-lime-50 text-lime-700 border border-lime-200 px-2.5 py-1 rounded-full whitespace-nowrap">Asda</button>
+          <button type="button" onclick="setStore('Morrisons')" class="bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 rounded-full whitespace-nowrap">Morrisons</button>
+          <button type="button" onclick="setStore('Boots')" class="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-full whitespace-nowrap">Boots</button>
+          <button type="button" onclick="setStore('中超/韓超')" class="bg-red-50 text-red-700 border border-red-200 px-2.5 py-1 rounded-full whitespace-nowrap">中超/韓超</button>
+        </div>
+
+        <!-- Rating / Anti-trap Tag -->
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1">好唔好食評價（防中伏標記）</label>
+          <div class="grid grid-cols-3 gap-2 text-xs font-bold">
+            <button type="button" onclick="setRating('unrated')" id="rate-unrated" class="rate-btn py-2 rounded-xl border-2 border-gray-300 bg-gray-100 text-gray-700">🤔 未試食</button>
+            <button type="button" onclick="setRating('good')" id="rate-good" class="rate-btn py-2 rounded-xl border border-gray-200 bg-white text-gray-600">😋 好食推介</button>
+            <button type="button" onclick="setRating('bad')" id="rate-bad" class="rate-btn py-2 rounded-xl border border-gray-200 bg-white text-gray-600">❌ 伏！唔好買</button>
+          </div>
+          <input type="hidden" id="itemRating" value="unrated" />
+        </div>
+
+        <!-- Notes -->
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1">食評備註（例如：太甜、減價先買）</label>
+          <input type="text" id="itemNote" placeholder="寫低邊隻味好食或者點解中伏..."
+            class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button type="button" onclick="closeAddModal()" class="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-600 font-bold text-sm">取消</button>
+          <button type="submit" class="flex-[2] py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md hover:bg-emerald-700">💾 儲存純文字紀錄</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Family Sync Modal -->
+  <div id="syncModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-base font-bold text-gray-800">🔄 多部手機同步設定</h3>
+        <button onclick="closeSyncModal()" class="text-gray-400 font-bold text-lg">✕</button>
+      </div>
+      <p class="text-xs text-gray-600 mb-3 leading-relaxed">
+        輸入同一個「家庭同步碼」，你同屋企人就可以共用同一份存貨與防伏清單（純文字同步，完全唔佔手機空間）。
+      </p>
+      <div class="mb-3">
+        <label class="block text-xs font-bold text-gray-600 mb-1">家庭同步碼</label>
+        <div class="flex gap-2">
+          <input type="text" id="familyCodeInput" class="flex-1 border border-gray-300 rounded-xl px-3 py-2 text-sm font-mono uppercase font-bold" />
+          <button onclick="saveFamilyCode()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold">套用</button>
+        </div>
+      </div>
+      <div class="border-t pt-3 mt-3">
+        <p class="text-[11px] text-gray-500 mb-2">📲 快速傳送清單資料給另一部手機（WhatsApp 複製貼上）：</p>
+        <div class="flex gap-2">
+          <button onclick="exportDataString()" class="flex-1 bg-amber-500 text-white py-2 rounded-xl text-xs font-bold">📤 複製同步字串</button>
+          <button onclick="importDataString()" class="flex-1 bg-gray-700 text-white py-2 rounded-xl text-xs font-bold">📥 貼上匯入</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- State & Sample Data ---
+    let currentTab = 'stock';
+    let currentFilter = 'all';
+    let familyCode = localStorage.getItem('wa14_family_code') || 'WA14HOME';
+    let html5QrCode = null;
+    let ocrStream = null;
+    let ocrInterval = null;
+    let isOcrScanning = false;
+
+    // Default sample items so user can see how it works immediately
+    const defaultItems = [
+      {
+        id: '1',
+        barcode: '5000112637922',
+        name: 'M&S 牛奶朱古力消化餅',
+        qty: 2,
+        expiry: getFutureDate(45),
+        price: '1.65',
+        store: 'M&S',
+        rating: 'good',
+        note: 'Altrincham 分店買，配茶一流，必回購'
+      },
+      {
+        id: '2',
+        barcode: '0000000000002',
+        name: '某牌子特價茄汁豆罐頭',
+        qty: 1,
+        expiry: getFutureDate(5),
+        price: '0.45',
+        store: 'Aldi',
+        rating: 'bad',
+        note: '❌ 伏！汁太稀唔好食，下次買返 Heinz'
+      },
+      {
+        id: '3',
+        barcode: '0000000000003',
+        name: '日清出前一丁麻油味 (5包裝)',
+        qty: 0,
+        expiry: getFutureDate(-10),
+        price: '3.50',
+        store: '中超/韓超',
+        rating: 'good',
+        note: '特價 £3.50 抵買，平時要 £4.20'
+      }
+    ];
+
+    function getStorageKey() {
+      return `wa14_pantry_items_${familyCode}`;
+    }
+
+    function getItems() {
+      const raw = localStorage.getItem(getStorageKey());
+      if (!raw) {
+        localStorage.setItem(getStorageKey(), JSON.stringify(defaultItems));
+        return defaultItems;
+      }
+      return JSON.parse(raw);
+    }
+
+    function saveItemsToStorage(items) {
+      localStorage.setItem(getStorageKey(), JSON.stringify(items));
+      updateStorageSize();
+      renderList();
+    }
+
+    function getFutureDate(days) {
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split('T')[0];
+    }
+
+    function updateStorageSize() {
+      const raw = localStorage.getItem(getStorageKey()) || '[]';
+      const kb = (new Blob([raw]).size / 1024).toFixed(2);
+      document.getElementById('storageSize').textContent = `${kb} KB`;
+    }
+
+    // --- UI Rendering ---
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('tabStock').className = tab === 'stock'
+        ? 'flex-1 py-1.5 rounded-lg bg-white text-emerald-700 shadow-sm transition'
+        : 'flex-1 py-1.5 rounded-lg text-gray-600 hover:text-gray-800 transition';
+      document.getElementById('tabHistory').className = tab === 'history'
+        ? 'flex-1 py-1.5 rounded-lg bg-white text-emerald-700 shadow-sm transition'
+        : 'flex-1 py-1.5 rounded-lg text-gray-600 hover:text-gray-800 transition';
+      document.getElementById('filterPills').style.display = tab === 'stock' ? 'flex' : 'none';
+      renderList();
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-pill').forEach(btn => {
+        if (btn.dataset.filter === filter) {
+          btn.className = 'filter-pill bg-emerald-600 text-white px-3 py-1 rounded-full whitespace-nowrap font-medium';
+        } else {
+          btn.className = 'filter-pill bg-white text-gray-600 border px-3 py-1 rounded-full whitespace-nowrap';
+        }
+      });
+      renderList();
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('clearSearchBtn').classList.add('hidden');
+      renderList();
+    }
+
+    function getDaysLeft(expiryStr) {
+      if (!expiryStr) return 999;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const exp = new Date(expiryStr);
+      return Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
+    }
+
+    function renderList() {
+      const items = getItems();
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      document.getElementById('clearSearchBtn').classList.toggle('hidden', !query);
+
+      const stockItems = items.filter(i => Number(i.qty) > 0);
+      const historyItems = items.filter(i => Number(i.qty) <= 0);
+
+      document.getElementById('countStock').textContent = stockItems.length;
+      document.getElementById('countHistory').textContent = historyItems.length;
+
+      let displayList = currentTab === 'stock' ? stockItems : historyItems;
+
+      // Sort stock by expiry date ascending (soonest first)
+      if (currentTab === 'stock') {
+        displayList.sort((a, b) => new Date(a.expiry) - new Date(b.expiry));
+        if (currentFilter === 'expiring') {
+          displayList = displayList.filter(i => { const d = getDaysLeft(i.expiry); return d >= 0 && d <= 14; });
+        } else if (currentFilter === 'expired') {
+          displayList = displayList.filter(i => getDaysLeft(i.expiry) < 0);
+        } else if (currentFilter === 'bad') {
+          displayList = displayList.filter(i => i.rating === 'bad');
+        }
+      }
+
+      if (query) {
+        displayList = displayList.filter(i =>
+          (i.name && i.name.toLowerCase().includes(query)) ||
+          (i.store && i.store.toLowerCase().includes(query)) ||
+          (i.note && i.note.toLowerCase().includes(query)) ||
+          (query === '伏' && i.rating === 'bad')
+        );
+      }
+
+      const container = document.getElementById('itemList');
+      if (displayList.length === 0) {
+        container.innerHTML = `<div class="text-center py-10 text-gray-400 text-sm">暫時未有相關紀錄，撳下面「⚡ 鏡頭直掃入貨」試下！</div>`;
+        return;
+      }
+
+      container.innerHTML = displayList.map(item => {
+        const days = getDaysLeft(item.expiry);
+        let badgeHtml = '';
+        let cardBorder = 'border-gray-200';
+
+        if (currentTab === 'stock') {
+          if (days < 0) {
+            badgeHtml = `<span class="bg-red-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-md">🚨 已過期 ${Math.abs(days)} 日</span>`;
+            cardBorder = 'border-red-400 bg-red-50/40';
+          } else if (days <= 14) {
+            badgeHtml = `<span class="bg-amber-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-md">⚠️ 剩 ${days} 日過期</span>`;
+            cardBorder = 'border-amber-300 bg-amber-50/30';
+          } else {
+            badgeHtml = `<span class="bg-emerald-100 text-emerald-800 text-[11px] font-medium px-2 py-0.5 rounded-md">剩 ${days} 日 (${item.expiry})</span>`;
+          }
+        } else {
+          badgeHtml = `<span class="bg-gray-200 text-gray-600 text-[11px] px-2 py-0.5 rounded-md">已食完歸檔</span>`;
+        }
+
+        let ratingBadge = '';
+        if (item.rating === 'bad') {
+          ratingBadge = `<span class="bg-red-100 text-red-700 border border-red-300 text-[11px] font-bold px-2 py-0.5 rounded-md">❌ 伏！唔好買</span>`;
+        } else if (item.rating === 'good') {
+          ratingBadge = `<span class="bg-emerald-100 text-emerald-700 text-[11px] font-bold px-2 py-0.5 rounded-md">😋 好食</span>`;
+        }
+
+        return `
+          <div class="bg-white rounded-2xl p-3.5 shadow-sm border ${cardBorder} transition">
+            <div class="flex justify-between items-start gap-2">
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                  ${badgeHtml}
+                  ${ratingBadge}
+                </div>
+                <h3 class="font-bold text-gray-900 text-base truncate">${escapeHtml(item.name)}</h3>
+                <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500 mt-1">
+                  ${item.store ? `<span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-medium">📍 ${escapeHtml(item.store)}</span>` : ''}
+                  ${item.price ? `<span class="font-mono font-bold text-gray-700">💷 £${escapeHtml(item.price)}</span>` : ''}
+                  ${item.expiry ? `<span>📅 ${item.expiry}</span>` : ''}
+                </div>
+                ${item.note ? `<p class="mt-1.5 text-xs ${item.rating === 'bad' ? 'text-red-600 font-medium' : 'text-gray-600'} bg-gray-50 px-2.5 py-1.5 rounded-lg">💬 ${escapeHtml(item.note)}</p>` : ''}
+              </div>
+
+              <!-- Quantity Controls -->
+              <div class="flex flex-col items-end justify-between gap-2">
+                <div class="flex items-center bg-gray-100 rounded-xl p-0.5 border">
+                  <button onclick="changeQty('${item.id}', -1)" class="w-7 h-7 flex items-center justify-center font-bold text-gray-600 hover:bg-white rounded-lg">−</button>
+                  <span class="w-7 text-center font-bold text-sm">${item.qty}</span>
+                  <button onclick="changeQty('${item.id}', 1)" class="w-7 h-7 flex items-center justify-center font-bold text-emerald-700 hover:bg-white rounded-lg">+</button>
+                </div>
+                <div class="flex gap-2 text-xs text-gray-400">
+                  <button onclick="editItem('${item.id}')" class="hover:text-emerald-600 underline">編輯</button>
+                  <button onclick="deleteItem('${item.id}')" class="hover:text-red-600 underline">刪除</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    }
+
+    // --- Item Actions ---
+    function changeQty(id, delta) {
+      const items = getItems();
+      const idx = items.findIndex(i => i.id === id);
+      if (idx === -1) return;
+      items[idx].qty = Math.max(0, Number(items[idx].qty) + delta);
+      saveItemsToStorage(items);
+    }
+
+    function deleteItem(id) {
+      if (!confirm('確定要徹底刪除呢條紀錄？（建議將數量減至 0 保留防伏評價）')) return;
+      const items = getItems().filter(i => i.id !== id);
+      saveItemsToStorage(items);
+    }
+
+    // --- Modal & Form Logic ---
+    function openAddModal(autoScan = false) {
+      document.getElementById('itemForm').reset();
+      document.getElementById('editId').value = '';
+      document.getElementById('itemBarcode').value = '';
+      document.getElementById('itemQty').value = '1';
+      document.getElementById('itemExpiry').value = getFutureDate(90);
+      setRating('unrated');
+      document.getElementById('historyWarningBanner').classList.add('hidden');
+      document.getElementById('modalTitle').textContent = autoScan ? '⚡ 鏡頭直掃入貨' : '✍️ 新增 / 編輯貨品';
+      document.getElementById('itemModal').classList.remove('hidden');
+
+      if (autoScan) {
+        document.getElementById('scannerSection').classList.remove('hidden');
+        startScanner('barcode');
+      } else {
+        document.getElementById('scannerSection').classList.add('hidden');
+      }
+    }
+
+    function editItem(id) {
+      const item = getItems().find(i => i.id === id);
+      if (!item) return;
+      openAddModal(false);
+      document.getElementById('modalTitle').textContent = '✏️ 編輯貨品與評價';
+      document.getElementById('editId').value = item.id;
+      document.getElementById('itemBarcode').value = item.barcode || '';
+      document.getElementById('itemName').value = item.name;
+      document.getElementById('itemQty').value = item.qty;
+      document.getElementById('itemExpiry').value = item.expiry;
+      document.getElementById('itemPrice').value = item.price || '';
+      document.getElementById('itemStore').value = item.store || '';
+      document.getElementById('itemNote').value = item.note || '';
+      setRating(item.rating || 'unrated');
+    }
+
+    function closeAddModal() {
+      stopAllScanners();
+      document.getElementById('itemModal').classList.add('hidden');
+    }
+
+    function setStore(storeName) {
+      document.getElementById('itemStore').value = storeName;
+    }
+
+    function setRating(rating) {
+      document.getElementById('itemRating').value = rating;
+      document.querySelectorAll('.rate-btn').forEach(btn => {
+        btn.className = 'rate-btn py-2 rounded-xl border border-gray-200 bg-white text-gray-600';
+      });
+      const activeBtn = document.getElementById(`rate-${rating}`);
+      if (rating === 'unrated') activeBtn.className = 'rate-btn py-2 rounded-xl border-2 border-gray-400 bg-gray-100 text-gray-800';
+      if (rating === 'good') activeBtn.className = 'rate-btn py-2 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-700';
+      if (rating === 'bad') activeBtn.className = 'rate-btn py-2 rounded-xl border-2 border-red-500 bg-red-50 text-red-700';
+    }
+
+    function addDaysToExpiry(days) {
+      document.getElementById('itemExpiry').value = getFutureDate(days);
+    }
+
+    function addMonthsToExpiry(months) {
+      const d = new Date();
+      d.setMonth(d.getMonth() + months);
+      document.getElementById('itemExpiry').value = d.toISOString().split('T')[0];
+    }
+
+    function checkPreviousHistory(nameOrBarcode) {
+      if (!nameOrBarcode || nameOrBarcode.length < 2) {
+        document.getElementById('historyWarningBanner').classList.add('hidden');
+        return;
+      }
+      const q = nameOrBarcode.toLowerCase();
+      const match = getItems().find(i =>
+        (i.barcode && i.barcode === nameOrBarcode) ||
+        (i.name && i.name.toLowerCase().includes(q))
+      );
+
+      const banner = document.getElementById('historyWarningBanner');
+      if (match) {
+        banner.classList.remove('hidden');
+        if (match.rating === 'bad') {
+          banner.className = 'mb-3 p-3 rounded-xl border-2 border-red-500 bg-red-50 text-red-800 text-xs';
+          banner.innerHTML = `🚨 <b>防伏警報！你以前買過「${escapeHtml(match.name)}」並標記為中伏！</b><br>上次係 <b>${match.store || '未知地點'}</b> 買 <b>£${match.price || '?'}</b>｜評價：${escapeHtml(match.note || '唔好食')}`;
+        } else {
+          banner.className = 'mb-3 p-3 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs';
+          banner.innerHTML = `💡 <b>歷史購買參考：</b>上次係 <b>${match.store || '未知地點'}</b> 買 <b>£${match.price || '?'}</b>｜評價：${escapeHtml(match.note || '未有備註')}`;
+        }
+        // Auto-fill store & price if currently empty
+        if (!document.getElementById('itemStore').value && match.store) document.getElementById('itemStore').value = match.store;
+        if (!document.getElementById('itemPrice').value && match.price) document.getElementById('itemPrice').value = match.price;
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
+    function saveItem(e) {
+      e.preventDefault();
+      const items = getItems();
+      const editId = document.getElementById('editId').value;
+      const newItem = {
+        id: editId || Date.now().toString(),
+        barcode: document.getElementById('itemBarcode').value.trim(),
+        name: document.getElementById('itemName').value.trim(),
+        qty: Number(document.getElementById('itemQty').value),
+        expiry: document.getElementById('itemExpiry').value,
+        price: document.getElementById('itemPrice').value.trim(),
+        store: document.getElementById('itemStore').value.trim(),
+        rating: document.getElementById('itemRating').value,
+        note: document.getElementById('itemNote').value.trim()
+      };
+
+      if (editId) {
+        const idx = items.findIndex(i => i.id === editId);
+        if (idx !== -1) items[idx] = newItem;
+      } else {
+        items.unshift(newItem);
+      }
+
+      saveItemsToStorage(items);
+      closeAddModal();
+    }
+
+    // --- Live Scanners (Zero Photo Stored) ---
+    async function startScanner(mode) {
+      document.getElementById('scannerSection').classList.remove('hidden');
+      await stopAllScanners();
+
+      if (mode === 'barcode') {
+        document.getElementById('modeBarcodeBtn').className = 'flex-1 py-2 font-bold bg-emerald-600 text-white';
+        document.getElementById('modeOcrBtn').className = 'flex-1 py-2 font-bold text-gray-300';
+        document.getElementById('barcodeReader').classList.remove('hidden');
+        document.getElementById('ocrVideo').classList.add('hidden');
+        document.getElementById('ocrOverlay').classList.add('hidden');
+        document.getElementById('scanHint').textContent = '對準包裝條碼，掃到後自動跳去掃到期日';
+
+        html5QrCode = new Html5Qrcode("barcodeReader");
+        html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 240, height: 110 } },
+          async (decodedText) => {
+            if (navigator.vibrate) navigator.vibrate(100);
+            document.getElementById('itemBarcode').value = decodedText;
+            checkPreviousHistory(decodedText);
+
+            // Check local history first, otherwise fetch from Open Food Facts
+            const localMatch = getItems().find(i => i.barcode === decodedText);
+            if (localMatch) {
+              document.getElementById('itemName').value = localMatch.name;
+            } else {
+              document.getElementById('itemName').value = `查詢條碼 ${decodedText}...`;
+              fetch(`https://world.openfoodfacts.org/api/v0/product/${decodedText}.json`)
+                .then(r => r.json())
+                .then(data => {
+                  if (data.status === 1 && data.product && data.product.product_name) {
+                    document.getElementById('itemName').value = data.product.product_name;
+                  } else {
+                    document.getElementById('itemName').value = '';
+                    document.getElementById('itemName').placeholder = '資料庫未有此貨，請輸入名稱';
+                  }
+                }).catch(() => {
+                  document.getElementById('itemName').value = '';
+                });
+            }
+
+            // Seamlessly switch to Live Date OCR!
+            startScanner('ocr');
+          },
+          () => {}
+        ).catch(() => {
+          document.getElementById('scanHint').textContent = '⚠️ 無法開啟相機，請確認瀏覽器已允許相機權限';
+        });
+
+      } else if (mode === 'ocr') {
+        document.getElementById('modeBarcodeBtn').className = 'flex-1 py-2 font-bold text-gray-300';
+        document.getElementById('modeOcrBtn').className = 'flex-1 py-2 font-bold bg-amber-600 text-white';
+        document.getElementById('barcodeReader').classList.add('hidden');
+        document.getElementById('ocrVideo').classList.remove('hidden');
+        document.getElementById('ocrOverlay').classList.remove('hidden');
+        document.getElementById('scanHint').textContent = '直接照住罐底或袋背日期，唔使撳快門';
+
+        try {
+          ocrStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+          const video = document.getElementById('ocrVideo');
+          video.srcObject = ocrStream;
+          await video.play();
+
+          // Run live OCR frame check every 1.2 seconds in memory (never saved to disk)
+          ocrInterval = setInterval(async () => {
+            if (isOcrScanning || video.readyState !== 4) return;
+            isOcrScanning = true;
+            try {
+              const canvas = document.getElementById('ocrCanvas');
+              const ctx = canvas.getContext('2d');
+              // Crop center strip where target box is
+              const vw = video.videoWidth;
+              const vh = video.videoHeight;
+              const cw = vw * 0.7;
+              const ch = vh * 0.25;
+              canvas.width = cw;
+              canvas.height = ch;
+              ctx.drawImage(video, (vw - cw) / 2, (vh - ch) / 2, cw, ch, 0, 0, cw, ch);
+
+              const { data: { text } } = await Tesseract.recognize(canvas, 'eng');
+              const parsedDate = extractDateFromText(text);
+              if (parsedDate) {
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                document.getElementById('itemExpiry').value = parsedDate;
+                document.getElementById('ocrStatusText').textContent = `✅ 成功讀取日期：${parsedDate}`;
+                setTimeout(() => stopAllScanners(), 800);
+              }
+            } catch (err) {
+              // Ignore frame errors
+            }
+            isOcrScanning = false;
+          }, 1200);
+        } catch (err) {
+          document.getElementById('ocrStatusText').textContent = '⚠️ 無法啟動鏡頭讀取日期';
+        }
+      }
+    }
+
+    // Parse common UK / International packaging date formats (e.g. 15/06/2027, 2027-06-15, OCT 2027, 06/27)
+    function extractDateFromText(rawText) {
+      const text = rawText.toUpperCase().replace(/\s+/g, ' ');
+      const months = { JAN: '01', FEB: '02', MAR: '03', APR: '04', MAY: '05', JUN: '06', JUL: '07', AUG: '08', SEP: '09', OCT: '10', NOV: '11', DEC: '12' };
+
+      // 1. YYYY-MM-DD or YYYY/MM/DD or YYYY.MM.DD
+      let m = text.match(/(202[5-9]|203[0-5])[\/\-\.](0[1-9]|1[0-2])[\/\-\.](0[1-9]|[12][0-9]|3[01])/);
+      if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+
+      // 2. DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY (UK standard)
+      m = text.match(/(0[1-9]|[12][0-9]|3[01])[\/\-\.](0[1-9]|1[0-2])[\/\-\.](202[5-9]|203[0-5])/);
+      if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+
+      // 3. DD MMM YYYY or MMM YYYY (e.g. 12 OCT 2027 or OCT 2027)
+      m = text.match(/(?:(0[1-9]|[12][0-9]|3[01])\s*)?(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\s*(202[5-9]|203[0-5])/);
+      if (m) {
+        const day = m[1] || '28';
+        return `${m[3]}-${months[m[2]]}-${day}`;
+      }
+
+      // 4. MM/YYYY or MM/YY (e.g. 08/2027 or 08/27)
+      m = text.match(/(0[1-9]|1[0-2])[\/\-\.](202[5-9]|203[0-5]|2[5-9])/);
+      if (m) {
+        const yr = m[2].length === 2 ? `20${m[2]}` : m[2];
+        return `${yr}-${m[1]}-28`;
+      }
+
+      return null;
+    }
+
+    async function stopAllScanners() {
+      if (html5QrCode) {
+        try { await html5QrCode.stop(); html5QrCode.clear(); } catch (e) {}
+        html5QrCode = null;
+      }
+      if (ocrInterval) {
+        clearInterval(ocrInterval);
+        ocrInterval = null;
+      }
+      if (ocrStream) {
+        ocrStream.getTracks().forEach(t => t.stop());
+        ocrStream = null;
+      }
+    }
+
+    // --- Family Sync Logic ---
+    function openSyncModal() {
+      document.getElementById('familyCodeInput').value = familyCode;
+      document.getElementById('syncModal').classList.remove('hidden');
+    }
+
+    function closeSyncModal() {
+      document.getElementById('syncModal').classList.add('hidden');
+    }
+
+    function saveFamilyCode() {
+      const code = document.getElementById('familyCodeInput').value.trim().toUpperCase();
+      if (!code) return;
+      familyCode = code;
+      localStorage.setItem('wa14_family_code', familyCode);
+      document.getElementById('headerFamilyCode').textContent = familyCode;
+      closeSyncModal();
+      renderList();
+      updateStorageSize();
+    }
+
+    function exportDataString() {
+      const dataStr = btoa(encodeURIComponent(JSON.stringify(getItems())));
+      navigator.clipboard.writeText(dataStr).then(() => {
+        alert('✅ 已複製同步字串！你可以直接貼上 WhatsApp 發俾屋企人，佢喺另一部機撳「貼上匯入」就即時同步。');
+      });
+    }
+
+    function importDataString() {
+      const str = prompt('請貼上屋企人發過嚟嘅同步字串：');
+      if (!str) return;
+      try {
+        const parsed = JSON.parse(decodeURIComponent(atob(str.trim())));
+        if (Array.isArray(parsed)) {
+          saveItemsToStorage(parsed);
+          closeSyncModal();
+          alert(`✅ 成功同步 ${parsed.length} 項貨品紀錄！`);
+        }
+      } catch (e) {
+        alert('❌ 同步字串格式唔啱，請重新複製一次。');
+      }
+    }
+
+    // Init
+    document.getElementById('headerFamilyCode').textContent = familyCode;
+    updateStorageSize();
+    renderList();
+  </script>
+</body>
+</html>
