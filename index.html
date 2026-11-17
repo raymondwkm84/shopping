@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>WA14 零食罐頭防伏管家 (AI 視覺識別升級版)</title>
+  <title>WA14 零食罐頭防伏管家 (原生相機高清版)</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "PingFang HK", "Microsoft JhengHei", sans-serif; background-color: #f3f4f6; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -21,11 +20,11 @@
         <h1 class="text-lg font-bold tracking-tight flex items-center gap-1.5">
           <span>🥫</span> 零食罐頭防伏管家
         </h1>
-        <p class="text-[11px] text-emerald-100">AI 視覺直掃 · 零留相極省空間 · 英國 £</p>
+        <p class="text-[11px] text-emerald-100">原生相機高清識別 · 零留相 · 英國 £ 版</p>
       </div>
       <div class="flex gap-1.5">
         <button onclick="openAiKeyModal()" id="aiStatusBtn" class="bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm">
-          ✨ 設定 AI 引擎
+          ✨ 啟用 AI
         </button>
         <button onclick="openSyncModal()" class="bg-emerald-700 hover:bg-emerald-800 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-emerald-500">
           🔄 <span id="headerFamilyCode" class="font-mono font-bold text-amber-300">WA14</span>
@@ -65,7 +64,7 @@
 
     <!-- Storage Indicator -->
     <div class="bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5 mb-3 flex items-center justify-between text-[11px] text-emerald-800">
-      <span>💾 純文字儲存（識別後自動銷毀相片）</span>
+      <span>💾 純文字儲存（識別後即刻銷毀相片，唔入相簿）</span>
       <span id="storageSize" class="font-mono font-bold">0.4 KB</span>
     </div>
 
@@ -75,61 +74,46 @@
   <!-- Floating Bottom Buttons -->
   <div class="fixed bottom-4 left-0 right-0 z-20 px-4">
     <div class="max-w-md mx-auto flex gap-2.5">
-      <button onclick="openAddModal('manual')" class="flex-1 bg-white border-2 border-emerald-600 text-emerald-700 font-bold py-3 rounded-2xl shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 text-sm">
+      <button onclick="openAddModal()" class="flex-1 bg-white border-2 border-emerald-600 text-emerald-700 font-bold py-3 rounded-2xl shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 text-sm">
         <span>✍️</span> 手動記低
       </button>
-      <button onclick="openAddModal('barcode')" class="flex-[1.5] bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3 rounded-2xl shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 text-sm">
-        <span>⚡</span> 智能鏡頭掃描
+      <button onclick="quickScanFront()" class="flex-[1.5] bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3 rounded-2xl shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 text-sm">
+        <span>📷</span> 一照入貨 (自動填資料)
       </button>
     </div>
+  </div>
+
+  <!-- Hidden Native Camera Inputs (Triggers phone's native sharp autofocus camera directly, never saves to gallery) -->
+  <input type="file" id="nativeCamFront" accept="image/*" capture="environment" class="hidden" onchange="handleNativePhoto(event, 'front')" />
+  <input type="file" id="nativeCamDate" accept="image/*" capture="environment" class="hidden" onchange="handleNativePhoto(event, 'date')" />
+
+  <!-- Global AI Processing Overlay -->
+  <div id="globalLoading" class="fixed inset-0 bg-black/75 z-50 hidden flex flex-col items-center justify-center text-white p-6 text-center">
+    <div class="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mb-3"></div>
+    <p id="loadingTitle" class="text-base font-bold text-amber-300 mb-1">AI 正在高速讀取文字...</p>
+    <p class="text-xs text-gray-300">讀取完會即刻銷毀暫存畫面，唔會佔用電話空間</p>
   </div>
 
   <!-- Add / Edit Modal -->
   <div id="itemModal" class="fixed inset-0 bg-black/60 z-40 hidden flex items-end sm:items-center justify-center">
     <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl max-h-[94vh] overflow-y-auto p-5 shadow-2xl">
       <div class="flex justify-between items-center mb-3">
-        <h2 id="modalTitle" class="text-lg font-bold text-gray-800">⚡ 智能鏡頭掃描</h2>
+        <h2 id="modalTitle" class="text-lg font-bold text-gray-800">新增 / 編輯貨品</h2>
         <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-700 text-xl font-bold px-2">✕</button>
       </div>
 
-      <!-- 3-in-1 Smart Camera Panel -->
-      <div id="scannerSection" class="mb-4 bg-gray-900 rounded-2xl overflow-hidden border-2 border-emerald-500">
-        <!-- Mode Switch Tabs -->
-        <div class="grid grid-cols-3 bg-gray-800 text-[11px] text-white text-center font-bold">
-          <button type="button" id="tabModeBarcode" onclick="switchCamMode('barcode')" class="py-2.5 bg-emerald-600">1. 掃條碼</button>
-          <button type="button" id="tabModeFront" onclick="switchCamMode('front')" class="py-2.5 text-gray-300">2. AI 掃包裝正面</button>
-          <button type="button" id="tabModeDate" onclick="switchCamMode('date')" class="py-2.5 text-gray-300">3. AI 掃罐底日期</button>
-        </div>
-
-        <!-- Camera Viewport -->
-        <div class="relative h-52 bg-black flex items-center justify-center overflow-hidden">
-          <div id="barcodeReader" class="w-full h-full"></div>
-          <video id="aiVideo" class="hidden w-full h-full object-cover" playsinline autoplay muted></video>
-          <canvas id="aiCanvas" class="hidden"></canvas>
-
-          <!-- Viewfinder Guide for AI Front / Date -->
-          <div id="aiGuideOverlay" class="hidden absolute inset-0 pointer-events-none flex flex-col items-center justify-center">
-            <div id="aiGuideBox" class="w-64 h-20 border-2 border-amber-400 rounded-xl bg-amber-400/10"></div>
-            <p id="aiGuideText" class="text-[11px] text-white bg-black/75 px-3 py-1 rounded-full mt-2">
-              對準罐底噴碼日期，撳下面按鈕識別
-            </p>
-          </div>
-
-          <!-- Loading Spinner -->
-          <div id="aiLoadingOverlay" class="hidden absolute inset-0 bg-black/75 flex flex-col items-center justify-center text-white">
-            <div class="w-8 h-8 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mb-2"></div>
-            <p class="text-xs font-bold text-amber-300">AI 正在讀取文字，唔會儲存相片...</p>
-          </div>
-        </div>
-
-        <!-- Bottom Action Bar inside Camera -->
-        <div class="bg-gray-800 p-2.5 flex items-center justify-between gap-2">
-          <span id="camStatusHint" class="text-[11px] text-gray-300 flex-1">掃唔到條碼？即刻轉「AI 掃包裝正面」</span>
-          <button type="button" id="aiSnapBtn" onclick="triggerAiRecognition()" class="hidden bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold text-xs px-4 py-2 rounded-xl shadow">
-            ✨ 一照生成文字
-          </button>
-          <button type="button" onclick="stopAllCameras()" class="text-xs text-red-400 px-2 py-1">關鏡頭</button>
-        </div>
+      <!-- Native Camera Quick Triggers -->
+      <div class="grid grid-cols-2 gap-2.5 mb-4">
+        <button type="button" onclick="triggerCam('front')" class="bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-500 text-emerald-800 p-3 rounded-2xl flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+          <span class="text-xl">📦</span>
+          <span class="text-xs font-bold">1. 照一照包裝正面</span>
+          <span class="text-[10px] text-emerald-600">自動填名稱＋口味</span>
+        </button>
+        <button type="button" onclick="triggerCam('date')" class="bg-amber-50 hover:bg-amber-100 border-2 border-amber-500 text-amber-900 p-3 rounded-2xl flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+          <span class="text-xl">📅</span>
+          <span class="text-xs font-bold">2. 照一照罐底日期</span>
+          <span class="text-[10px] text-amber-700">專讀噴碼 BB / EXP</span>
+        </button>
       </div>
 
       <!-- Warning / History Alert -->
@@ -138,12 +122,11 @@
       <!-- Form -->
       <form id="itemForm" onsubmit="saveItem(event)" class="space-y-3">
         <input type="hidden" id="editId" />
-        <input type="hidden" id="itemBarcode" />
 
         <div class="flex gap-2">
           <div class="flex-1">
             <label class="block text-xs font-bold text-gray-600 mb-1">零食 / 罐頭名稱 *</label>
-            <input type="text" id="itemName" required oninput="checkPreviousHistory(this.value)" placeholder="掃條碼或用 AI 掃包裝自動填入"
+            <input type="text" id="itemName" required oninput="checkPreviousHistory(this.value)" placeholder="撳上面「照包裝正面」自動填入"
               class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
           </div>
           <div class="w-20">
@@ -157,7 +140,7 @@
         <div>
           <div class="flex justify-between items-center mb-1">
             <label class="text-xs font-bold text-gray-600">到期日 (Best Before / Use By) *</label>
-            <button type="button" onclick="switchCamMode('date')" class="text-[11px] text-amber-600 font-bold underline">✨ 用 AI 掃罐底日期</button>
+            <span id="rawDateDetected" class="text-[11px] text-amber-600 font-bold"></span>
           </div>
           <input type="date" id="itemExpiry" required
             class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none mb-1.5" />
@@ -235,16 +218,14 @@
         <button onclick="closeAiKeyModal()" class="text-gray-400 font-bold text-lg">✕</button>
       </div>
       <p class="text-xs text-gray-600 mb-3 leading-relaxed">
-        貼上免費嘅 <b>Google Gemini API Key</b>，即可開啟「掃包裝正面自動寫名」同「精準讀取罐底噴碼日期」功能（識別完即刪畫面，完全唔佔空間）：
+        貼上免費嘅 <b>Google Gemini API Key</b>，即可開啟「照包裝正面自動寫名」同「精準讀取罐底噴碼日期」：
       </p>
       <input type="password" id="geminiKeyInput" placeholder="貼上 AIzaSy 開頭嘅 API Key..."
         class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs font-mono mb-2 focus:ring-2 focus:ring-amber-500 focus:outline-none" />
       <p class="text-[11px] text-gray-500 mb-3">
-        點攞免費 Key？去 Google AI Studio 登入 Google 帳號撳「Create API key」即可（完全免費）。
+        去 <b>aistudio.google.com</b> 登入 Google 帳號撳「Get API key」即可免費領取。
       </p>
-      <div class="flex gap-2">
-        <button onclick="saveGeminiKey()" class="flex-1 bg-amber-500 text-white py-2 rounded-xl text-xs font-bold">儲存並啟用</button>
-      </div>
+      <button onclick="saveGeminiKey()" class="w-full bg-amber-500 text-white py-2.5 rounded-xl text-xs font-bold">儲存並啟用</button>
     </div>
   </div>
 
@@ -275,16 +256,12 @@
   <script>
     let currentTab = 'stock';
     let currentFilter = 'all';
-    let currentCamMode = 'barcode';
     let familyCode = localStorage.getItem('wa14_family_code') || 'WA14';
     let geminiApiKey = localStorage.getItem('wa14_gemini_key') || '';
-    let html5QrCode = null;
-    let aiVideoStream = null;
 
     const defaultItems = [
       {
         id: '1',
-        barcode: '5000112637922',
         name: 'M&S 牛奶朱古力消化餅',
         qty: 2,
         expiry: getFutureDate(45),
@@ -295,7 +272,6 @@
       },
       {
         id: '2',
-        barcode: '0000000000002',
         name: '特價茄汁豆罐頭',
         qty: 1,
         expiry: getFutureDate(5),
@@ -321,8 +297,7 @@
       renderList();
     }
     function getFutureDate(days) {
-      const d = new Date();
-      d.setDate(d.getDate() + days);
+      const d = new Date(); d.setDate(d.getDate() + days);
       return d.toISOString().split('T')[0];
     }
     function updateStorageSize() {
@@ -340,7 +315,124 @@
       }
     }
 
-    // --- Render List ---
+    // --- Native Camera Triggers (100% works on iOS/Android with Autofocus & Flash) ---
+    function quickScanFront() {
+      if (!geminiApiKey) { openAiKeyModal(); return; }
+      openAddModal();
+      triggerCam('front');
+    }
+
+    function triggerCam(type) {
+      if (!geminiApiKey) { openAiKeyModal(); return; }
+      const input = document.getElementById(type === 'front' ? 'nativeCamFront' : 'nativeCamDate');
+      input.value = ''; // reset so same file event triggers
+      input.click();
+    }
+
+    async function handleNativePhoto(event, mode) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      document.getElementById('globalLoading').classList.remove('hidden');
+      document.getElementById('loadingTitle').textContent = mode === 'front'
+        ? 'AI 正在辨識包裝產品資料...'
+        : 'AI 正在讀取罐底噴碼日期...';
+
+      try {
+        // Compress in memory only & wipe immediately after API call
+        const base64Image = await fileToCompressedBase64(file, 1024);
+        event.target.value = ''; // Clear file reference from memory
+
+        const promptText = mode === 'front'
+          ? `你是一個家居食品管理助手。請辨識這張食品/零食/罐頭包裝正面圖片（可能包含英、日、韓或中文），並以純 JSON 格式回覆（不要 markdown 標記）：
+             {"name": "繁體中文產品名稱及牌子（如原包裝為英文或日韓文，請翻譯成香港慣用繁體中文並保留主要牌子名）", "note": "口味、淨重或特色簡述（例如：海鹽味 150g）", "expiry": "如果畫面剛好見到到期日請轉成 YYYY-MM-DD，否則留空字串", "price": "如果見到價錢數字請填純數字如 1.50，否則留空"}`
+          : `請仔細辨識這張食品包裝背面或罐底的到期日/最佳食用日期（包括點陣噴碼 dot-matrix font、Best Before、Use By、EXP、賞味期限，常見英國格式為 DD/MM/YYYY 或 MMM YYYY）。今天日期是 ${new Date().toISOString().split('T')[0]}。請只以純 JSON 格式回覆（不要 markdown）：
+             {"expiry": "轉換後的標準日期 YYYY-MM-DD（若只有月份年份如 08/2027 則填該月最後一日如 2027-08-28；若完全找不到則留空字串）", "raw_text": "你看到的原始日期文字"}`;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              parts: [
+                { text: promptText },
+                { inline_data: { mime_type: 'image/jpeg', data: base64Image } }
+              ]
+            }]
+          })
+        });
+
+        const data = await response.json();
+        if (data.error) throw new Error(data.error.message);
+
+        const rawReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        const jsonMatch = rawReply.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const result = JSON.parse(jsonMatch[0]);
+          if (navigator.vibrate) navigator.vibrate([80, 50, 80]);
+
+          if (mode === 'front') {
+            if (result.name) {
+              document.getElementById('itemName').value = result.name;
+              checkPreviousHistory(result.name);
+            }
+            if (result.note && !document.getElementById('itemNote').value) {
+              document.getElementById('itemNote').value = result.note;
+            }
+            if (result.price) document.getElementById('itemPrice').value = result.price;
+            if (result.expiry) {
+              document.getElementById('itemExpiry').value = result.expiry;
+              document.getElementById('rawDateDetected').textContent = `✅ 已自動讀埋日期`;
+            } else {
+              // Ask user if they want to immediately snap the expiry date
+              setTimeout(() => {
+                if (confirm(`✅ 已識別：「${result.name}」\n\n要唔要順手照埋罐底/袋背嘅「到期日」？`)) {
+                  triggerCam('date');
+                }
+              }, 200);
+            }
+          } else {
+            if (result.expiry) {
+              document.getElementById('itemExpiry').value = result.expiry;
+              document.getElementById('rawDateDetected').textContent = `✅ 讀到: ${result.raw_text || result.expiry}`;
+            } else {
+              alert('⚠️ 相片太模糊或反光睇唔到日期，請對焦清楚再照一次！');
+            }
+          }
+        }
+      } catch (err) {
+        alert('❌ 識別失敗：' + err.message + '\n請檢查右上角 Gemini API Key 是否正確。');
+      } finally {
+        document.getElementById('globalLoading').classList.add('hidden');
+      }
+    }
+
+    function fileToCompressedBase64(file, maxDim) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            // Immediately free canvas memory
+            canvas.width = 0; canvas.height = 0;
+            resolve(dataUrl.split(',')[1]);
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // --- UI Rendering & Form Logic ---
     function switchTab(tab) {
       currentTab = tab;
       document.getElementById('tabStock').className = tab === 'stock' ? 'flex-1 py-1.5 rounded-lg bg-white text-emerald-700 shadow-sm transition' : 'flex-1 py-1.5 rounded-lg text-gray-600 transition';
@@ -395,7 +487,7 @@
 
       const container = document.getElementById('itemList');
       if (displayList.length === 0) {
-        container.innerHTML = `<div class="text-center py-10 text-gray-400 text-sm">暫時未有相關紀錄，撳下面「⚡ 智能鏡頭掃描」試下！</div>`;
+        container.innerHTML = `<div class="text-center py-10 text-gray-400 text-sm">暫時未有相關紀錄，撳下面「📷 一照入貨」試下！</div>`;
         return;
       }
 
@@ -461,31 +553,21 @@
       if (confirm('確定徹底刪除？')) saveItemsToStorage(getItems().filter(i => i.id !== id));
     }
 
-    // --- Modal & 3-in-1 Camera Modes ---
-    function openAddModal(mode) {
+    function openAddModal() {
       document.getElementById('itemForm').reset();
       document.getElementById('editId').value = '';
-      document.getElementById('itemBarcode').value = '';
       document.getElementById('itemQty').value = '1';
       document.getElementById('itemExpiry').value = getFutureDate(90);
+      document.getElementById('rawDateDetected').textContent = '';
       setRating('unrated');
       document.getElementById('historyWarningBanner').classList.add('hidden');
       document.getElementById('itemModal').classList.remove('hidden');
-
-      if (mode === 'manual') {
-        document.getElementById('scannerSection').classList.add('hidden');
-      } else {
-        document.getElementById('scannerSection').classList.remove('hidden');
-        switchCamMode(mode);
-      }
     }
-
     function editItem(id) {
       const item = getItems().find(i => i.id === id);
       if (!item) return;
-      openAddModal('manual');
+      openAddModal();
       document.getElementById('editId').value = item.id;
-      document.getElementById('itemBarcode').value = item.barcode || '';
       document.getElementById('itemName').value = item.name;
       document.getElementById('itemQty').value = item.qty;
       document.getElementById('itemExpiry').value = item.expiry;
@@ -494,189 +576,7 @@
       document.getElementById('itemNote').value = item.note || '';
       setRating(item.rating || 'unrated');
     }
-
-    function closeAddModal() {
-      stopAllCameras();
-      document.getElementById('itemModal').classList.add('hidden');
-    }
-
-    async function switchCamMode(mode) {
-      currentCamMode = mode;
-      document.getElementById('scannerSection').classList.remove('hidden');
-      await stopAllCameras();
-
-      ['barcode', 'front', 'date'].forEach(m => {
-        const btn = document.getElementById(`tabMode${m.charAt(0).toUpperCase() + m.slice(1)}`);
-        btn.className = m === mode ? 'py-2.5 bg-emerald-600 text-white' : 'py-2.5 text-gray-300 hover:text-white';
-      });
-
-      if (mode === 'barcode') {
-        document.getElementById('barcodeReader').classList.remove('hidden');
-        document.getElementById('aiVideo').classList.add('hidden');
-        document.getElementById('aiGuideOverlay').classList.add('hidden');
-        document.getElementById('aiSnapBtn').classList.add('hidden');
-        document.getElementById('camStatusHint').textContent = '對準條碼；若資料庫無資料，請轉「2. AI 掃包裝正面」';
-
-        html5QrCode = new Html5Qrcode("barcodeReader");
-        html5QrCode.start(
-          { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 240, height: 110 } },
-          async (decodedText) => {
-            if (navigator.vibrate) navigator.vibrate(100);
-            document.getElementById('itemBarcode').value = decodedText;
-            checkPreviousHistory(decodedText);
-
-            const localMatch = getItems().find(i => i.barcode === decodedText);
-            if (localMatch) {
-              document.getElementById('itemName').value = localMatch.name;
-              switchCamMode('date');
-            } else {
-              document.getElementById('itemName').value = '正在搜尋條碼...';
-              try {
-                const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${decodedText}.json`);
-                const data = await res.json();
-                if (data.status === 1 && data.product && data.product.product_name) {
-                  document.getElementById('itemName').value = data.product.product_name;
-                  switchCamMode('date');
-                } else {
-                  // Barcode not found -> automatically switch to AI Front Package Scanner!
-                  document.getElementById('itemName').value = '';
-                  switchCamMode('front');
-                  document.getElementById('camStatusHint').textContent = '⚠️ 條碼庫無此貨！請對準包裝正面撳「✨ 一照生成文字」';
-                }
-              } catch {
-                document.getElementById('itemName').value = '';
-                switchCamMode('front');
-              }
-            }
-          },
-          () => {}
-        ).catch(() => {
-          document.getElementById('camStatusHint').textContent = '⚠️ 無法開啟相機，請確認 HTTPS 網址及相機權限';
-        });
-
-      } else {
-        // AI Front Package OR AI Date Scanner
-        document.getElementById('barcodeReader').classList.add('hidden');
-        document.getElementById('aiVideo').classList.remove('hidden');
-        document.getElementById('aiGuideOverlay').classList.remove('hidden');
-        document.getElementById('aiSnapBtn').classList.remove('hidden');
-
-        if (mode === 'front') {
-          document.getElementById('aiGuideBox').className = 'w-56 h-36 border-2 border-emerald-400 rounded-2xl bg-emerald-400/10';
-          document.getElementById('aiGuideText').textContent = '框住零食/罐頭正面包裝（亦可順便影埋價錢牌）';
-          document.getElementById('camStatusHint').textContent = '對準包裝正面，撳右邊掣即刻生成文字';
-        } else {
-          document.getElementById('aiGuideBox').className = 'w-64 h-16 border-2 border-amber-400 rounded-xl bg-amber-400/10';
-          document.getElementById('aiGuideText').textContent = '框住罐底 / 袋背噴碼日期（如 BB 15/06/27）';
-          document.getElementById('camStatusHint').textContent = 'AI 專讀點陣噴碼日期，識別完自動填日曆';
-        }
-
-        try {
-          aiVideoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-          const video = document.getElementById('aiVideo');
-          video.srcObject = aiVideoStream;
-          await video.play();
-        } catch (err) {
-          document.getElementById('camStatusHint').textContent = '⚠️ 無法開啟鏡頭';
-        }
-      }
-    }
-
-    // --- Gemini Vision API Call (Reads Front Package OR Dot-Matrix Expiry Date) ---
-    async function triggerAiRecognition() {
-      if (!geminiApiKey) {
-        openAiKeyModal();
-        return;
-      }
-      const video = document.getElementById('aiVideo');
-      if (video.readyState !== 4) return;
-
-      document.getElementById('aiLoadingOverlay').classList.remove('hidden');
-
-      // Capture temporary frame in memory ONLY (never saved to disk/gallery)
-      const canvas = document.getElementById('aiCanvas');
-      const scale = Math.min(1, 800 / video.videoWidth);
-      canvas.width = video.videoWidth * scale;
-      canvas.height = video.videoHeight * scale;
-      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-      const base64Image = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-      // Clear canvas immediately
-      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-
-      const promptText = currentCamMode === 'front'
-        ? `你是一個家居食品管理助手。請辨識這張食品/零食/罐頭包裝正面圖片（可能包含英、日、韓或中文），並以純 JSON 格式回覆（不要 markdown 標記）：
-           {"name": "繁體中文產品名稱及牌子（如原包裝為英文或日韓文，請翻譯成香港慣用繁體中文並保留主要牌子名）", "note": "口味、淨重或特色簡述（例如：海鹽味 150g）", "expiry": "如果畫面剛好見到到期日請轉成 YYYY-MM-DD，否則留空字串", "price": "如果見到價錢數字請填純數字如 1.50，否則留空"}`
-        : `請仔細辨識這張食品包裝背面或罐底的到期日/最佳食用日期（包括點陣噴碼 dot-matrix font、Best Before、Use By、EXP、賞味期限，常見英國格式為 DD/MM/YYYY 或 MMM YYYY）。今天日期是 ${new Date().toISOString().split('T')[0]}。請只以純 JSON 格式回覆（不要 markdown）：
-           {"expiry": "轉換後的標準日期 YYYY-MM-DD（若只有月份年份如 08/2027 則填該月最後一日如 2027-08-28；若完全找不到則留空字串）", "raw_text": "你看到的原始日期文字"}`;
-
-      try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{
-              parts: [
-                { text: promptText },
-                { inline_data: { mime_type: 'image/jpeg', data: base64Image } }
-              ]
-            }]
-          })
-        });
-
-        const data = await response.json();
-        const rawReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        const jsonMatch = rawReply.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const result = JSON.parse(jsonMatch[0]);
-          if (navigator.vibrate) navigator.vibrate([80, 50, 80]);
-
-          if (currentCamMode === 'front') {
-            if (result.name) {
-              document.getElementById('itemName').value = result.name;
-              checkPreviousHistory(result.name);
-            }
-            if (result.note && !document.getElementById('itemNote').value) {
-              document.getElementById('itemNote').value = result.note;
-            }
-            if (result.price) document.getElementById('itemPrice').value = result.price;
-            if (result.expiry) {
-              document.getElementById('itemExpiry').value = result.expiry;
-              stopAllCameras();
-            } else {
-              // Automatically jump to scan the expiry date next!
-              switchCamMode('date');
-              document.getElementById('camStatusHint').textContent = '✅ 已填好產品名！而家反轉罐底照一照到期日';
-            }
-          } else {
-            if (result.expiry) {
-              document.getElementById('itemExpiry').value = result.expiry;
-              document.getElementById('camStatusHint').textContent = `✅ 成功識別日期：${result.expiry} (${result.raw_text || ''})`;
-              stopAllCameras();
-            } else {
-              alert('⚠️ 未能看清日期，請移近少少對準反光位再撳一次！');
-            }
-          }
-        }
-      } catch (err) {
-        alert('❌ AI 識別失敗，請檢查網絡或 API Key 是否正確。');
-      } finally {
-        document.getElementById('aiLoadingOverlay').classList.add('hidden');
-      }
-    }
-
-    async function stopAllCameras() {
-      if (html5QrCode) {
-        try { await html5QrCode.stop(); html5QrCode.clear(); } catch (e) {}
-        html5QrCode = null;
-      }
-      if (aiVideoStream) {
-        aiVideoStream.getTracks().forEach(t => t.stop());
-        aiVideoStream = null;
-      }
-    }
-
-    // --- Form Helpers ---
+    function closeAddModal() { document.getElementById('itemModal').classList.add('hidden'); }
     function setStore(s) { document.getElementById('itemStore').value = s; }
     function setRating(r) {
       document.getElementById('itemRating').value = r;
@@ -695,7 +595,7 @@
       const banner = document.getElementById('historyWarningBanner');
       if (!val || val.length < 2) { banner.classList.add('hidden'); return; }
       const q = val.toLowerCase();
-      const match = getItems().find(i => (i.barcode && i.barcode === val) || (i.name && i.name.toLowerCase().includes(q)));
+      const match = getItems().find(i => i.name && i.name.toLowerCase().includes(q));
       if (match) {
         banner.classList.remove('hidden');
         banner.className = match.rating === 'bad'
@@ -714,7 +614,6 @@
       const editId = document.getElementById('editId').value;
       const newItem = {
         id: editId || Date.now().toString(),
-        barcode: document.getElementById('itemBarcode').value.trim(),
         name: document.getElementById('itemName').value.trim(),
         qty: Number(document.getElementById('itemQty').value),
         expiry: document.getElementById('itemExpiry').value,
@@ -733,7 +632,6 @@
       closeAddModal();
     }
 
-    // --- Modals for AI Key & Sync ---
     function openAiKeyModal() {
       document.getElementById('geminiKeyInput').value = geminiApiKey;
       document.getElementById('aiKeyModal').classList.remove('hidden');
@@ -744,7 +642,7 @@
       localStorage.setItem('wa14_gemini_key', geminiApiKey);
       updateAiStatusBtn();
       closeAiKeyModal();
-      alert('✅ AI 視覺引擎已啟用！而家可以精準掃包裝正面同罐底日期。');
+      alert('✅ AI 視覺引擎已啟用！而家撳「📷 一照入貨」就會直接用手機原生高清相機識別。');
     }
     function openSyncModal() {
       document.getElementById('familyCodeInput').value = familyCode;
@@ -775,7 +673,6 @@
       } catch { alert('❌ 格式錯誤'); }
     }
 
-    // Init
     document.getElementById('headerFamilyCode').textContent = familyCode;
     updateAiStatusBtn();
     updateStorageSize();
