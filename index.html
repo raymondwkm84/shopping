@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dino Year 1 Math Adventure</title>
+<title>Dino Year 1 & 2 Math Adventure</title>
 
 <!-- 1. 瀏覽器標籤頁圖標 (Favicon) - 綠底金冠恐龍 -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%232e7d32%22/><text y=%2238%22 x=%2250%22 text-anchor=%22middle%22 font-size=%2234%22>👑</text><text y=%2282%22 x=%2250%22 text-anchor=%22middle%22 font-size=%2252%22>🦖</text></svg>">
@@ -167,11 +167,30 @@
   #menu-view, #submenu-add-view, #submenu-sub-view { display: none; }
   .section-label {
     text-align: left;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: bold;
-    color: #555;
-    margin: 10px 0 4px 4px;
+    color: #2e7d32;
+    margin: 12px 0 5px 4px;
     text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .year-tag-y1 {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+    padding: 1px 7px;
+    border-radius: 8px;
+    font-size: 10.5px;
+  }
+  .year-tag-y2 {
+    background: #f3e5f5;
+    color: #6a1b9a;
+    border: 1px solid #ce93d8;
+    padding: 1px 7px;
+    border-radius: 8px;
+    font-size: 10.5px;
   }
   .menu-grid {
     display: grid;
@@ -190,18 +209,29 @@
     text-align: center;
     transition: all 0.1s;
     line-height: 1.25;
+    position: relative;
   }
   .menu-btn:active { transform: translateY(2px); box-shadow: none; }
+
+  .y2-pill {
+    display: inline-block;
+    background: rgba(255,255,255,0.25);
+    padding: 1px 5px;
+    border-radius: 6px;
+    font-size: 10px;
+    margin-right: 3px;
+    vertical-align: middle;
+  }
 
   .btn-group-add { background: linear-gradient(135deg, #43a047, #2e7d32); font-size: 15px; padding: 14px 8px; }
   .btn-group-sub { background: linear-gradient(135deg, #fb8c00, #e65100); font-size: 15px; padding: 14px 8px; }
   
-  .btn-adv-1 { background: linear-gradient(135deg, #6a1b9a, #4a148c); font-size: 13.5px; padding: 12px 6px; }
-  .btn-adv-2 { background: linear-gradient(135deg, #1565c0, #0d47a1); font-size: 13.5px; padding: 12px 6px; }
-  .btn-adv-3 { background: linear-gradient(135deg, #00838f, #006064); font-size: 13.5px; padding: 12px 6px; }
-  .btn-adv-4 { background: linear-gradient(135deg, #ad1457, #880e4f); font-size: 13.5px; padding: 12px 6px; }
-  .btn-adv-5 { background: linear-gradient(135deg, #2e7d32, #004d40); font-size: 13.5px; padding: 12px 6px; }
-  .btn-adv-6 { background: linear-gradient(135deg, #ef6c00, #bf360c); font-size: 13.5px; padding: 12px 6px; }
+  .btn-adv-1 { background: linear-gradient(135deg, #6a1b9a, #4a148c); font-size: 13px; padding: 12px 6px; }
+  .btn-adv-2 { background: linear-gradient(135deg, #1565c0, #0d47a1); font-size: 13px; padding: 12px 6px; }
+  .btn-adv-3 { background: linear-gradient(135deg, #00838f, #006064); font-size: 13px; padding: 12px 6px; }
+  .btn-adv-4 { background: linear-gradient(135deg, #ad1457, #880e4f); font-size: 13px; padding: 12px 6px; }
+  .btn-adv-5 { background: linear-gradient(135deg, #2e7d32, #004d40); font-size: 13px; padding: 12px 6px; }
+  .btn-adv-6 { background: linear-gradient(135deg, #ef6c00, #bf360c); font-size: 13px; padding: 12px 6px; }
 
   .btn-c-1 { background: #4caf50; }
   .btn-c-1b { background: #388e3c; }
@@ -215,8 +245,10 @@
   .btn-c-7 { background: #9c27b0; }
   .btn-c-8 { background: #0288d1; }
   .btn-c-9 { background: #607d8b; }
+  .btn-c-money { background: #fbc02d; color: #3e2723; }
+  .btn-c-frac { background: #ec407a; }
   .btn-challenge { background: #d32f2f; }
-  .btn-allstar { background: linear-gradient(135deg, #8e24aa, #5e35b1); grid-column: span 2; padding: 12px; font-size: 14.5px; }
+  .btn-allstar { background: linear-gradient(135deg, #8e24aa, #5e35b1); grid-column: span 2; padding: 12px; font-size: 14px; }
 
   .bottom-tools {
     display: flex;
@@ -408,6 +440,28 @@
     position: relative;
     overflow: hidden;
   }
+
+  /* UK Coins Visual */
+  .uk-coins-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 6px;
+  }
+  .uk-coin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 900;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    border: 2.5px solid rgba(0,0,0,0.25);
+  }
+  .coin-copper { background: radial-gradient(circle at 30% 30%, #e69d6c, #b86b35); color: #fff; border-radius: 50%; }
+  .coin-silver { background: radial-gradient(circle at 30% 30%, #f5f5f5, #bdbdbd); color: #212121; border-radius: 50%; }
+  .coin-heptagon { background: radial-gradient(circle at 30% 30%, #f5f5f5, #b0bec5); color: #212121; border-radius: 28%; }
+  .coin-pound { background: radial-gradient(circle at 30% 30%, #fff59d, #fbc02d); color: #3e2723; border: 4px solid #9e9e9e; border-radius: 50%; }
 
   .grid-5-group {
     display: grid;
@@ -875,38 +929,46 @@
 
     <!-- 3. MAIN MENU VIEW -->
     <div id="menu-view">
-      <div class="section-label">🇬🇧 UK Year 1 Foundation Worlds</div>
+      <!-- TIER 1: UK YEAR 1 CORE CURRICULUM -->
+      <div class="section-label">
+        <span>🇬🇧 Year 1 Core Curriculum</span>
+        <span class="year-tag-y1">Year 1</span>
+      </div>
       <div class="menu-grid">
         <button class="menu-btn btn-group-add" onclick="showSubMenu('add')">➕ Addition World<br><small style="font-size: 11px; opacity: 0.9;">≤10, Make 10, ≤20, Mixed</small></button>
         <button class="menu-btn btn-group-sub" onclick="showSubMenu('sub')">➖ Subtraction World<br><small style="font-size: 11px; opacity: 0.9;">≤10, ≤20, Crossing 10, Mixed</small></button>
-      </div>
-
-      <div class="section-label">🎯 Foundation Modules</div>
-      <div class="menu-grid">
         <button class="menu-btn btn-c-4" onclick="startMode('bonds')">Number Bonds (10 & 20)</button>
         <button class="menu-btn btn-c-5" onclick="startMode('doubles')">Doubles & Halves</button>
         <button class="menu-btn btn-c-6" onclick="startMode('moreless')">More / Less (±1, ±2, ±10)</button>
         <button class="menu-btn btn-c-7" onclick="startMode('skip')">Frog Skip (2, 5, 10)</button>
         <button class="menu-btn btn-c-8" onclick="startMode('compare')">Compare (≤100 & ≤20 Sums)</button>
-        <button class="menu-btn btn-c-9" onclick="startMode('mixed')">🔀 Mixed Revision (Foundation)</button>
+        <button class="menu-btn btn-c-money" onclick="startMode('money')">💷 UK Money (Coins)</button>
+        <button class="menu-btn btn-c-frac" onclick="startMode('fractions')">🍕 Fractions (1/2 & 1/4)</button>
+        <button class="menu-btn btn-c-9" onclick="startMode('mixed')">🔀 Year 1 Mixed Revision</button>
       </div>
 
-      <div class="section-label">⚡ Time & Speed Challenges</div>
+      <!-- TIER 2: SPEED & ENDURANCE -->
+      <div class="section-label">
+        <span>⚡ Time & Speed Challenges</span>
+      </div>
       <div class="menu-grid">
         <button class="menu-btn btn-challenge" onclick="startChallenge('bomb')">💣 10-Min Bomb Rush</button>
-        <button class="menu-btn btn-challenge" onclick="startChallenge('speed30')">🏁 30 Questions Speedrun</button>
-        <button class="menu-btn btn-allstar" onclick="startChallenge('allstar30')">🏆 All-Star 30 Speedrun (School Challenges Mix)</button>
+        <button class="menu-btn btn-challenge" onclick="startChallenge('speed30')">🏁 Year 1 Speedrun (30 Qs)</button>
+        <button class="menu-btn btn-allstar" onclick="startChallenge('allstar30')">🚀 Year 2 All-Star Speedrun (30 Qs)</button>
       </div>
 
-      <!-- SCHOOL & NEXT-STEP CHALLENGES AT BOTTOM -->
-      <div class="section-label" style="color: #6a1b9a;">🏆 CHALLENGES (School & Next-Step)</div>
+      <!-- TIER 3: YEAR 2 / GREATER DEPTH CHALLENGES -->
+      <div class="section-label" style="color: #6a1b9a;">
+        <span>🚀 Year 2 / Greater Depth</span>
+        <span class="year-tag-y2">Year 2 Level</span>
+      </div>
       <div class="menu-grid">
-        <button class="menu-btn btn-adv-1" onclick="startMode('compare100')">🐊 Compare to 100 & Sums<br><small style="font-size: 10px; opacity: 0.9;">e.g. 46 [ ] 30+16, 88 [ ] 91</small></button>
-        <button class="menu-btn btn-adv-2" onclick="startMode('add100')">🔢 2-Digit Add (No Cross)<br><small style="font-size: 10px; opacity: 0.9;">e.g. 30+16, 47+10, 21+11</small></button>
-        <button class="menu-btn btn-adv-3" onclick="startMode('add100_cross')">⚡ 2-Digit Crossing 10<br><small style="font-size: 10px; opacity: 0.9;">e.g. 23 + 8, 19 + 5</small></button>
-        <button class="menu-btn btn-adv-4" onclick="startMode('mult_intro')">✖️ Intro Times Tables<br><small style="font-size: 10px; opacity: 0.9;">Equal Groups: 2s, 3s, 5s, 10s</small></button>
-        <button class="menu-btn btn-adv-5" onclick="startMode('shapes')">🔷 2D & 3D Shapes<br><small style="font-size: 10px; opacity: 0.9;">Sides, Vertices, Cube, Cone</small></button>
-        <button class="menu-btn btn-adv-6" onclick="startMode('time')">🕒 Telling the Time<br><small style="font-size: 10px; opacity: 0.9;">O'clock, Half & Quarter</small></button>
+        <button class="menu-btn btn-adv-1" onclick="startMode('compare100')"><span class="y2-pill">Y2</span>🐊 Compare 100 & Sums<br><small style="font-size: 10px; opacity: 0.9;">e.g. 46 [ ] 30+16, 88 [ ] 91</small></button>
+        <button class="menu-btn btn-adv-2" onclick="startMode('add100')"><span class="y2-pill">Y2</span>🔢 2-Digit Add (No Cross)<br><small style="font-size: 10px; opacity: 0.9;">e.g. 30+16, 47+10, 21+11</small></button>
+        <button class="menu-btn btn-adv-3" onclick="startMode('add100_cross')"><span class="y2-pill">Y2</span>⚡ 2-Digit Crossing 10<br><small style="font-size: 10px; opacity: 0.9;">e.g. 23 + 8, 19 + 5</small></button>
+        <button class="menu-btn btn-adv-4" onclick="startMode('mult_intro')"><span class="y2-pill">Y2</span>✖️ Times Tables (2,3,5,10)<br><small style="font-size: 10px; opacity: 0.9;">Equal Groups & Arrays</small></button>
+        <button class="menu-btn btn-adv-5" onclick="startMode('shapes')"><span class="y2-pill">Y2</span>🔷 2D & 3D Shapes<br><small style="font-size: 10px; opacity: 0.9;">Sides, Vertices, Faces</small></button>
+        <button class="menu-btn btn-adv-6" onclick="startMode('time')"><span class="y2-pill">Y2</span>🕒 Telling the Time<br><small style="font-size: 10px; opacity: 0.9;">O'clock, Half & Quarter</small></button>
       </div>
 
       <div class="bottom-tools">
@@ -1294,7 +1356,6 @@ function handleLogin() {
 }
 
 function initLoadedUser() {
-  // Backwards compatibility for existing accounts
   if (typeof userData.todayWrong === 'undefined') userData.todayWrong = 0;
   if (typeof userData.todaySeconds === 'undefined') userData.todaySeconds = 0;
   if (!userData.todayTopicStats) userData.todayTopicStats = {};
@@ -1441,23 +1502,25 @@ function closeModal(id) {
 
 // --- DETAILED PARENT ANALYTICS ENGINE ---
 const TOPIC_LABELS = {
-  add10: 'Addition ≤ 10',
-  make10: 'Make 10 Addition',
-  add20: 'Addition ≤ 20 (Crossing 10)',
-  sub10: 'Subtraction ≤ 10',
-  sub20_nocross: 'Sub ≤ 20 (No Crossing)',
-  sub20_cross: 'Sub ≤ 20 (Crossing 10)',
-  bonds: 'Number Bonds (10 & 20)',
-  doubles: 'Doubles & Halves',
-  moreless: 'More / Less (±1, ±2, ±10)',
-  skip: 'Frog Skip Counting',
-  compare: 'Compare (≤100 & ≤20 Sums)',
-  compare100: 'Challenge: Compare to 100',
-  add100: 'Challenge: 2-Digit Add',
-  add100_cross: 'Challenge: 2-Digit Crossing 10',
-  mult_intro: 'Challenge: Intro Times Tables',
-  shapes: 'Challenge: 2D & 3D Shapes',
-  time: 'Challenge: Telling the Time'
+  add10: '[Y1] Addition ≤ 10',
+  make10: '[Y1] Make 10 Addition',
+  add20: '[Y1] Addition ≤ 20',
+  sub10: '[Y1] Subtraction ≤ 10',
+  sub20_nocross: '[Y1] Sub ≤ 20 (No Crossing)',
+  sub20_cross: '[Y1] Sub ≤ 20 (Crossing 10)',
+  bonds: '[Y1] Number Bonds (10 & 20)',
+  doubles: '[Y1] Doubles & Halves',
+  moreless: '[Y1] More / Less',
+  skip: '[Y1] Frog Skip Counting',
+  compare: '[Y1] Compare (≤100 & ≤20 Sums)',
+  money: '[Y1] UK Money (Coins)',
+  fractions: '[Y1] Fractions (1/2 & 1/4)',
+  compare100: '[Y2] Compare 100 & Sums',
+  add100: '[Y2] 2-Digit Add',
+  add100_cross: '[Y2] 2-Digit Crossing 10',
+  mult_intro: '[Y2] Times Tables (2,3,5,10)',
+  shapes: '[Y2] 2D & 3D Shapes',
+  time: '[Y2] Telling the Time'
 };
 
 function getSpeedVerdictBadge(avgSec, totalQs) {
@@ -1500,7 +1563,6 @@ function openAnalytics() {
   initAudio();
   playPop();
 
-  // 1. Today's Stats
   document.getElementById('an-today-date').innerText = userData.todayDate || getTodayStr();
   const todayMins = Math.max(1, Math.round((userData.todaySeconds || 0) / 60));
   const todayTotalAns = (userData.todayScore || 0) + (userData.todayWrong || 0);
@@ -1516,7 +1578,6 @@ function openAnalytics() {
   document.getElementById('an-today-strong').innerText = todayInsights.bestTopic;
   document.getElementById('an-today-weak').innerText = todayInsights.worstTopic;
 
-  // 2. All-Time Overall Stats
   const totalMins = Math.round((userData.totalSeconds || 0) / 60);
   const totalAns = (userData.totalScore || 0) + (userData.totalWrong || 0);
   const avgSpeed = totalAns > 0 ? (userData.totalSeconds / totalAns).toFixed(1) : 0;
@@ -1533,6 +1594,26 @@ function openAnalytics() {
 
   document.getElementById('analytics-modal').style.display = 'flex';
 }
+
+// --- UK MONEY & FRACTIONS DATA BANKS ---
+const UK_COINS = [
+  { val: 1, label: '1p', cls: 'coin-copper', size: 40, font: 14 },
+  { val: 2, label: '2p', cls: 'coin-copper', size: 48, font: 16 },
+  { val: 5, label: '5p', cls: 'coin-silver', size: 38, font: 13 },
+  { val: 10, label: '10p', cls: 'coin-silver', size: 46, font: 15 },
+  { val: 20, label: '20p', cls: 'coin-heptagon', size: 44, font: 14 },
+  { val: 50, label: '50p', cls: 'coin-heptagon', size: 52, font: 15 },
+  { val: 100, label: '£1', cls: 'coin-pound', size: 50, font: 16 },
+  { val: 200, label: '£2', cls: 'coin-pound', size: 56, font: 17 }
+];
+
+let currentCoinsList = [];
+let moneyIsIdentify = false;
+
+let fractionType = 'pizza'; // 'pizza', 'grid', 'quantity'
+let fracShaded = 1;
+let fracTotal = 2;
+let fracChoiceOpts = [];
 
 // --- SHAPES & TIME DATA BANKS ---
 const SHAPES_BANK = [
@@ -1644,15 +1725,18 @@ let isDoubleQuestion = true;
 
 let keyboardBuffer = '';
 
-const FOUNDATION_MODES = [
+const YEAR1_MODES = [
   'add10', 'make10', 'add20',
   'sub10', 'sub20_nocross', 'sub20_cross',
-  'bonds', 'doubles', 'moreless', 'skip', 'compare'
+  'bonds', 'doubles', 'moreless', 'skip', 'compare',
+  'money', 'fractions'
 ];
 
-const CHALLENGE_MODES = [
+const YEAR2_MODES = [
   'compare100', 'add100', 'add100_cross', 'mult_intro', 'shapes', 'time'
 ];
+
+const ALWAYS_VISUAL_MODES = ['shapes', 'time', 'money', 'fractions'];
 
 function toggleVisual() {
   initAudio();
@@ -1674,7 +1758,7 @@ function startMode(mode) {
   activeMode = mode;
   isChallenge = false;
   currentStreak = 0;
-  if (mode === 'shapes' || mode === 'time') {
+  if (ALWAYS_VISUAL_MODES.includes(mode)) {
     showVisual = true;
   } else {
     showVisual = !manualVisualOff;
@@ -1728,7 +1812,7 @@ function startChallenge(chType) {
     }, 1000);
   } else if (chType === 'speed30' || chType === 'allstar30') {
     challengeTimer = 0;
-    const prefix = (chType === 'allstar30') ? '🏆 ' : '⏱️ ';
+    const prefix = (chType === 'allstar30') ? '🚀 Y2 ' : '⏱️ Y1 ';
     updateTimerBanner(`${prefix}00:00 (0/30)`);
     challengeInterval = setInterval(() => {
       challengeTimer++;
@@ -1836,13 +1920,13 @@ function buildCandidateQuestion() {
   let mode = activeMode;
   if (isChallenge) {
     if (activeChallenge === 'allstar30') {
-      mode = CHALLENGE_MODES[Math.floor(Math.random() * CHALLENGE_MODES.length)];
+      mode = YEAR2_MODES[Math.floor(Math.random() * YEAR2_MODES.length)];
     } else {
-      mode = FOUNDATION_MODES[Math.floor(Math.random() * FOUNDATION_MODES.length)];
+      mode = YEAR1_MODES[Math.floor(Math.random() * YEAR1_MODES.length)];
     }
   } else {
     if (mode === 'mixed') {
-      mode = FOUNDATION_MODES[Math.floor(Math.random() * FOUNDATION_MODES.length)];
+      mode = YEAR1_MODES[Math.floor(Math.random() * YEAR1_MODES.length)];
     } else if (mode === 'mixed_add') {
       const addChoices = ['add10', 'make10', 'add20'];
       mode = addChoices[Math.floor(Math.random() * addChoices.length)];
@@ -1859,7 +1943,7 @@ function buildCandidateQuestion() {
   let sig = '';
 
   if (mode === 'add10') {
-    document.getElementById('mode-badge').innerText = (activeMode === 'mixed_add' ? '🔀 Mixed Add: ' : '') + 'Addition ≤ 10';
+    document.getElementById('mode-badge').innerText = '[Y1] Addition ≤ 10';
     q_paramA = Math.floor(Math.random() * 5) + 1;
     q_paramB = Math.floor(Math.random() * (10 - q_paramA)) + 1;
     correctAns = q_paramA + q_paramB;
@@ -1868,9 +1952,9 @@ function buildCandidateQuestion() {
     sig = `add10:${q_paramA}+${q_paramB}`;
   } 
   else if (mode === 'make10') {
-    document.getElementById('mode-badge').innerText = (activeMode === 'mixed_add' ? '🔀 Mixed Add: ' : '') + 'Make 10 Addition';
-    q_paramA = Math.floor(Math.random() * 3) + 7; // 7, 8, 9
-    q_paramB = Math.floor(Math.random() * 5) + 3; // 3..7
+    document.getElementById('mode-badge').innerText = '[Y1] Make 10 Addition';
+    q_paramA = Math.floor(Math.random() * 3) + 7;
+    q_paramB = Math.floor(Math.random() * 5) + 3;
     correctAns = q_paramA + q_paramB;
     make10_moved = 0;
     qBox.innerText = `${q_paramA} + ${q_paramB} = ?`;
@@ -1878,18 +1962,16 @@ function buildCandidateQuestion() {
     sig = `make10:${q_paramA}+${q_paramB}`;
   }
   else if (mode === 'add20') {
-    document.getElementById('mode-badge').innerText = (activeMode === 'mixed_add' ? '🔀 Mixed Add: ' : '') + 'Addition ≤ 20';
+    document.getElementById('mode-badge').innerText = '[Y1] Addition ≤ 20';
     const subPattern = Math.random();
     if (subPattern < 0.65) {
-      // Crossing 10 (e.g., 6+7, 8+5, 9+8, 7+6)
-      q_paramA = Math.floor(Math.random() * 4) + 6; // 6..9
+      q_paramA = Math.floor(Math.random() * 4) + 6;
       const minB = 11 - q_paramA;
       const maxB = 19 - q_paramA;
       q_paramB = Math.floor(Math.random() * (maxB - minB + 1)) + minB;
       if (q_paramB > 9) q_paramB = 9;
     } else {
-      // Teens + Ones within 20 (e.g., 12 + 5, 14 + 4)
-      q_paramA = Math.floor(Math.random() * 6) + 11; // 11..16
+      q_paramA = Math.floor(Math.random() * 6) + 11;
       q_paramB = Math.floor(Math.random() * (20 - q_paramA)) + 1;
     }
     correctAns = q_paramA + q_paramB;
@@ -1901,7 +1983,7 @@ function buildCandidateQuestion() {
     sig = `add20:${q_paramA}+${q_paramB}`;
   }
   else if (mode === 'sub10') {
-    document.getElementById('mode-badge').innerText = (activeMode === 'mixed_sub' ? '🔀 Mixed Sub: ' : '') + 'Subtraction ≤ 10';
+    document.getElementById('mode-badge').innerText = '[Y1] Subtraction ≤ 10';
     q_paramA = Math.floor(Math.random() * 7) + 4;
     q_paramB = Math.floor(Math.random() * (q_paramA - 1)) + 1;
     correctAns = q_paramA - q_paramB;
@@ -1910,7 +1992,7 @@ function buildCandidateQuestion() {
     sig = `sub10:${q_paramA}-${q_paramB}`;
   }
   else if (mode === 'sub20_nocross') {
-    document.getElementById('mode-badge').innerText = (activeMode === 'mixed_sub' ? '🔀 Mixed Sub: ' : '') + 'Sub ≤ 20 (No Crossing)';
+    document.getElementById('mode-badge').innerText = '[Y1] Sub ≤ 20 (No Cross)';
     const onesA = Math.floor(Math.random() * 6) + 4;
     q_paramA = 10 + onesA; 
     q_paramB = Math.floor(Math.random() * (onesA - 1)) + 1;
@@ -1920,7 +2002,7 @@ function buildCandidateQuestion() {
     sig = `sub20nc:${q_paramA}-${q_paramB}`;
   }
   else if (mode === 'sub20_cross') {
-    document.getElementById('mode-badge').innerText = (activeMode === 'mixed_sub' ? '🔀 Mixed Sub: ' : '') + 'Sub ≤ 20 (Crossing 10)';
+    document.getElementById('mode-badge').innerText = '[Y1] Sub ≤ 20 (Cross 10)';
     const onesA = Math.floor(Math.random() * 6) + 1; 
     q_paramA = 10 + onesA; 
     q_paramB = onesA + Math.floor(Math.random() * 3) + 2; 
@@ -1931,7 +2013,7 @@ function buildCandidateQuestion() {
     sig = `sub20c:${q_paramA}-${q_paramB}`;
   }
   else if (mode === 'bonds') {
-    document.getElementById('mode-badge').innerText = 'Number Bonds';
+    document.getElementById('mode-badge').innerText = '[Y1] Number Bonds';
     const target = Math.random() > 0.5 ? 10 : 20;
     q_paramA = Math.floor(Math.random() * (target - 2)) + 1;
     correctAns = target - q_paramA;
@@ -1940,7 +2022,7 @@ function buildCandidateQuestion() {
     sig = `bonds:${q_paramA}_to_${target}`;
   }
   else if (mode === 'doubles') {
-    document.getElementById('mode-badge').innerText = 'Doubles & Halves';
+    document.getElementById('mode-badge').innerText = '[Y1] Doubles & Halves';
     isDoubleQuestion = Math.random() > 0.5;
     if (isDoubleQuestion) {
       q_paramA = Math.floor(Math.random() * 6) + 1;
@@ -1958,7 +2040,7 @@ function buildCandidateQuestion() {
     }
   }
   else if (mode === 'moreless') {
-    document.getElementById('mode-badge').innerText = 'More / Less';
+    document.getElementById('mode-badge').innerText = '[Y1] More / Less';
     const isMore = Math.random() > 0.5;
     const stepChoices = [1, 1, 2, 10];
     q_paramStep = stepChoices[Math.floor(Math.random() * stepChoices.length)];
@@ -1983,7 +2065,7 @@ function buildCandidateQuestion() {
     sig = `ml:${q_paramStep}_${isMore?'M':'L'}_${q_paramA}`;
   }
   else if (mode === 'skip') {
-    document.getElementById('mode-badge').innerText = 'Frog Skip Counting';
+    document.getElementById('mode-badge').innerText = '[Y1] Frog Skip Counting';
     skip_step = [2, 5, 10][Math.floor(Math.random() * 3)];
     const start = skip_step * (Math.floor(Math.random() * 3) + 1);
     
@@ -1996,15 +2078,13 @@ function buildCandidateQuestion() {
     hBox.innerText = `🐸 Froggy jumps in +${skip_step}s! Which lily pad will froggy land on?`;
     sig = `skip:${skip_step}_${start}_${skip_blankIdx}`;
   }
-  // UPGRADED FOUNDATION COMPARE: Numbers up to 100 OR Add/Sub Expressions within 20
   else if (mode === 'compare') {
-    document.getElementById('mode-badge').innerText = 'Compare (≤100 & ≤20 Sums)';
+    document.getElementById('mode-badge').innerText = '[Y1] Compare (≤100 & ≤20)';
     const pattern = Math.random();
 
     if (pattern < 0.45) {
-      // Pure numbers up to 100 (e.g. 42 vs 78, 65 vs 61)
       compUseBase10 = true;
-      compLeftVal = Math.floor(Math.random() * 90) + 10; // 10..99
+      compLeftVal = Math.floor(Math.random() * 90) + 10;
       if (Math.random() < 0.2) {
         compRightVal = compLeftVal;
       } else {
@@ -2013,7 +2093,6 @@ function buildCandidateQuestion() {
       compLeftStr = `${compLeftVal}`;
       compRightStr = `${compRightVal}`;
     } else if (pattern < 0.8) {
-      // Add/Sub within 20 vs Number (e.g. 8 + 5 [ ? ] 14, 15 - 6 [ ? ] 9)
       compUseBase10 = false;
       const isAdd = Math.random() > 0.4;
       if (isAdd) {
@@ -2030,7 +2109,7 @@ function buildCandidateQuestion() {
           compRightVal = sum; compRightStr = `${a} + ${b}`;
         }
       } else {
-        const a = Math.floor(Math.random() * 10) + 9; // 9..18
+        const a = Math.floor(Math.random() * 10) + 9;
         const b = Math.floor(Math.random() * (a - 2)) + 2;
         const diff = a - b;
         const delta = [-2, -1, 0, 0, 1, 2][Math.floor(Math.random() * 6)];
@@ -2044,7 +2123,6 @@ function buildCandidateQuestion() {
         }
       }
     } else {
-      // Both sides Add/Sub within 20 (e.g. 7 + 4 [ ? ] 10 + 1, 14 - 5 [ ? ] 6 + 3)
       compUseBase10 = false;
       const a1 = Math.floor(Math.random() * 8) + 3;
       const a2 = Math.floor(Math.random() * (19 - a1)) + 1;
@@ -2065,8 +2143,78 @@ function buildCandidateQuestion() {
     hBox.innerText = `🐊 Work out both sides first! Crocodile eats the bigger value!`;
     sig = `compF:${compLeftStr}vs${compRightStr}`;
   }
+  // NEW YEAR 1 MODULE: UK MONEY (COINS)
+  else if (mode === 'money') {
+    document.getElementById('mode-badge').innerText = '[Y1] 💷 UK Money';
+    moneyIsIdentify = Math.random() < 0.35;
+
+    if (moneyIsIdentify) {
+      // Identify a single UK coin (1p to £2)
+      const chosenCoin = UK_COINS[Math.floor(Math.random() * UK_COINS.length)];
+      currentCoinsList = [chosenCoin];
+      correctAns = chosenCoin.label;
+      qBox.innerText = `What coin is this?`;
+      hBox.innerText = `Look at the colour, shape, and number on the UK coin!`;
+
+      const others = UK_COINS.filter(c => c.label !== chosenCoin.label).sort(() => 0.5 - Math.random()).slice(0, 3).map(c => c.label);
+      choiceOptions = [chosenCoin.label, ...others].sort(() => 0.5 - Math.random());
+      sig = `money_id:${chosenCoin.label}`;
+    } else {
+      // Count pence coins (1p, 2p, 5p, 10p, 20p) up to ~50p
+      const penceCoins = UK_COINS.filter(c => c.val <= 20);
+      const numCoins = Math.floor(Math.random() * 3) + 2; // 2 to 4 coins
+      currentCoinsList = [];
+      let totalP = 0;
+      for (let i = 0; i < numCoins; i++) {
+        const c = penceCoins[Math.floor(Math.random() * penceCoins.length)];
+        currentCoinsList.push(c);
+        totalP += c.val;
+      }
+      // Sort biggest coin first (good UK teaching practice!)
+      currentCoinsList.sort((a, b) => b.val - a.val);
+      correctAns = totalP;
+      qBox.innerText = `How many pence (p) in total?`;
+      hBox.innerText = `💡 Start counting from the biggest coin first!`;
+      sig = `money_sum:${currentCoinsList.map(c=>c.val).join('+')}`;
+    }
+  }
+  // NEW YEAR 1 MODULE: FRACTIONS (1/2 & 1/4)
+  else if (mode === 'fractions') {
+    document.getElementById('mode-badge').innerText = '[Y1] 🍕 Fractions (1/2 & 1/4)';
+    const pattern = Math.random();
+
+    if (pattern < 0.65) {
+      // Visual Pizza / Shape Fraction identification
+      fractionType = (Math.random() > 0.5) ? 'pizza' : 'grid';
+      const fracPool = [
+        { shaded: 1, total: 2, label: 'One Half (1/2)' },
+        { shaded: 1, total: 4, label: 'One Quarter (1/4)' },
+        { shaded: 3, total: 4, label: 'Three Quarters (3/4)' },
+        { shaded: 4, total: 4, label: 'One Whole (4/4)' }
+      ];
+      const pick = fracPool[Math.floor(Math.random() * fracPool.length)];
+      fracShaded = pick.shaded;
+      fracTotal = pick.total;
+      correctAns = pick.label;
+
+      qBox.innerText = `What fraction is shaded?`;
+      hBox.innerText = `Count how many equal slices are coloured out of ${fracTotal}!`;
+      fracChoiceOpts = fracPool.map(f => f.label).sort(() => 0.5 - Math.random());
+      sig = `frac_vis:${fractionType}_${fracShaded}/${fracTotal}`;
+    } else {
+      // Quarter of a small quantity (e.g., Quarter of 4, 8, 12, 16)
+      fractionType = 'quantity';
+      const quarterVal = Math.floor(Math.random() * 4) + 1; // 1..4
+      q_paramA = quarterVal * 4; // 4, 8, 12, 16
+      correctAns = quarterVal;
+      qBox.innerText = `One Quarter (1/4) of ${q_paramA} = ?`;
+      hBox.innerText = `🍕 Share ${q_paramA} cookies equally onto 4 plates!`;
+      sig = `frac_qty:1/4_of_${q_paramA}`;
+    }
+  }
+  // YEAR 2 CHALLENGES
   else if (mode === 'compare100') {
-    document.getElementById('mode-badge').innerText = '🏆 Compare to 100';
+    document.getElementById('mode-badge').innerText = '[Y2] Compare 100 & Sums';
     compUseBase10 = true;
     const subType = Math.floor(Math.random() * 3);
 
@@ -2132,7 +2280,7 @@ function buildCandidateQuestion() {
     sig = `comp100:${compLeftStr}vs${compRightStr}`;
   }
   else if (mode === 'add100') {
-    document.getElementById('mode-badge').innerText = '🏆 2-Digit Add (No Cross)';
+    document.getElementById('mode-badge').innerText = '[Y2] 2-Digit Add (No Cross)';
     const pattern = Math.floor(Math.random() * 3);
     if (pattern === 0) {
       q_paramA = (Math.floor(Math.random() * 7) + 1) * 10;
@@ -2154,7 +2302,7 @@ function buildCandidateQuestion() {
     sig = `add100:${q_paramA}+${q_paramB}`;
   }
   else if (mode === 'add100_cross') {
-    document.getElementById('mode-badge').innerText = '🏆 2-Digit Crossing 10';
+    document.getElementById('mode-badge').innerText = '[Y2] 2-Digit Crossing 10';
     const tens = (Math.floor(Math.random() * 6) + 1) * 10;
     const onesA = Math.floor(Math.random() * 6) + 4;
     q_paramA = tens + onesA;
@@ -2169,7 +2317,7 @@ function buildCandidateQuestion() {
     sig = `add100c:${q_paramA}+${q_paramB}`;
   }
   else if (mode === 'mult_intro') {
-    document.getElementById('mode-badge').innerText = '🏆 Intro Times Tables';
+    document.getElementById('mode-badge').innerText = '[Y2] Times Tables';
     const tables = [2, 2, 3, 5, 5, 10, 10];
     q_paramB = tables[Math.floor(Math.random() * tables.length)];
     q_paramA = Math.floor(Math.random() * 5) + 2;
@@ -2179,7 +2327,7 @@ function buildCandidateQuestion() {
     sig = `mult:${q_paramA}x${q_paramB}`;
   }
   else if (mode === 'shapes') {
-    document.getElementById('mode-badge').innerText = '🏆 2D & 3D Shapes';
+    document.getElementById('mode-badge').innerText = '[Y2] 2D & 3D Shapes';
     currentShapeObj = SHAPES_BANK[Math.floor(Math.random() * SHAPES_BANK.length)];
     shapeQuestionMode = (Math.random() < 0.65) ? 'name' : 'count';
 
@@ -2209,7 +2357,7 @@ function buildCandidateQuestion() {
     }
   }
   else if (mode === 'time') {
-    document.getElementById('mode-badge').innerText = '🏆 Telling the Time';
+    document.getElementById('mode-badge').innerText = '[Y2] Telling the Time';
     timeHour = Math.floor(Math.random() * 12) + 1;
     const minChoices = [0, 0, 30, 30, 15, 45];
     timeMinute = minChoices[Math.floor(Math.random() * minChoices.length)];
@@ -2254,7 +2402,7 @@ function nextQuestion() {
 
   if (q_type === 'skip') playFrogJumpSound();
 
-  if (q_type !== 'shapes' && q_type !== 'time') {
+  if (!ALWAYS_VISUAL_MODES.includes(q_type)) {
     if (!manualVisualOff && currentStreak >= 3 && showVisual) {
       showVisual = false;
       updateVisualToggleBtn();
@@ -2266,7 +2414,14 @@ function nextQuestion() {
 
   const hBox = document.getElementById('hint-text');
   const kWrap = document.getElementById('keyboard-preview-wrap');
-  const isChoiceInput = (q_type === 'compare' || q_type === 'compare100' || q_type === 'time' || (q_type === 'shapes' && shapeQuestionMode === 'name'));
+  const isChoiceInput = (
+    q_type === 'compare' ||
+    q_type === 'compare100' ||
+    q_type === 'time' ||
+    (q_type === 'shapes' && shapeQuestionMode === 'name') ||
+    (q_type === 'money' && moneyIsIdentify) ||
+    (q_type === 'fractions' && fractionType !== 'quantity')
+  );
   kWrap.style.display = isChoiceInput ? 'none' : 'block';
 
   if (!showVisual) {
@@ -2325,11 +2480,66 @@ function buildClockSVG(hour, minute) {
   `;
 }
 
+function buildFractionVisualHTML() {
+  if (fractionType === 'pizza') {
+    const cx = 60, cy = 60, r = 50;
+    if (fracTotal === 2) {
+      const leftFill = fracShaded >= 1 ? '#ff7043' : '#fff8e1';
+      const rightFill = fracShaded >= 2 ? '#ff7043' : '#fff8e1';
+      return `
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <path d="M ${cx} ${cy} L ${cx} ${cy - r} A ${r} ${r} 0 0 0 ${cx} ${cy + r} Z" fill="${leftFill}" stroke="#d84315" stroke-width="3"/>
+          <path d="M ${cx} ${cy} L ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx} ${cy + r} Z" fill="${rightFill}" stroke="#d84315" stroke-width="3"/>
+        </svg>
+      `;
+    } else {
+      // 4 Quarters Pizza
+      const q1 = fracShaded >= 1 ? '#ff7043' : '#fff8e1';
+      const q2 = fracShaded >= 2 ? '#ff7043' : '#fff8e1';
+      const q3 = fracShaded >= 3 ? '#ff7043' : '#fff8e1';
+      const q4 = fracShaded >= 4 ? '#ff7043' : '#fff8e1';
+      return `
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <path d="M ${cx} ${cy} L ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx + r} ${cy} Z" fill="${q1}" stroke="#d84315" stroke-width="3"/>
+          <path d="M ${cx} ${cy} L ${cx + r} ${cy} A ${r} ${r} 0 0 1 ${cx} ${cy + r} Z" fill="${q2}" stroke="#d84315" stroke-width="3"/>
+          <path d="M ${cx} ${cy} L ${cx} ${cy + r} A ${r} ${r} 0 0 1 ${cx - r} ${cy} Z" fill="${q3}" stroke="#d84315" stroke-width="3"/>
+          <path d="M ${cx} ${cy} L ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx} ${cy - r} Z" fill="${q4}" stroke="#d84315" stroke-width="3"/>
+        </svg>
+      `;
+    }
+  } else if (fractionType === 'grid') {
+    const cols = fracTotal === 2 ? 2 : 2;
+    let html = `<div style="display:grid; grid-template-columns: repeat(${cols}, 54px); gap:4px; background:#fff; padding:6px; border:3px solid #ec407a; border-radius:12px;">`;
+    for (let i = 0; i < fracTotal; i++) {
+      const bg = i < fracShaded ? '#f06292' : '#fce4ec';
+      html += `<div style="width:54px; height:54px; background:${bg}; border-radius:6px; border:1px solid #ad1457;"></div>`;
+    }
+    html += `</div>`;
+    return html;
+  } else {
+    // 4 plates with equal cookies for 1/4 of quantity
+    const perPlate = q_paramA / 4;
+    let html = `<div class="mult-plates-wrap">`;
+    for (let p = 1; p <= 4; p++) {
+      let cookies = '';
+      for (let c = 0; c < perPlate; c++) cookies += '🍪';
+      html += `
+        <div class="mult-plate" style="border-color:${p === 1 ? '#e91e63' : '#ccc'}; background:${p === 1 ? '#fce4ec' : '#fff'};">
+          <div class="mult-plate-title">Quarter ${p}</div>
+          <div class="mult-plate-items">${cookies}</div>
+        </div>
+      `;
+    }
+    html += `</div>`;
+    return html;
+  }
+}
+
 function renderQuestionVisual() {
   const board = document.getElementById('visual-board');
   board.innerHTML = '';
 
-  if (!showVisual && q_type !== 'shapes' && q_type !== 'time') {
+  if (!showVisual && !ALWAYS_VISUAL_MODES.includes(q_type)) {
     board.innerHTML = `
       <div class="mental-box">
         <div style="font-size: 34px;">🧠💭✨</div>
@@ -2340,7 +2550,24 @@ function renderQuestionVisual() {
     return;
   }
 
-  if (q_type === 'shapes') {
+  if (q_type === 'money') {
+    const wrap = document.createElement('div');
+    wrap.className = 'uk-coins-wrap';
+    currentCoinsList.forEach(c => {
+      const coinEl = document.createElement('div');
+      coinEl.className = `uk-coin ${c.cls}`;
+      coinEl.style.width = `${c.size}px`;
+      coinEl.style.height = `${c.size}px`;
+      coinEl.style.fontSize = `${c.font}px`;
+      coinEl.innerText = c.label;
+      wrap.appendChild(coinEl);
+    });
+    board.appendChild(wrap);
+  }
+  else if (q_type === 'fractions') {
+    board.innerHTML = buildFractionVisualHTML();
+  }
+  else if (q_type === 'shapes') {
     board.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: center;">
         <div style="background: #e0f2f1; color: #00695c; font-size: 11px; font-weight: bold; padding: 2px 10px; border-radius: 10px; margin-bottom: 4px;">
@@ -2387,7 +2614,6 @@ function renderQuestionVisual() {
       `;
       board.appendChild(wrap);
     } else {
-      // Visual cookies/strawberries for <= 20 expressions
       const cWrap = document.createElement('div');
       cWrap.className = 'compare-container';
 
@@ -2619,7 +2845,6 @@ function renderQuestionVisual() {
   }
   else if (q_type === 'make10' || q_type === 'add20') {
     if (q_paramA < 10) {
-      // Interactive Ten-Frame for bridging 10 (e.g. 8 + 5, 6 + 7)
       const container = document.createElement('div');
       container.className = 'ten-frame-container';
       const frame = document.createElement('div');
@@ -2661,7 +2886,6 @@ function renderQuestionVisual() {
       container.appendChild(tray);
       board.appendChild(container);
     } else {
-      // Teens + Ones visual (10 locked cookies + loose stars)
       const onesA = q_paramA - 10;
       const wrap = document.createElement('div');
       wrap.className = 'sub-crossing-wrap';
@@ -2837,9 +3061,15 @@ function renderKeypad() {
     return;
   }
 
-  if (q_type === 'time' || (q_type === 'shapes' && shapeQuestionMode === 'name')) {
+  if (
+    q_type === 'time' ||
+    (q_type === 'shapes' && shapeQuestionMode === 'name') ||
+    (q_type === 'money' && moneyIsIdentify) ||
+    (q_type === 'fractions' && fractionType !== 'quantity')
+  ) {
     box.className = 'options-grid choice-mode';
-    choiceOptions.forEach(optText => {
+    const opts = (q_type === 'fractions') ? fracChoiceOpts : choiceOptions;
+    opts.forEach(optText => {
       const b = document.createElement('button');
       b.className = 'btn-opt btn-choice';
       b.innerText = optText;
@@ -2956,7 +3186,7 @@ function checkAnswer(chosen) {
         triggerConfetti();
         const m = Math.floor(challengeTimer / 60);
         const s = challengeTimer % 60;
-        const badgeTitle = activeChallenge === 'allstar30' ? '🏆 ALL-STAR CHAMPION!' : '🏁 SPEEDRUN CHAMPION!';
+        const badgeTitle = activeChallenge === 'allstar30' ? '🏆 YEAR 2 ALL-STAR CHAMPION!' : '🏁 YEAR 1 SPEEDRUN CHAMPION!';
         showChallengeResult(badgeTitle, `You crushed 30 questions in <b>${m}m ${s}s</b>! Speed: ${(challengeTimer/30).toFixed(1)}s/question!`);
         return;
       }
@@ -3007,9 +3237,13 @@ window.addEventListener('keydown', (e) => {
     return;
   }
 
-  if (q_type === 'time' || (q_type === 'shapes' && shapeQuestionMode === 'name')) {
-    return;
-  }
+  const isChoiceInput = (
+    q_type === 'time' ||
+    (q_type === 'shapes' && shapeQuestionMode === 'name') ||
+    (q_type === 'money' && moneyIsIdentify) ||
+    (q_type === 'fractions' && fractionType !== 'quantity')
+  );
+  if (isChoiceInput) return;
 
   if (e.key >= '0' && e.key <= '9') {
     if (keyboardBuffer.length < 3) {
