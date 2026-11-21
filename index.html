@@ -204,6 +204,7 @@
   .btn-adv-6 { background: linear-gradient(135deg, #ef6c00, #bf360c); font-size: 13.5px; padding: 12px 6px; }
 
   .btn-c-1 { background: #4caf50; }
+  .btn-c-1b { background: #388e3c; }
   .btn-c-2 { background: #ff9800; }
   .btn-c-2b { background: #f57c00; }
   .btn-c-2c { background: #e65100; }
@@ -215,6 +216,7 @@
   .btn-c-8 { background: #0288d1; }
   .btn-c-9 { background: #607d8b; }
   .btn-challenge { background: #d32f2f; }
+  .btn-allstar { background: linear-gradient(135deg, #8e24aa, #5e35b1); grid-column: span 2; padding: 12px; font-size: 14.5px; }
 
   .bottom-tools {
     display: flex;
@@ -634,7 +636,7 @@
     padding: 8px;
     min-width: 110px;
   }
-  .compare-panel-title { font-weight: bold; font-size: 14px; color: #0288d1; margin-bottom: 4px; }
+  .compare-panel-title { font-weight: bold; font-size: 13.5px; color: #0288d1; margin-bottom: 4px; }
 
   /* Ten-Frames */
   .ten-frame-container {
@@ -774,7 +776,7 @@
   .msg-area.retry { color: #d32f2f; }
   .msg-area.success { color: #2e7d32; }
 
-  /* Modals */
+  /* Modals & Enhanced Parent Report */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -786,11 +788,11 @@
   }
   .modal-box {
     background: white;
-    width: 90%;
-    max-width: 440px;
-    max-height: 85vh;
+    width: 92%;
+    max-width: 460px;
+    max-height: 88vh;
     overflow-y: auto;
-    padding: 20px;
+    padding: 18px;
     border-radius: 24px;
     text-align: center;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
@@ -803,8 +805,17 @@
   .btn-buy { background: #f39c12; color: white; }
   .btn-wear { background: #27ae60; color: white; }
 
-  .stat-card { background: #f8f9fa; border-radius: 12px; padding: 10px; margin: 8px 0; text-align: left; font-size: 14px; }
-  .stat-highlight { font-size: 18px; font-weight: bold; color: #2e7d32; }
+  .stat-card { background: #f8f9fa; border-radius: 14px; padding: 11px 13px; margin: 8px 0; text-align: left; font-size: 13.5px; line-height: 1.5; border: 1px solid #eceff1; }
+  .stat-card-title { font-weight: bold; font-size: 14.5px; margin-bottom: 4px; color: #1b5e20; border-bottom: 1px solid #e0e0e0; padding-bottom: 3px; }
+  .stat-highlight { font-size: 15.5px; font-weight: bold; color: #2e7d32; }
+  .speed-verdict-pill {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: bold;
+    margin-top: 4px;
+  }
 
   .bomb-shake { animation: shake 0.5s infinite; }
   @keyframes shake {
@@ -866,24 +877,25 @@
     <div id="menu-view">
       <div class="section-label">🇬🇧 UK Year 1 Foundation Worlds</div>
       <div class="menu-grid">
-        <button class="menu-btn btn-group-add" onclick="showSubMenu('add')">➕ Addition World<br><small style="font-size: 11px; opacity: 0.9;">≤10, Make 10, Mixed</small></button>
+        <button class="menu-btn btn-group-add" onclick="showSubMenu('add')">➕ Addition World<br><small style="font-size: 11px; opacity: 0.9;">≤10, Make 10, ≤20, Mixed</small></button>
         <button class="menu-btn btn-group-sub" onclick="showSubMenu('sub')">➖ Subtraction World<br><small style="font-size: 11px; opacity: 0.9;">≤10, ≤20, Crossing 10, Mixed</small></button>
       </div>
 
-      <div class="section-label">🎯 Foundation Modules (To 20)</div>
+      <div class="section-label">🎯 Foundation Modules</div>
       <div class="menu-grid">
         <button class="menu-btn btn-c-4" onclick="startMode('bonds')">Number Bonds (10 & 20)</button>
         <button class="menu-btn btn-c-5" onclick="startMode('doubles')">Doubles & Halves</button>
         <button class="menu-btn btn-c-6" onclick="startMode('moreless')">More / Less (±1, ±2, ±10)</button>
         <button class="menu-btn btn-c-7" onclick="startMode('skip')">Frog Skip (2, 5, 10)</button>
-        <button class="menu-btn btn-c-8" onclick="startMode('compare')">Compare ≤ 20 (&gt;, &lt;, =)</button>
-        <button class="menu-btn btn-c-9" onclick="startMode('mixed')">🔀 Mixed Revision (≤20)</button>
+        <button class="menu-btn btn-c-8" onclick="startMode('compare')">Compare (≤100 & ≤20 Sums)</button>
+        <button class="menu-btn btn-c-9" onclick="startMode('mixed')">🔀 Mixed Revision (Foundation)</button>
       </div>
 
       <div class="section-label">⚡ Time & Speed Challenges</div>
       <div class="menu-grid">
         <button class="menu-btn btn-challenge" onclick="startChallenge('bomb')">💣 10-Min Bomb Rush</button>
         <button class="menu-btn btn-challenge" onclick="startChallenge('speed30')">🏁 30 Questions Speedrun</button>
+        <button class="menu-btn btn-allstar" onclick="startChallenge('allstar30')">🏆 All-Star 30 Speedrun (School Challenges Mix)</button>
       </div>
 
       <!-- SCHOOL & NEXT-STEP CHALLENGES AT BOTTOM -->
@@ -911,9 +923,10 @@
         <div style="width: 70px;"></div>
       </div>
       <div class="menu-grid">
-        <button class="menu-btn btn-c-1" style="grid-column: span 2; padding: 14px;" onclick="startMode('add10')">1. Addition ≤ 10</button>
-        <button class="menu-btn btn-c-3" style="grid-column: span 2; padding: 14px;" onclick="startMode('make10')">2. Make 10 Addition (11-20)</button>
-        <button class="menu-btn" style="grid-column: span 2; padding: 15px; background: linear-gradient(135deg, #2e7d32, #1b5e20);" onclick="startMode('mixed_add')">3. 🔀 Mixed Addition (All Stages)</button>
+        <button class="menu-btn btn-c-1" style="grid-column: span 2; padding: 13px;" onclick="startMode('add10')">1. Addition ≤ 10</button>
+        <button class="menu-btn btn-c-3" style="grid-column: span 2; padding: 13px;" onclick="startMode('make10')">2. Make 10 Addition (Bridge 10)</button>
+        <button class="menu-btn btn-c-1b" style="grid-column: span 2; padding: 13px;" onclick="startMode('add20')">3. Addition ≤ 20 (All & Crossing 10)</button>
+        <button class="menu-btn" style="grid-column: span 2; padding: 15px; background: linear-gradient(135deg, #2e7d32, #1b5e20);" onclick="startMode('mixed_add')">4. 🔀 Mixed Addition (All Stages)</button>
       </div>
     </div>
 
@@ -972,25 +985,38 @@
   </div>
 </div>
 
-<!-- ANALYTICS MODAL -->
+<!-- ENHANCED PARENT ANALYTICS MODAL -->
 <div id="analytics-modal" class="modal-overlay">
   <div class="modal-box">
-    <h2>📊 Learning Analytics Report</h2>
+    <h2 style="margin: 0 0 10px 0; color: #1b5e20;">📊 Detailed Parent Report</h2>
+
+    <!-- TODAY'S PERFORMANCE -->
+    <div class="stat-card" style="background: #f1f8e9; border-color: #c5e1a5;">
+      <div class="stat-card-title">📅 Today's Session (<span id="an-today-date"></span>)</div>
+      <div>⏱ Time Today: <span class="stat-highlight" id="an-today-time">0 min</span> | ✅ Answered: <span class="stat-highlight" id="an-today-correct">0</span> | ❌ Mistakes: <span class="stat-highlight" style="color:#d32f2f;" id="an-today-wrong">0</span></div>
+      <div>⚡ Today's Speed: <span class="stat-highlight" id="an-today-speed">0s</span> / question <span id="an-today-verdict"></span></div>
+      <div style="margin-top: 4px;">💪 Today Strongest: <strong style="color:#2e7d32;" id="an-today-strong">-</strong></div>
+      <div>🎯 Today Needs Practice: <strong style="color:#c62828;" id="an-today-weak">-</strong></div>
+    </div>
+
+    <!-- ALL-TIME OVERALL PERFORMANCE -->
     <div class="stat-card">
-      <div>⏱ Total Time Spent: <span class="stat-highlight" id="an-time">0 min</span></div>
-      <div>✅ Total Correct: <span class="stat-highlight" id="an-correct">0</span> questions</div>
-      <div>❌ Total Mistakes: <span class="stat-highlight" id="an-wrong">0</span> times</div>
-      <div>⚡ Average Speed: <span class="stat-highlight" id="an-speed">0s</span> per question</div>
+      <div class="stat-card-title" style="color: #1565c0;">🏆 All-Time Overall Summary</div>
+      <div>⏱ Total Time: <span class="stat-highlight" style="color:#1565c0;" id="an-time">0 min</span> | ✅ Correct: <span class="stat-highlight" style="color:#1565c0;" id="an-correct">0</span> | ❌ Mistakes: <span class="stat-highlight" style="color:#d32f2f;" id="an-wrong">0</span></div>
+      <div>⚡ Overall Speed: <span class="stat-highlight" style="color:#1565c0;" id="an-speed">0s</span> / question <span id="an-overall-verdict"></span></div>
+      <div style="margin-top: 4px;">💪 Overall Strongest: <strong style="color:#2e7d32;" id="an-strong">-</strong></div>
+      <div>🎯 Overall Needs Practice: <strong style="color:#c62828;" id="an-weak">-</strong></div>
     </div>
-    <div class="stat-card" style="border-left: 4px solid #4caf50;">
-      <div style="font-weight: bold; color: #2e7d32;">💪 Strongest Topic:</div>
-      <div id="an-strong" style="margin-top: 4px;">Answering more to calculate...</div>
+
+    <!-- YEAR 1 SPEED BENCHMARK GUIDE -->
+    <div style="font-size: 11.5px; color: #666; text-align: left; background: #fffde7; padding: 8px 10px; border-radius: 10px; border: 1px dashed #ffd54f; margin-bottom: 10px;">
+      <strong>🇬🇧 UK Year 1 Speed Benchmark Guide:</strong><br>
+      • <strong>≤ 4.0s / Q:</strong> ⚡ Super Fast (Fluent mental recall)<br>
+      • <strong>4.1s – 8.0s / Q:</strong> ✅ Reasonable & Healthy (Steady mental partitioning)<br>
+      • <strong>&gt; 8.0s / Q:</strong> 🐢 Careful / Counting (Using fingers or visual blocks—normal for new topics)
     </div>
-    <div class="stat-card" style="border-left: 4px solid #f44336;">
-      <div style="font-weight: bold; color: #c62828;">🎯 Needs Practice:</div>
-      <div id="an-weak" style="margin-top: 4px;">Answering more to calculate...</div>
-    </div>
-    <button class="btn-back" style="width: 100%; padding: 10px; margin-top: 10px;" onclick="closeModal('analytics-modal')">Close</button>
+
+    <button class="btn-back" style="width: 100%; padding: 10px; background: #2e7d32; color: white;" onclick="closeModal('analytics-modal')">Close Report</button>
   </div>
 </div>
 
@@ -1250,6 +1276,9 @@ function handleLogin() {
       todayCoins: 0,
       totalCoins: 0,
       todayScore: 0,
+      todayWrong: 0,
+      todaySeconds: 0,
+      todayTopicStats: {},
       totalScore: 0,
       totalWrong: 0,
       totalSeconds: 0,
@@ -1265,10 +1294,18 @@ function handleLogin() {
 }
 
 function initLoadedUser() {
+  // Backwards compatibility for existing accounts
+  if (typeof userData.todayWrong === 'undefined') userData.todayWrong = 0;
+  if (typeof userData.todaySeconds === 'undefined') userData.todaySeconds = 0;
+  if (!userData.todayTopicStats) userData.todayTopicStats = {};
+
   if (userData.todayDate !== getTodayStr()) {
     userData.todayDate = getTodayStr();
     userData.todayScore = 0;
     userData.todayCoins = 0;
+    userData.todayWrong = 0;
+    userData.todaySeconds = 0;
+    userData.todayTopicStats = {};
     userData.celebratedToday = false;
   }
   saveUserData();
@@ -1402,33 +1439,98 @@ function closeModal(id) {
   document.getElementById(id).style.display = 'none';
 }
 
-// --- LEARNING ANALYTICS ENGINE ---
+// --- DETAILED PARENT ANALYTICS ENGINE ---
+const TOPIC_LABELS = {
+  add10: 'Addition ≤ 10',
+  make10: 'Make 10 Addition',
+  add20: 'Addition ≤ 20 (Crossing 10)',
+  sub10: 'Subtraction ≤ 10',
+  sub20_nocross: 'Sub ≤ 20 (No Crossing)',
+  sub20_cross: 'Sub ≤ 20 (Crossing 10)',
+  bonds: 'Number Bonds (10 & 20)',
+  doubles: 'Doubles & Halves',
+  moreless: 'More / Less (±1, ±2, ±10)',
+  skip: 'Frog Skip Counting',
+  compare: 'Compare (≤100 & ≤20 Sums)',
+  compare100: 'Challenge: Compare to 100',
+  add100: 'Challenge: 2-Digit Add',
+  add100_cross: 'Challenge: 2-Digit Crossing 10',
+  mult_intro: 'Challenge: Intro Times Tables',
+  shapes: 'Challenge: 2D & 3D Shapes',
+  time: 'Challenge: Telling the Time'
+};
+
+function getSpeedVerdictBadge(avgSec, totalQs) {
+  if (totalQs === 0) return '';
+  if (avgSec <= 4.0) {
+    return `<span class="speed-verdict-pill" style="background:#e8f5e9; color:#2e7d32;">⚡ Super Fast (Fluent!)</span>`;
+  } else if (avgSec <= 8.0) {
+    return `<span class="speed-verdict-pill" style="background:#e3f2fd; color:#1565c0;">✅ Reasonable & Steady (Healthy)</span>`;
+  } else {
+    return `<span class="speed-verdict-pill" style="background:#fff3e0; color:#e65100;">🐢 Careful / Counting (Taking time)</span>`;
+  }
+}
+
+function analyzeTopicMap(statsObj, minQuestions) {
+  let bestTopic = "Need more practice (min " + minQuestions + " Qs)";
+  let worstTopic = "All looking good so far!";
+  let maxAcc = -1;
+  let minAcc = 999;
+
+  for (const [topicKey, st] of Object.entries(statsObj || {})) {
+    const totalTopic = st.correct + st.wrong;
+    if (totalTopic >= minQuestions) {
+      const acc = st.correct / totalTopic;
+      const label = TOPIC_LABELS[topicKey] || topicKey;
+      const avgT = (st.time / totalTopic).toFixed(1);
+      if (acc > maxAcc) {
+        maxAcc = acc;
+        bestTopic = `${label} (${Math.round(acc * 100)}% acc, ${avgT}s/Q)`;
+      }
+      if (acc < minAcc && acc < 0.95) {
+        minAcc = acc;
+        worstTopic = `${label} (${Math.round(acc * 100)}% acc, ${avgT}s/Q)`;
+      }
+    }
+  }
+  return { bestTopic, worstTopic };
+}
+
 function openAnalytics() {
   initAudio();
   playPop();
-  const totalMins = Math.round(userData.totalSeconds / 60);
-  const totalAns = userData.totalScore + userData.totalWrong;
+
+  // 1. Today's Stats
+  document.getElementById('an-today-date').innerText = userData.todayDate || getTodayStr();
+  const todayMins = Math.max(1, Math.round((userData.todaySeconds || 0) / 60));
+  const todayTotalAns = (userData.todayScore || 0) + (userData.todayWrong || 0);
+  const todayAvgSpeed = todayTotalAns > 0 ? (userData.todaySeconds / todayTotalAns).toFixed(1) : 0;
+
+  document.getElementById('an-today-time').innerText = todayTotalAns > 0 ? `${todayMins} min` : '0 min';
+  document.getElementById('an-today-correct').innerText = userData.todayScore || 0;
+  document.getElementById('an-today-wrong').innerText = userData.todayWrong || 0;
+  document.getElementById('an-today-speed').innerText = `${todayAvgSpeed}s`;
+  document.getElementById('an-today-verdict').innerHTML = getSpeedVerdictBadge(parseFloat(todayAvgSpeed), todayTotalAns);
+
+  const todayInsights = analyzeTopicMap(userData.todayTopicStats, 2);
+  document.getElementById('an-today-strong').innerText = todayInsights.bestTopic;
+  document.getElementById('an-today-weak').innerText = todayInsights.worstTopic;
+
+  // 2. All-Time Overall Stats
+  const totalMins = Math.round((userData.totalSeconds || 0) / 60);
+  const totalAns = (userData.totalScore || 0) + (userData.totalWrong || 0);
   const avgSpeed = totalAns > 0 ? (userData.totalSeconds / totalAns).toFixed(1) : 0;
 
   document.getElementById('an-time').innerText = `${totalMins} min`;
-  document.getElementById('an-correct').innerText = userData.totalScore;
-  document.getElementById('an-wrong').innerText = userData.totalWrong;
+  document.getElementById('an-correct').innerText = userData.totalScore || 0;
+  document.getElementById('an-wrong').innerText = userData.totalWrong || 0;
   document.getElementById('an-speed').innerText = `${avgSpeed}s`;
+  document.getElementById('an-overall-verdict').innerHTML = getSpeedVerdictBadge(parseFloat(avgSpeed), totalAns);
 
-  let bestTopic = "None yet", worstTopic = "None yet";
-  let maxAcc = -1, minAcc = 999;
+  const overallInsights = analyzeTopicMap(userData.topicStats, 3);
+  document.getElementById('an-strong').innerText = overallInsights.bestTopic;
+  document.getElementById('an-weak').innerText = overallInsights.worstTopic;
 
-  for (const [topic, st] of Object.entries(userData.topicStats)) {
-    const totalTopic = st.correct + st.wrong;
-    if (totalTopic >= 3) {
-      const acc = st.correct / totalTopic;
-      if (acc > maxAcc) { maxAcc = acc; bestTopic = `${topic} (${Math.round(acc*100)}% accuracy)`; }
-      if (acc < minAcc) { minAcc = acc; worstTopic = `${topic} (${Math.round(acc*100)}% accuracy)`; }
-    }
-  }
-
-  document.getElementById('an-strong').innerText = bestTopic;
-  document.getElementById('an-weak').innerText = worstTopic;
   document.getElementById('analytics-modal').style.display = 'flex';
 }
 
@@ -1519,7 +1621,7 @@ let showVisual = true;
 let manualVisualOff = false;
 let currentStreak = 0;
 let currentQuestionWrongAttempts = 0;
-let recentQuestions = []; // Stores last 20 question signatures to avoid duplicates
+let recentQuestions = [];
 
 let q_paramA = 0;
 let q_paramB = 0;
@@ -1531,6 +1633,7 @@ let compLeftVal = 0;
 let compRightVal = 0;
 let compLeftStr = '';
 let compRightStr = '';
+let compUseBase10 = false;
 
 let skip_step = 2;
 let skip_seq = [];
@@ -1541,9 +1644,14 @@ let isDoubleQuestion = true;
 
 let keyboardBuffer = '';
 
-const ALL_CURRICULUM_MODES = [
-  'add10', 'sub10', 'sub20_nocross', 'sub20_cross',
-  'make10', 'bonds', 'doubles', 'moreless', 'skip', 'compare'
+const FOUNDATION_MODES = [
+  'add10', 'make10', 'add20',
+  'sub10', 'sub20_nocross', 'sub20_cross',
+  'bonds', 'doubles', 'moreless', 'skip', 'compare'
+];
+
+const CHALLENGE_MODES = [
+  'compare100', 'add100', 'add100_cross', 'mult_intro', 'shapes', 'time'
 ];
 
 function toggleVisual() {
@@ -1618,14 +1726,15 @@ function startChallenge(chType) {
         showChallengeResult('💥 BOOM! Time Up!', `Awesome stamina! You completed <b>${challengeQCount}</b> questions in 10 minutes!`);
       }
     }, 1000);
-  } else if (chType === 'speed30') {
+  } else if (chType === 'speed30' || chType === 'allstar30') {
     challengeTimer = 0;
-    updateTimerBanner(`⏱️ 00:00 (0/30)`);
+    const prefix = (chType === 'allstar30') ? '🏆 ' : '⏱️ ';
+    updateTimerBanner(`${prefix}00:00 (0/30)`);
     challengeInterval = setInterval(() => {
       challengeTimer++;
       const m = Math.floor(challengeTimer / 60).toString().padStart(2, '0');
       const s = (challengeTimer % 60).toString().padStart(2, '0');
-      updateTimerBanner(`⏱️ ${m}:${s} (${challengeQCount}/30)`);
+      updateTimerBanner(`${prefix}${m}:${s} (${challengeQCount}/30)`);
     }, 1000);
   }
   nextQuestion();
@@ -1724,16 +1833,23 @@ function formatTimeWords(h, m) {
 
 // Helper: Generate one candidate question and return its unique signature
 function buildCandidateQuestion() {
-  let mode = isChallenge ? ALL_CURRICULUM_MODES[Math.floor(Math.random() * ALL_CURRICULUM_MODES.length)] : activeMode;
-  
-  if (mode === 'mixed') {
-    mode = ALL_CURRICULUM_MODES[Math.floor(Math.random() * ALL_CURRICULUM_MODES.length)];
-  } else if (mode === 'mixed_add') {
-    const addChoices = ['add10', 'make10'];
-    mode = addChoices[Math.floor(Math.random() * addChoices.length)];
-  } else if (mode === 'mixed_sub') {
-    const subChoices = ['sub10', 'sub20_nocross', 'sub20_cross'];
-    mode = subChoices[Math.floor(Math.random() * subChoices.length)];
+  let mode = activeMode;
+  if (isChallenge) {
+    if (activeChallenge === 'allstar30') {
+      mode = CHALLENGE_MODES[Math.floor(Math.random() * CHALLENGE_MODES.length)];
+    } else {
+      mode = FOUNDATION_MODES[Math.floor(Math.random() * FOUNDATION_MODES.length)];
+    }
+  } else {
+    if (mode === 'mixed') {
+      mode = FOUNDATION_MODES[Math.floor(Math.random() * FOUNDATION_MODES.length)];
+    } else if (mode === 'mixed_add') {
+      const addChoices = ['add10', 'make10', 'add20'];
+      mode = addChoices[Math.floor(Math.random() * addChoices.length)];
+    } else if (mode === 'mixed_sub') {
+      const subChoices = ['sub10', 'sub20_nocross', 'sub20_cross'];
+      mode = subChoices[Math.floor(Math.random() * subChoices.length)];
+    }
   }
 
   q_type = mode;
@@ -1753,13 +1869,36 @@ function buildCandidateQuestion() {
   } 
   else if (mode === 'make10') {
     document.getElementById('mode-badge').innerText = (activeMode === 'mixed_add' ? '🔀 Mixed Add: ' : '') + 'Make 10 Addition';
-    q_paramA = Math.floor(Math.random() * 3) + 7;
-    q_paramB = Math.floor(Math.random() * 5) + 3;
+    q_paramA = Math.floor(Math.random() * 3) + 7; // 7, 8, 9
+    q_paramB = Math.floor(Math.random() * 5) + 3; // 3..7
     correctAns = q_paramA + q_paramB;
     make10_moved = 0;
     qBox.innerText = `${q_paramA} + ${q_paramB} = ?`;
     hBox.innerText = `Move stars to make 10 in the Ten-Frame!`;
     sig = `make10:${q_paramA}+${q_paramB}`;
+  }
+  else if (mode === 'add20') {
+    document.getElementById('mode-badge').innerText = (activeMode === 'mixed_add' ? '🔀 Mixed Add: ' : '') + 'Addition ≤ 20';
+    const subPattern = Math.random();
+    if (subPattern < 0.65) {
+      // Crossing 10 (e.g., 6+7, 8+5, 9+8, 7+6)
+      q_paramA = Math.floor(Math.random() * 4) + 6; // 6..9
+      const minB = 11 - q_paramA;
+      const maxB = 19 - q_paramA;
+      q_paramB = Math.floor(Math.random() * (maxB - minB + 1)) + minB;
+      if (q_paramB > 9) q_paramB = 9;
+    } else {
+      // Teens + Ones within 20 (e.g., 12 + 5, 14 + 4)
+      q_paramA = Math.floor(Math.random() * 6) + 11; // 11..16
+      q_paramB = Math.floor(Math.random() * (20 - q_paramA)) + 1;
+    }
+    correctAns = q_paramA + q_paramB;
+    make10_moved = 0;
+    qBox.innerText = `${q_paramA} + ${q_paramB} = ?`;
+    hBox.innerText = q_paramA < 10 
+      ? `Make 10 first, then add the rest!` 
+      : `Add the ones to ${q_paramA}!`;
+    sig = `add20:${q_paramA}+${q_paramB}`;
   }
   else if (mode === 'sub10') {
     document.getElementById('mode-badge').innerText = (activeMode === 'mixed_sub' ? '🔀 Mixed Sub: ' : '') + 'Subtraction ≤ 10';
@@ -1857,22 +1996,78 @@ function buildCandidateQuestion() {
     hBox.innerText = `🐸 Froggy jumps in +${skip_step}s! Which lily pad will froggy land on?`;
     sig = `skip:${skip_step}_${start}_${skip_blankIdx}`;
   }
+  // UPGRADED FOUNDATION COMPARE: Numbers up to 100 OR Add/Sub Expressions within 20
   else if (mode === 'compare') {
-    document.getElementById('mode-badge').innerText = 'Compare ≤ 20';
-    q_paramA = Math.floor(Math.random() * 18) + 1;
-    const same = Math.random() < 0.25;
-    q_paramB = same ? q_paramA : Math.floor(Math.random() * 18) + 1;
+    document.getElementById('mode-badge').innerText = 'Compare (≤100 & ≤20 Sums)';
+    const pattern = Math.random();
 
-    if (q_paramA > q_paramB) correctAns = '>';
-    else if (q_paramA < q_paramB) correctAns = '<';
+    if (pattern < 0.45) {
+      // Pure numbers up to 100 (e.g. 42 vs 78, 65 vs 61)
+      compUseBase10 = true;
+      compLeftVal = Math.floor(Math.random() * 90) + 10; // 10..99
+      if (Math.random() < 0.2) {
+        compRightVal = compLeftVal;
+      } else {
+        compRightVal = Math.floor(Math.random() * 90) + 10;
+      }
+      compLeftStr = `${compLeftVal}`;
+      compRightStr = `${compRightVal}`;
+    } else if (pattern < 0.8) {
+      // Add/Sub within 20 vs Number (e.g. 8 + 5 [ ? ] 14, 15 - 6 [ ? ] 9)
+      compUseBase10 = false;
+      const isAdd = Math.random() > 0.4;
+      if (isAdd) {
+        const a = Math.floor(Math.random() * 9) + 3;
+        const b = Math.floor(Math.random() * (20 - a)) + 1;
+        const sum = a + b;
+        const delta = [-2, -1, 0, 0, 1, 2][Math.floor(Math.random() * 6)];
+        const other = Math.max(1, Math.min(20, sum + delta));
+        if (Math.random() > 0.5) {
+          compLeftVal = sum; compLeftStr = `${a} + ${b}`;
+          compRightVal = other; compRightStr = `${other}`;
+        } else {
+          compLeftVal = other; compLeftStr = `${other}`;
+          compRightVal = sum; compRightStr = `${a} + ${b}`;
+        }
+      } else {
+        const a = Math.floor(Math.random() * 10) + 9; // 9..18
+        const b = Math.floor(Math.random() * (a - 2)) + 2;
+        const diff = a - b;
+        const delta = [-2, -1, 0, 0, 1, 2][Math.floor(Math.random() * 6)];
+        const other = Math.max(1, Math.min(18, diff + delta));
+        if (Math.random() > 0.5) {
+          compLeftVal = diff; compLeftStr = `${a} - ${b}`;
+          compRightVal = other; compRightStr = `${other}`;
+        } else {
+          compLeftVal = other; compLeftStr = `${other}`;
+          compRightVal = diff; compRightStr = `${a} - ${b}`;
+        }
+      }
+    } else {
+      // Both sides Add/Sub within 20 (e.g. 7 + 4 [ ? ] 10 + 1, 14 - 5 [ ? ] 6 + 3)
+      compUseBase10 = false;
+      const a1 = Math.floor(Math.random() * 8) + 3;
+      const a2 = Math.floor(Math.random() * (19 - a1)) + 1;
+      compLeftVal = a1 + a2;
+      compLeftStr = `${a1} + ${a2}`;
+
+      const b1 = Math.floor(Math.random() * 8) + 3;
+      const b2 = Math.max(1, Math.min(10, compLeftVal - b1 + [-1, 0, 0, 1][Math.floor(Math.random() * 4)]));
+      compRightVal = b1 + b2;
+      compRightStr = `${b1} + ${b2}`;
+    }
+
+    if (compLeftVal > compRightVal) correctAns = '>';
+    else if (compLeftVal < compRightVal) correctAns = '<';
     else correctAns = '=';
 
-    qBox.innerText = `${q_paramA}  [ ? ]  ${q_paramB}`;
-    hBox.innerText = `🐊 Crocodile always eats the bigger number! Choose >, <, or =`;
-    sig = `comp20:${q_paramA}vs${q_paramB}`;
+    qBox.innerText = `${compLeftStr}   [ ? ]   ${compRightStr}`;
+    hBox.innerText = `🐊 Work out both sides first! Crocodile eats the bigger value!`;
+    sig = `compF:${compLeftStr}vs${compRightStr}`;
   }
   else if (mode === 'compare100') {
     document.getElementById('mode-badge').innerText = '🏆 Compare to 100';
+    compUseBase10 = true;
     const subType = Math.floor(Math.random() * 3);
 
     if (subType === 0) {
@@ -2045,7 +2240,6 @@ function nextQuestion() {
   document.getElementById('msg-text').innerText = '';
   questionStartTime = Date.now();
 
-  // Retry up to 25 times if this exact question appeared within the last 20 questions
   let sig = '';
   let attempts = 0;
   do {
@@ -2060,7 +2254,6 @@ function nextQuestion() {
 
   if (q_type === 'skip') playFrogJumpSound();
 
-  // Smart Fading (except shapes & time)
   if (q_type !== 'shapes' && q_type !== 'time') {
     if (!manualVisualOff && currentStreak >= 3 && showVisual) {
       showVisual = false;
@@ -2178,20 +2371,64 @@ function renderQuestionVisual() {
     }
     board.appendChild(wrap);
   }
-  else if (q_type === 'compare100') {
-    const wrap = document.createElement('div');
-    wrap.className = 'base10-wrap';
-    wrap.innerHTML = `
-      <div class="base10-side">
-        <div class="base10-label">${compLeftStr} (${Math.floor(compLeftVal/10)} Tens, ${compLeftVal%10} Ones)</div>
-        ${buildBase10HTML(compLeftVal)}
-      </div>
-      <div class="base10-side">
-        <div class="base10-label">${compRightStr} (${Math.floor(compRightVal/10)} Tens, ${compRightVal%10} Ones)</div>
-        ${buildBase10HTML(compRightVal)}
-      </div>
-    `;
-    board.appendChild(wrap);
+  else if (q_type === 'compare' || q_type === 'compare100') {
+    if (compUseBase10 || compLeftVal > 20 || compRightVal > 20) {
+      const wrap = document.createElement('div');
+      wrap.className = 'base10-wrap';
+      wrap.innerHTML = `
+        <div class="base10-side">
+          <div class="base10-label">${compLeftStr} (${Math.floor(compLeftVal/10)} Tens, ${compLeftVal%10} Ones)</div>
+          ${buildBase10HTML(compLeftVal)}
+        </div>
+        <div class="base10-side">
+          <div class="base10-label">${compRightStr} (${Math.floor(compRightVal/10)} Tens, ${compRightVal%10} Ones)</div>
+          ${buildBase10HTML(compRightVal)}
+        </div>
+      `;
+      board.appendChild(wrap);
+    } else {
+      // Visual cookies/strawberries for <= 20 expressions
+      const cWrap = document.createElement('div');
+      cWrap.className = 'compare-container';
+
+      const pLeft = document.createElement('div');
+      pLeft.className = 'compare-panel';
+      pLeft.innerHTML = `<div class="compare-panel-title">${compLeftStr}</div>`;
+      const gL = document.createElement('div');
+      gL.className = 'grid-5-group';
+      for (let i = 0; i < Math.min(10, compLeftVal); i++) {
+        const c = document.createElement('div');
+        c.className = 'grid-item-cell';
+        c.style.width = '34px'; c.style.height = '34px'; c.style.fontSize = '20px';
+        c.innerText = '🍪';
+        gL.appendChild(c);
+      }
+      if (compLeftVal > 10) {
+        pLeft.innerHTML += `<div style="font-size:11px; color:#2e7d32; font-weight:bold;">10 + ${compLeftVal - 10}</div>`;
+      }
+      pLeft.appendChild(gL);
+
+      const pRight = document.createElement('div');
+      pRight.className = 'compare-panel';
+      pRight.innerHTML = `<div class="compare-panel-title">${compRightStr}</div>`;
+      const gR = document.createElement('div');
+      gR.className = 'grid-5-group';
+      for (let i = 0; i < Math.min(10, compRightVal); i++) {
+        const c = document.createElement('div');
+        c.className = 'grid-item-cell';
+        c.style.width = '34px'; c.style.height = '34px'; c.style.fontSize = '20px';
+        c.innerText = '🍓';
+        gR.appendChild(c);
+      }
+      if (compRightVal > 10) {
+        pRight.innerHTML += `<div style="font-size:11px; color:#c2185b; font-weight:bold;">10 + ${compRightVal - 10}</div>`;
+      }
+      pRight.appendChild(gR);
+
+      cWrap.appendChild(pLeft);
+      cWrap.appendChild(pRight);
+      board.appendChild(cWrap);
+    }
   }
   else if (q_type === 'add100' || q_type === 'add100_cross') {
     const wrap = document.createElement('div');
@@ -2380,47 +2617,94 @@ function renderQuestionVisual() {
     }
     board.appendChild(grid);
   }
-  else if (q_type === 'make10') {
-    const container = document.createElement('div');
-    container.className = 'ten-frame-container';
-    const frame = document.createElement('div');
-    frame.className = 'ten-frame';
+  else if (q_type === 'make10' || q_type === 'add20') {
+    if (q_paramA < 10) {
+      // Interactive Ten-Frame for bridging 10 (e.g. 8 + 5, 6 + 7)
+      const container = document.createElement('div');
+      container.className = 'ten-frame-container';
+      const frame = document.createElement('div');
+      frame.className = 'ten-frame';
 
-    for (let i = 0; i < 10; i++) {
-      const cell = document.createElement('div');
-      cell.className = 'frame-cell';
-      if (i < q_paramA) {
-        cell.classList.add('filled');
-        cell.innerText = '🍪';
-      } else if (i < q_paramA + make10_moved) {
-        cell.classList.add('filled');
-        cell.innerText = '⭐';
-        cell.onclick = () => {
-          if (!isAnswered) { playPop(); make10_moved--; renderQuestionVisual(); }
-        };
-      }
-      frame.appendChild(cell);
-    }
-
-    const remainingInTray = q_paramB - make10_moved;
-    const tray = document.createElement('div');
-    tray.className = 'outside-tray-grid';
-    for (let i = 0; i < remainingInTray; i++) {
-      const st = document.createElement('div');
-      st.className = 'clickable-star';
-      st.innerText = '⭐';
-      st.onclick = () => {
-        if (!isAnswered && (q_paramA + make10_moved < 10)) {
-          playPop();
-          make10_moved++;
-          renderQuestionVisual();
+      for (let i = 0; i < 10; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'frame-cell';
+        if (i < q_paramA) {
+          cell.classList.add('filled');
+          cell.innerText = '🍪';
+        } else if (i < q_paramA + make10_moved) {
+          cell.classList.add('filled');
+          cell.innerText = '⭐';
+          cell.onclick = () => {
+            if (!isAnswered) { playPop(); make10_moved--; renderQuestionVisual(); }
+          };
         }
-      };
-      tray.appendChild(st);
+        frame.appendChild(cell);
+      }
+
+      const remainingInTray = q_paramB - make10_moved;
+      const tray = document.createElement('div');
+      tray.className = 'outside-tray-grid';
+      for (let i = 0; i < remainingInTray; i++) {
+        const st = document.createElement('div');
+        st.className = 'clickable-star';
+        st.innerText = '⭐';
+        st.onclick = () => {
+          if (!isAnswered && (q_paramA + make10_moved < 10)) {
+            playPop();
+            make10_moved++;
+            renderQuestionVisual();
+          }
+        };
+        tray.appendChild(st);
+      }
+      container.appendChild(frame);
+      container.appendChild(tray);
+      board.appendChild(container);
+    } else {
+      // Teens + Ones visual (10 locked cookies + loose stars)
+      const onesA = q_paramA - 10;
+      const wrap = document.createElement('div');
+      wrap.className = 'sub-crossing-wrap';
+
+      const tenBox = document.createElement('div');
+      tenBox.className = 'sub-group-box';
+      tenBox.innerHTML = `<div class="sub-group-title" style="color: #2e7d32;">🍪 10 Cookies (1 Ten):</div>`;
+      const g10 = document.createElement('div');
+      g10.className = 'grid-5-group';
+      for (let i = 0; i < 10; i++) {
+        const c = document.createElement('div');
+        c.className = 'grid-item-cell';
+        c.style.width = '38px'; c.style.height = '38px'; c.style.fontSize = '22px';
+        c.innerText = '🍪';
+        g10.appendChild(c);
+      }
+      tenBox.appendChild(g10);
+
+      const onesBox = document.createElement('div');
+      onesBox.className = 'sub-group-box';
+      onesBox.innerHTML = `<div class="sub-group-title" style="color: #e65100;">Ones: ${onesA} ⭐ + ${q_paramB} 🍓</div>`;
+      const gOnes = document.createElement('div');
+      gOnes.className = 'grid-5-group';
+      for (let i = 0; i < onesA; i++) {
+        const c = document.createElement('div');
+        c.className = 'grid-item-cell';
+        c.style.width = '38px'; c.style.height = '38px'; c.style.fontSize = '22px';
+        c.innerText = '⭐';
+        gOnes.appendChild(c);
+      }
+      for (let i = 0; i < q_paramB; i++) {
+        const c = document.createElement('div');
+        c.className = 'grid-item-cell';
+        c.style.width = '38px'; c.style.height = '38px'; c.style.fontSize = '22px';
+        c.innerText = '🍓';
+        gOnes.appendChild(c);
+      }
+      onesBox.appendChild(gOnes);
+
+      wrap.appendChild(tenBox);
+      wrap.appendChild(onesBox);
+      board.appendChild(wrap);
     }
-    container.appendChild(frame);
-    container.appendChild(tray);
-    board.appendChild(container);
   }
   else if (q_type === 'doubles') {
     if (isDoubleQuestion) {
@@ -2520,40 +2804,6 @@ function renderQuestionVisual() {
       board.appendChild(hWrap);
     }
   }
-  else if (q_type === 'compare') {
-    const cWrap = document.createElement('div');
-    cWrap.className = 'compare-container';
-
-    const pLeft = document.createElement('div');
-    pLeft.className = 'compare-panel';
-    pLeft.innerHTML = `<div class="compare-panel-title">Left (${q_paramA})</div>`;
-    const gL = document.createElement('div');
-    gL.className = 'grid-5-group';
-    for (let i = 0; i < Math.min(10, q_paramA); i++) {
-      const c = document.createElement('div');
-      c.className = 'grid-item-cell';
-      c.innerText = '🍪';
-      gL.appendChild(c);
-    }
-    pLeft.appendChild(gL);
-
-    const pRight = document.createElement('div');
-    pRight.className = 'compare-panel';
-    pRight.innerHTML = `<div class="compare-panel-title">Right (${q_paramB})</div>`;
-    const gR = document.createElement('div');
-    gR.className = 'grid-5-group';
-    for (let i = 0; i < Math.min(10, q_paramB); i++) {
-      const c = document.createElement('div');
-      c.className = 'grid-item-cell';
-      c.innerText = '🍓';
-      gR.appendChild(c);
-    }
-    pRight.appendChild(gR);
-
-    cWrap.appendChild(pLeft);
-    cWrap.appendChild(pRight);
-    board.appendChild(cWrap);
-  }
   else {
     board.innerHTML = `<div style="font-size: 36px; padding: 10px;">🦖 ✨ 🔢</div>`;
   }
@@ -2644,10 +2894,17 @@ function renderKeypad() {
 function checkAnswer(chosen) {
   if (isAnswered) return;
   const timeTaken = (Date.now() - questionStartTime) / 1000;
-  userData.totalSeconds += Math.round(timeTaken);
+  const roundedSec = Math.round(timeTaken);
+
+  userData.totalSeconds = (userData.totalSeconds || 0) + roundedSec;
+  userData.todaySeconds = (userData.todaySeconds || 0) + roundedSec;
 
   if (!userData.topicStats[q_type]) userData.topicStats[q_type] = { correct: 0, wrong: 0, time: 0 };
   userData.topicStats[q_type].time += timeTaken;
+
+  if (!userData.todayTopicStats) userData.todayTopicStats = {};
+  if (!userData.todayTopicStats[q_type]) userData.todayTopicStats[q_type] = { correct: 0, wrong: 0, time: 0 };
+  userData.todayTopicStats[q_type].time += timeTaken;
 
   if (chosen === correctAns) {
     isAnswered = true;
@@ -2668,6 +2925,7 @@ function checkAnswer(chosen) {
     userData.todayCoins += earnedCoin;
     userData.totalCoins += earnedCoin;
     userData.topicStats[q_type].correct++;
+    userData.todayTopicStats[q_type].correct++;
     
     if (userData.todayScore >= 30 && !userData.celebratedToday) {
       userData.celebratedToday = true;
@@ -2693,12 +2951,13 @@ function checkAnswer(chosen) {
 
     if (isChallenge) {
       challengeQCount++;
-      if (activeChallenge === 'speed30' && challengeQCount >= 30) {
+      if ((activeChallenge === 'speed30' || activeChallenge === 'allstar30') && challengeQCount >= 30) {
         clearInterval(challengeInterval);
         triggerConfetti();
         const m = Math.floor(challengeTimer / 60);
         const s = challengeTimer % 60;
-        showChallengeResult('🏁 SPEEDRUN CHAMPION!', `You crushed 30 questions in <b>${m}m ${s}s</b>! Speed: ${(challengeTimer/30).toFixed(1)}s/question!`);
+        const badgeTitle = activeChallenge === 'allstar30' ? '🏆 ALL-STAR CHAMPION!' : '🏁 SPEEDRUN CHAMPION!';
+        showChallengeResult(badgeTitle, `You crushed 30 questions in <b>${m}m ${s}s</b>! Speed: ${(challengeTimer/30).toFixed(1)}s/question!`);
         return;
       }
     }
@@ -2717,7 +2976,9 @@ function checkAnswer(chosen) {
     }
 
     userData.totalWrong++;
+    userData.todayWrong = (userData.todayWrong || 0) + 1;
     userData.topicStats[q_type].wrong++;
+    userData.todayTopicStats[q_type].wrong++;
     saveUserData();
     document.getElementById('msg-text').className = 'msg-area retry';
     document.getElementById('msg-text').innerText = 'Almost! Try again (No coin for retry)';
