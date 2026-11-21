@@ -1,773 +1,2588 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>WA14 零食罐頭防伏管家 (100% 免費免 API Key 版)</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "PingFang HK", "Microsoft JhengHei", sans-serif; background-color: #f3f4f6; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dino Year 1 Math Adventure</title>
+
+<!-- 1. 瀏覽器標籤頁圖標 (Favicon) - 綠底金冠恐龍 -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%232e7d32%22/><text y=%2238%22 x=%2250%22 text-anchor=%22middle%22 font-size=%2234%22>👑</text><text y=%2282%22 x=%2250%22 text-anchor=%22middle%22 font-size=%2252%22>🦖</text></svg>">
+
+<!-- 2. Apple iOS / iPadOS 主畫面圖標 (Apple Touch Icon) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%232e7d32%22/><text y=%2238%22 x=%2250%22 text-anchor=%22middle%22 font-size=%2234%22>👑</text><text y=%2282%22 x=%2250%22 text-anchor=%22middle%22 font-size=%2252%22>🦖</text></svg>">
+
+<!-- 3. iOS 全螢幕 App 模式設定 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dino Math">
+
+<!-- 4. Android / Chrome 主畫面設定 -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2e7d32">
+
+<style>
+  /* =========================================
+     1. BASE STYLING
+     ========================================= */
+  body {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
+    background-color: #f4f9f4;
+    text-align: center;
+    margin: 0;
+    padding: 12px;
+    user-select: none;
+    overflow-x: hidden;
+  }
+  .container {
+    max-width: 560px;
+    margin: auto;
+    background: white;
+    padding: 18px;
+    border-radius: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    position: relative;
+    min-height: 580px;
+  }
+  h1 { font-size: 24px; color: #2e7d32; margin: 0 0 8px 0; }
+
+  /* =========================================
+     2. LOGIN PANEL
+     ========================================= */
+  #login-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 10px;
+  }
+  .login-input {
+    width: 80%;
+    padding: 12px;
+    margin: 8px 0;
+    font-size: 16px;
+    border: 2px solid #a5d6a7;
+    border-radius: 12px;
+    outline: none;
+  }
+  .login-btn {
+    width: 85%;
+    padding: 12px;
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    background: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+  }
+
+  /* =========================================
+     3. STATUS DASHBOARD & HEADER
+     ========================================= */
+  .status-header {
+    background: #e8f5e9;
+    padding: 8px 12px;
+    border-radius: 16px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #1b5e20;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .badge-pill {
+    background: #ffffff;
+    padding: 3px 8px;
+    border-radius: 10px;
+    border: 1px solid #c8e6c9;
+  }
+  .coin-badge {
+    color: #d35400;
+    background: #fff3e0;
+    border: 1px solid #ffe0b2;
+    padding: 3px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .user-badge { color: #2e7d32; font-size: 14px; }
+
+  .daily-progress-container {
+    width: 100%;
+    background: #c8e6c9;
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 2px;
+  }
+  .daily-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ffb300, #4caf50);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  .toast-banner {
+    display: none;
+    background: #fff9c4;
+    border: 2px solid #fbc02d;
+    color: #e65100;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    animation: bounce 0.6s ease;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  .dino-avatar-wrap {
+    position: relative;
+    display: inline-block;
+    font-size: 38px;
+    line-height: 1;
+    margin: 0 4px;
+  }
+  .dino-hat-layer {
+    position: absolute;
+    top: -16px;
+    left: 6px;
+    font-size: 20px;
+    pointer-events: none;
+  }
+
+  /* =========================================
+     4. MENUS & SUBMENUS
+     ========================================= */
+  #menu-view, #submenu-add-view, #submenu-sub-view { display: none; }
+  .section-label {
+    text-align: left;
+    font-size: 12.5px;
+    font-weight: bold;
+    color: #555;
+    margin: 10px 0 4px 4px;
+    text-transform: uppercase;
+  }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .menu-btn {
+    padding: 11px 6px;
+    font-size: 13.5px;
+    font-weight: bold;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.12);
+    text-align: center;
+    transition: all 0.1s;
+    line-height: 1.25;
+  }
+  .menu-btn:active { transform: translateY(2px); box-shadow: none; }
+
+  .btn-group-add { background: linear-gradient(135deg, #43a047, #2e7d32); font-size: 15px; padding: 14px 8px; }
+  .btn-group-sub { background: linear-gradient(135deg, #fb8c00, #e65100); font-size: 15px; padding: 14px 8px; }
+  
+  .btn-adv-1 { background: linear-gradient(135deg, #6a1b9a, #4a148c); font-size: 13.5px; padding: 12px 6px; }
+  .btn-adv-2 { background: linear-gradient(135deg, #1565c0, #0d47a1); font-size: 13.5px; padding: 12px 6px; }
+  .btn-adv-3 { background: linear-gradient(135deg, #00838f, #006064); font-size: 13.5px; padding: 12px 6px; }
+  .btn-adv-4 { background: linear-gradient(135deg, #ad1457, #880e4f); font-size: 13.5px; padding: 12px 6px; }
+
+  .btn-c-1 { background: #4caf50; }
+  .btn-c-2 { background: #ff9800; }
+  .btn-c-2b { background: #f57c00; }
+  .btn-c-2c { background: #e65100; }
+  .btn-c-3 { background: #e91e63; }
+  .btn-c-4 { background: #3f51b5; }
+  .btn-c-5 { background: #009688; }
+  .btn-c-6 { background: #795548; }
+  .btn-c-7 { background: #9c27b0; }
+  .btn-c-8 { background: #0288d1; }
+  .btn-c-9 { background: #607d8b; }
+  .btn-challenge { background: #d32f2f; }
+
+  .bottom-tools {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 14px;
+    gap: 8px;
+  }
+  .btn-tool {
+    flex: 1;
+    padding: 10px 0;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    color: white;
+  }
+
+  /* =========================================
+     5. GAME VIEW, COMBO & VISUALS
+     ========================================= */
+  #game-view { display: none; }
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    min-height: 76px;
+  }
+  .btn-back {
+    background: #e0e0e0;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .mode-badge {
+    font-size: 12px;
+    font-weight: bold;
+    color: #444;
+    background: #f1f2f6;
+    padding: 4px 8px;
+    border-radius: 10px;
+  }
+  .timer-banner {
+    font-size: 13px;
+    font-weight: bold;
+    color: #d32f2f;
+    background: #ffebee;
+    padding: 4px 10px;
+    border-radius: 10px;
+  }
+
+  .combo-badge {
+    display: none;
+    background: linear-gradient(135deg, #ff5722, #ff9800);
+    color: white;
+    font-size: 13px;
+    font-weight: 900;
+    padding: 3px 12px;
+    border-radius: 14px;
+    margin: 2px auto 6px auto;
+    width: fit-content;
+    box-shadow: 0 0 10px rgba(255, 87, 34, 0.6);
+    animation: flamePulse 0.4s infinite alternate;
+  }
+  @keyframes flamePulse {
+    0% { transform: scale(0.96); filter: drop-shadow(0 0 3px #ff9800); }
+    100% { transform: scale(1.05); filter: drop-shadow(0 0 8px #ff5722); }
+  }
+
+  .question-box {
+    font-size: 28px;
+    font-weight: bold;
+    color: #1b5e20;
+    margin: 4px 0 6px 0;
+    background: #e8f5e9;
+    padding: 8px 16px;
+    border-radius: 14px;
+    display: inline-block;
+    transition: all 0.3s ease;
+  }
+  .question-box.flaming {
+    border: 2px solid #ff5722;
+    background: #fff3e0;
+    box-shadow: 0 0 12px rgba(255, 87, 34, 0.4);
+  }
+
+  .instructions { color: #43a047; font-size: 13.5px; margin-bottom: 8px; font-weight: bold; min-height: 20px; }
+
+  /* Bomb Rush Widget */
+  .bomb-timer-widget {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 84px;
+    height: 94px;
+  }
+  .bomb-fuse-svg {
+    position: absolute;
+    top: 2px;
+    left: 20px;
+    width: 44px;
+    height: 32px;
+    overflow: visible;
+    z-index: 1;
+  }
+  .bomb-fuse-track { fill: none; stroke: #d7ccc8; stroke-width: 3.5; stroke-linecap: round; }
+  .bomb-fuse-burn { fill: none; stroke: #8d6e63; stroke-width: 3.5; stroke-linecap: round; transition: stroke-dashoffset 0.8s linear; }
+  .bomb-sparkle {
+    position: absolute;
+    font-size: 14px;
+    filter: drop-shadow(0 0 5px #ffeb3b);
+    animation: sparkFlicker 0.2s infinite alternate;
+    pointer-events: none;
+    z-index: 4;
+    transition: left 0.8s linear, top 0.8s linear;
+  }
+  @keyframes sparkFlicker {
+    0% { transform: scale(0.9) rotate(0deg); }
+    100% { transform: scale(1.3) rotate(20deg); }
+  }
+  .bomb-cap {
+    width: 22px;
+    height: 8px;
+    background: #c62828;
+    border-radius: 4px 4px 0 0;
+    margin-top: 24px;
+    box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.6);
+    z-index: 2;
+  }
+  .bomb-body {
+    width: 62px;
+    height: 62px;
+    background: radial-gradient(circle at 35% 30%, #ff5252, #e53935 48%, #b71c1c 90%);
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35), inset 0 3px 5px rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+  }
+  .bomb-body::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    width: 22px;
+    height: 11px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: rotate(-30deg);
+  }
+  .bomb-display-box {
+    background: #000000;
+    color: #ffffff;
+    font-family: 'Courier New', Courier, monospace, sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: 1.5px solid #222222;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.9);
+    letter-spacing: 0.5px;
+    z-index: 3;
+  }
+  .bomb-critical { animation: bombPulse 0.4s infinite alternate, shake 0.2s infinite; }
+  @keyframes bombPulse {
+    0% { transform: scale(1); filter: drop-shadow(0 0 2px #ff1744); }
+    100% { transform: scale(1.08); filter: drop-shadow(0 0 14px #ff1744); }
+  }
+
+  /* Visual Board */
+  .visual-area {
+    min-height: 120px;
+    margin: 8px 0;
+    padding: 10px;
+    background: #fffde7;
+    border-radius: 16px;
+    border: 2px dashed #ffd54f;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .grid-5-group {
+    display: grid;
+    grid-template-columns: repeat(5, 46px);
+    gap: 6px;
+    justify-content: center;
+  }
+  .grid-item-cell {
+    width: 46px;
+    height: 46px;
+    background: #ffffff;
+    border: 2px solid #a5d6a7;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 26px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .grid-item-cell.eaten {
+    opacity: 0.15;
+    transform: scale(0.6);
+    filter: grayscale(100%);
+    background: #eee;
+  }
+
+  /* Equal Groups / Multiplication Array Plates */
+  .mult-plates-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+  }
+  .mult-plate {
+    background: #ffffff;
+    border: 2px solid #f48fb1;
+    border-radius: 14px;
+    padding: 6px 10px;
+    min-width: 72px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  .mult-plate-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: #ad1457;
+    margin-bottom: 3px;
+  }
+  .mult-plate-items {
+    font-size: 18px;
+    line-height: 1.2;
+    max-width: 90px;
+    word-wrap: break-word;
+  }
+
+  /* Base-10 Tens & Ones Visual Blocks */
+  .base10-wrap {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    width: 100%;
+    gap: 10px;
+  }
+  .base10-side {
+    flex: 1;
+    background: #ffffff;
+    border: 2px solid #90caf9;
+    border-radius: 12px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .base10-label {
+    font-size: 12.5px;
+    font-weight: bold;
+    color: #1565c0;
+    margin-bottom: 6px;
+  }
+  .base10-blocks-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    align-items: flex-end;
+    min-height: 46px;
+  }
+  .ten-rod {
+    width: 13px;
+    height: 44px;
+    background: linear-gradient(180deg, #66bb6a, #2e7d32);
+    border: 1.5px solid #1b5e20;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2px 0;
+    box-sizing: border-box;
+  }
+  .ten-rod-line {
+    width: 100%;
+    height: 1px;
+    background: rgba(255,255,255,0.45);
+  }
+  .ones-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 12px);
+    gap: 3px;
+  }
+  .one-cube {
+    width: 12px;
+    height: 12px;
+    background: #ffb300;
+    border: 1px solid #e65100;
+    border-radius: 3px;
+  }
+
+  /* Subtraction Split Views */
+  .sub-crossing-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+  .sub-group-box {
+    background: white;
+    padding: 6px 10px;
+    border-radius: 12px;
+    border: 2px solid #ffcc80;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.2s;
+  }
+  .sub-group-title {
+    font-size: 12.5px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  /* Double Mirror Visual */
+  .mirror-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+  }
+  .mirror-panel {
+    background: #ffffff;
+    border: 2px solid #80cbc4;
+    border-radius: 12px;
+    padding: 8px;
+    min-width: 100px;
+  }
+  .mirror-divider {
+    font-size: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #009688;
+    font-weight: bold;
+  }
+
+  /* Halves Visual */
+  .halves-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+  .halves-pool {
+    background: rgba(233, 30, 99, 0.08);
+    border: 1px dashed #e91e63;
+    border-radius: 12px;
+    padding: 6px 12px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-height: 44px;
+  }
+  .halves-trays-wrap {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    gap: 8px;
+  }
+  .halves-tray {
+    flex: 1;
+    background: #ffffff;
+    border: 2px solid #ffb74d;
+    border-radius: 12px;
+    padding: 6px;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .halves-tray-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+    margin-top: 4px;
+  }
+
+  /* Compare Panels */
+  .compare-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    gap: 8px;
+  }
+  .compare-panel {
+    background: white;
+    border: 2px solid #b3e5fc;
+    border-radius: 12px;
+    padding: 8px;
+    min-width: 110px;
+  }
+  .compare-panel-title { font-weight: bold; font-size: 14px; color: #0288d1; margin-bottom: 4px; }
+
+  /* Ten-Frames */
+  .ten-frame-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+  }
+  .ten-frame {
+    display: grid;
+    grid-template-columns: repeat(5, 46px);
+    grid-template-rows: repeat(2, 46px);
+    gap: 4px;
+    background: #ffffff;
+    padding: 6px;
+    border: 3px solid #ff9800;
+    border-radius: 12px;
+  }
+  .frame-cell {
+    border: 1px dashed #ffa726;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 26px;
+  }
+  .frame-cell.filled { background: #fff8e1; }
+  .outside-tray-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 46px);
+    gap: 6px;
+    padding: 4px 8px;
+    background: rgba(255, 152, 0, 0.12);
+    border-radius: 10px;
+    border: 1px dashed #ffa726;
+  }
+  .clickable-star {
+    width: 46px;
+    height: 46px;
+    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  /* Frog Jump Number Line */
+  .frog-numberline-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 4px 6px 4px;
+  }
+  .frog-svg-wrap {
+    width: 100%;
+    max-width: 440px;
+    height: 120px;
+    overflow: visible;
+  }
+  .nl-axis-line { stroke: #2e7d32; stroke-width: 4; stroke-linecap: round; }
+  .nl-tick-line { stroke: #2e7d32; stroke-width: 3; stroke-linecap: round; }
+  .nl-arc-jump { fill: none; stroke: #ff9800; stroke-width: 3.5; stroke-dasharray: 6 3; stroke-linecap: round; }
+  .nl-jump-label { font-family: inherit; font-size: 13px; font-weight: 900; fill: #e65100; text-anchor: middle; }
+  .nl-number-text { font-family: inherit; font-size: 17px; font-weight: 900; fill: #1b5e20; text-anchor: middle; }
+  .nl-question-circle { fill: #fff9c4; stroke: #fbc02d; stroke-width: 2.5; }
+  .nl-question-text { font-family: inherit; font-size: 17px; font-weight: 900; fill: #d32f2f; text-anchor: middle; }
+  .frog-avatar-icon { font-size: 32px; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.2)); animation: frogBounce 1s infinite alternate ease-in-out; }
+  @keyframes frogBounce { 0% { transform: translateY(0); } 100% { transform: translateY(-7px); } }
+
+  /* Mental Box */
+  .mental-box {
+    background: #ffffff;
+    border: 2px dashed #7e57c2;
+    border-radius: 14px;
+    padding: 16px;
+    color: #5e35b1;
+    font-size: 14px;
+    font-weight: bold;
+    animation: mentalPulse 1.5s infinite alternate;
+  }
+  @keyframes mentalPulse {
+    0% { transform: scale(0.98); }
+    100% { transform: scale(1.02); }
+  }
+
+  /* Input Preview */
+  .keyboard-input-preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 2px dashed #a5d6a7;
+    border-radius: 12px;
+    padding: 4px 14px;
+    font-size: 26px;
+    font-weight: bold;
+    color: #1b5e20;
+    margin-bottom: 6px;
+    min-height: 40px;
+    min-width: 90px;
+    transition: all 0.2s;
+  }
+  .keyboard-input-preview.active {
+    border: 2px solid #2e7d32;
+    background: #e8f5e9;
+    box-shadow: 0 0 8px rgba(46, 125, 50, 0.25);
+  }
+
+  /* Keypad */
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 360px;
+    margin: 6px auto 0 auto;
+    gap: 6px;
+  }
+  .options-grid.compare-mode { grid-template-columns: repeat(3, 1fr); }
+  .btn-opt {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 8px 0;
+    background: #81c784;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #4caf50;
+    transition: opacity 0.2s;
+  }
+  .btn-opt.btn-compare { font-size: 30px; padding: 12px 0; background: #0288d1; box-shadow: 0 4px 0 #0277bd; }
+  .btn-opt:active:not(:disabled) { transform: translateY(2px); box-shadow: none; }
+  .btn-opt:disabled { opacity: 0.45; cursor: not-allowed; }
+  .msg-area { min-height: 28px; font-size: 16px; font-weight: bold; margin-top: 4px; }
+  .msg-area.retry { color: #d32f2f; }
+  .msg-area.success { color: #2e7d32; }
+
+  /* Modals */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  .modal-box {
+    background: white;
+    width: 90%;
+    max-width: 440px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 20px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  }
+
+  .shop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px 0; }
+  .shop-card { border: 2px solid #eee; border-radius: 12px; padding: 8px; background: #fafafa; }
+  .shop-card.owned { border-color: #27ae60; background: #e8f8f5; }
+  .shop-btn { width: 100%; padding: 6px 0; margin-top: 5px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+  .btn-buy { background: #f39c12; color: white; }
+  .btn-wear { background: #27ae60; color: white; }
+
+  .stat-card { background: #f8f9fa; border-radius: 12px; padding: 10px; margin: 8px 0; text-align: left; font-size: 14px; }
+  .stat-highlight { font-size: 18px; font-weight: bold; color: #2e7d32; }
+
+  .bomb-shake { animation: shake 0.5s infinite; }
+  @keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    20% { transform: translate(-2px, -1px) rotate(-2deg); }
+    40% { transform: translate(2px, 0px) rotate(2deg); }
+    60% { transform: translate(-1px, 2px) rotate(0deg); }
+    80% { transform: translate(2px, 1px) rotate(1deg); }
+    100% { transform: translate(1px, -1px) rotate(-1deg); }
+  }
+
+  #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+</style>
 </head>
-<body class="pb-24 text-gray-800 select-none">
+<body>
 
-  <!-- Top Header -->
-  <header class="bg-emerald-600 text-white sticky top-0 z-30 shadow-md">
-    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-      <div>
-        <h1 class="text-lg font-bold tracking-tight flex items-center gap-1.5">
-          <span>🥫</span> 零食罐頭防伏管家
-        </h1>
-        <p class="text-[11px] text-emerald-100">100% 免費免 API Key · 零留相極省空間 · 英國 £</p>
-      </div>
-      <button onclick="openSyncModal()" class="bg-emerald-700 hover:bg-emerald-800 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-emerald-500">
-        🔄 家庭碼: <span id="headerFamilyCode" class="font-mono font-bold text-amber-300">WA14</span>
-      </button>
-    </div>
+<canvas id="confetti-canvas"></canvas>
 
-    <!-- Search Bar -->
-    <div class="max-w-md mx-auto px-4 pb-3">
-      <div class="relative">
-        <input type="text" id="searchInput" oninput="renderList()" placeholder="搜尋牌子、罐頭、Tesco / Aldi、或「伏」..."
-          class="w-full pl-9 pr-8 py-2 rounded-xl text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-inner" />
-        <span class="absolute left-3 top-2.5 text-gray-400 text-sm">🔍</span>
-        <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute right-2.5 top-2 text-gray-400 text-sm">✕</button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="max-w-md mx-auto px-4 pt-3">
-    <div class="flex bg-gray-200 p-1 rounded-xl mb-3 text-sm font-medium">
-      <button id="tabStock" onclick="switchTab('stock')" class="flex-1 py-1.5 rounded-lg bg-white text-emerald-700 shadow-sm transition">
-        🏠 屋企存貨 (<span id="countStock">0</span>)
-      </button>
-      <button id="tabHistory" onclick="switchTab('history')" class="flex-1 py-1.5 rounded-lg text-gray-600 transition">
-        📝 食完/防伏紀錄 (<span id="countHistory">0</span>)
-      </button>
-    </div>
-
-    <!-- Filter Pills -->
-    <div id="filterPills" class="flex gap-2 overflow-x-auto no-scrollbar pb-2 mb-2 text-xs">
-      <button onclick="setFilter('all')" data-filter="all" class="filter-pill bg-emerald-600 text-white px-3 py-1 rounded-full whitespace-nowrap font-medium">全部存貨</button>
-      <button onclick="setFilter('expiring')" data-filter="expiring" class="filter-pill bg-white text-gray-600 border px-3 py-1 rounded-full whitespace-nowrap">⚠️ 就快過期 (14日內)</button>
-      <button onclick="setFilter('expired')" data-filter="expired" class="filter-pill bg-white text-gray-600 border px-3 py-1 rounded-full whitespace-nowrap">🚨 已過期</button>
-      <button onclick="setFilter('bad')" data-filter="bad" class="filter-pill bg-white text-gray-600 border px-3 py-1 rounded-full whitespace-nowrap">❌ 中伏負評</button>
-    </div>
-
-    <!-- Storage Indicator -->
-    <div class="bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5 mb-3 flex items-center justify-between text-[11px] text-emerald-800">
-      <span>💾 純文字儲存（完全免付費、零相片佔用）</span>
-      <span id="storageSize" class="font-mono font-bold">0.4 KB</span>
-    </div>
-
-    <div id="itemList" class="space-y-2.5"></div>
-  </main>
-
-  <!-- Floating Bottom Buttons -->
-  <div class="fixed bottom-4 left-0 right-0 z-20 px-4">
-    <div class="max-w-md mx-auto flex gap-2.5">
-      <button onclick="openAddModal(false)" class="flex-1 bg-white border-2 border-emerald-600 text-emerald-700 font-bold py-3 rounded-2xl shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 text-sm">
-        <span>✍️</span> 手動 / 貼上入貨
-      </button>
-      <button onclick="openAddModal(true)" class="flex-[1.5] bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3 rounded-2xl shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 text-sm">
-        <span>📷</span> 免費掃碼 / 照日期
-      </button>
-    </div>
+<div class="container">
+  <!-- 1. LOGIN SCREEN -->
+  <div id="login-view">
+    <div style="font-size: 55px;">🦖📚</div>
+    <h1>Dino Math Login</h1>
+    <div style="color: #666; margin-bottom: 15px;">Login once and your Dino will remember you!</div>
+    <input type="text" id="login-user" class="login-input" placeholder="Student Name (e.g. Alex)">
+    <input type="password" id="login-pass" class="login-input" placeholder="Password (any simple pin)">
+    <button class="login-btn" onclick="handleLogin()">Login / Start ➔</button>
   </div>
 
-  <!-- Hidden Native Camera Input for Offline Enhanced Date OCR -->
-  <input type="file" id="offlineDateCam" accept="image/*" capture="environment" class="hidden" onchange="handleOfflineDatePhoto(event)" />
-
-  <!-- Global Loading Overlay -->
-  <div id="globalLoading" class="fixed inset-0 bg-black/75 z-50 hidden flex flex-col items-center justify-center text-white p-6 text-center">
-    <div class="w-12 h-12 border-4 border-emerald-400 border-t-transparent rounded-full animate-spin mb-3"></div>
-    <p id="loadingTitle" class="text-base font-bold text-emerald-300 mb-1">正在用本地離線引擎辨識日期...</p>
-    <p class="text-xs text-gray-300">完全免費免連網，讀取後即刻銷毀暫存畫面</p>
-  </div>
-
-  <!-- Add / Edit Modal -->
-  <div id="itemModal" class="fixed inset-0 bg-black/60 z-40 hidden flex items-end sm:items-center justify-center">
-    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl max-h-[94vh] overflow-y-auto p-5 shadow-2xl">
-      <div class="flex justify-between items-center mb-3">
-        <h2 id="modalTitle" class="text-lg font-bold text-gray-800">新增 / 編輯貨品</h2>
-        <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-700 text-xl font-bold px-2">✕</button>
-      </div>
-
-      <!-- Free Offline Tools Bar -->
-      <div class="grid grid-cols-2 gap-2 mb-3">
-        <button type="button" onclick="toggleBarcodeBox()" class="bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-500 text-emerald-800 p-2.5 rounded-2xl flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
-          <span class="text-lg">🔍</span>
-          <span class="text-xs font-bold">免費掃條碼 (Barcode)</span>
-          <span class="text-[10px] text-emerald-600">自動查全球食品庫</span>
-        </button>
-        <button type="button" onclick="triggerOfflineDateCam()" class="bg-amber-50 hover:bg-amber-100 border-2 border-amber-500 text-amber-900 p-2.5 rounded-2xl flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
-          <span class="text-lg">📅</span>
-          <span class="text-xs font-bold">離線照罐底讀日期</span>
-          <span class="text-[10px] text-amber-700">黑白高對比濾鏡強化</span>
-        </button>
-      </div>
-
-      <!-- Barcode Live Reader Container (Collapsible) -->
-      <div id="barcodeSection" class="hidden mb-3 bg-gray-900 rounded-2xl overflow-hidden border-2 border-emerald-500">
-        <div id="barcodeReader" class="w-full h-44 bg-black"></div>
-        <div class="bg-gray-800 px-3 py-1.5 flex justify-between items-center text-[11px] text-gray-300">
-          <span id="barcodeHint">對準條碼；若無資料可用下面「智能貼上」</span>
-          <button type="button" onclick="stopBarcodeScanner()" class="text-red-400 underline">關閉</button>
+  <!-- 2. MAIN HEADER -->
+  <div id="app-content" style="display: none;">
+    <div class="status-header">
+      <div class="status-row">
+        <div class="user-badge">👤 <span id="display-user">Kid</span></div>
+        <div class="dino-avatar-wrap">
+          <div class="dino-hat-layer" id="equipped-hat"></div>
+          🦖
+        </div>
+        <div class="coin-badge" onclick="openShop()">
+          🪙 Today: <span id="today-coins">0</span> | Total: <span id="total-coins">0</span>
         </div>
       </div>
-
-      <!-- Smart Paste Box (Works with iPhone Live Text / Android Google Lens / Free Gemini App) -->
-      <div class="mb-3 bg-indigo-50 border border-indigo-200 rounded-2xl p-3">
-        <div class="flex justify-between items-center mb-1">
-          <label class="text-xs font-bold text-indigo-900">⚡ 智能貼上解析（配合手機自帶相機複製文字）</label>
-          <button type="button" onclick="pasteFromClipboard()" class="bg-indigo-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg active:scale-95">📋 一鍵貼上</button>
-        </div>
-        <textarea id="smartPasteInput" rows="2" oninput="parseSmartText(this.value)"
-          placeholder="用手機相機對住罐頭/包裝長按複製文字，或者貼上收據文字，自動拆解名稱、價錢 £ 同到期日..."
-          class="w-full border border-indigo-200 rounded-xl px-2.5 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400"></textarea>
+      <div class="status-row">
+        <div class="badge-pill">🌟 Today Goal: <span id="today-score">0</span> / 30</div>
+        <div class="badge-pill">🏆 Total Qs: <span id="total-score">0</span></div>
+        <button onclick="handleLogout()" style="background: none; border: none; font-size: 11px; color: #888; cursor: pointer;">Logout</button>
       </div>
-
-      <!-- Warning / History Alert -->
-      <div id="historyWarningBanner" class="hidden mb-3 p-3 rounded-xl border text-xs"></div>
-
-      <!-- Form -->
-      <form id="itemForm" onsubmit="saveItem(event)" class="space-y-3">
-        <input type="hidden" id="editId" />
-        <input type="hidden" id="itemBarcode" />
-
-        <div class="flex gap-2">
-          <div class="flex-1">
-            <label class="block text-xs font-bold text-gray-600 mb-1">零食 / 罐頭名稱 *</label>
-            <input type="text" id="itemName" required oninput="checkPreviousHistory(this.value)" placeholder="輸入名稱或掃條碼/貼上文字"
-              class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-          </div>
-          <div class="w-20">
-            <label class="block text-xs font-bold text-gray-600 mb-1">數量</label>
-            <input type="number" id="itemQty" value="1" min="0"
-              class="w-full border border-gray-300 rounded-xl px-2 py-2 text-sm text-center font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-          </div>
-        </div>
-
-        <!-- Expiry Date -->
-        <div>
-          <div class="flex justify-between items-center mb-1">
-            <label class="text-xs font-bold text-gray-600">到期日 (Best Before / Use By) *</label>
-            <span id="rawDateDetected" class="text-[11px] text-amber-600 font-bold"></span>
-          </div>
-          <input type="date" id="itemExpiry" required
-            class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none mb-1.5" />
-          <div class="flex gap-1.5 overflow-x-auto no-scrollbar text-[11px]">
-            <button type="button" onclick="addDaysToExpiry(3)" class="bg-gray-100 px-2.5 py-1 rounded-lg font-medium">+3日</button>
-            <button type="button" onclick="addDaysToExpiry(14)" class="bg-gray-100 px-2.5 py-1 rounded-lg font-medium">+2星期</button>
-            <button type="button" onclick="addMonthsToExpiry(1)" class="bg-gray-100 px-2.5 py-1 rounded-lg font-medium">+1個月</button>
-            <button type="button" onclick="addMonthsToExpiry(6)" class="bg-gray-100 px-2.5 py-1 rounded-lg font-medium">+6個月</button>
-            <button type="button" onclick="addMonthsToExpiry(12)" class="bg-gray-100 px-2.5 py-1 rounded-lg font-medium">+1年</button>
-            <button type="button" onclick="addMonthsToExpiry(24)" class="bg-gray-100 px-2.5 py-1 rounded-lg font-medium">+2年</button>
-          </div>
-        </div>
-
-        <!-- Price & Store -->
-        <div class="flex gap-2">
-          <div class="w-28">
-            <label class="block text-xs font-bold text-gray-600 mb-1">買入價錢 (£)</label>
-            <div class="relative">
-              <span class="absolute left-3 top-2 text-gray-500 text-sm font-bold">£</span>
-              <input type="number" step="0.01" id="itemPrice" placeholder="1.50"
-                class="w-full border border-gray-300 rounded-xl pl-7 pr-2 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-            </div>
-          </div>
-          <div class="flex-1">
-            <label class="block text-xs font-bold text-gray-600 mb-1">係邊買 (英國超市)</label>
-            <input type="text" id="itemStore" placeholder="揀下面或自己打..."
-              class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-          </div>
-        </div>
-
-        <!-- UK WA14 Store Pills -->
-        <div class="flex gap-1.5 overflow-x-auto no-scrollbar text-[11px] pb-1">
-          <button type="button" onclick="setStore('Tesco')" class="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-full whitespace-nowrap">Tesco</button>
-          <button type="button" onclick="setStore('Sainsbury\'s')" class="bg-orange-50 text-orange-700 border border-orange-200 px-2.5 py-1 rounded-full whitespace-nowrap">Sainsbury's</button>
-          <button type="button" onclick="setStore('M&S')" class="bg-gray-100 text-gray-800 border border-gray-300 px-2.5 py-1 rounded-full whitespace-nowrap">M&S</button>
-          <button type="button" onclick="setStore('Waitrose')" class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-full whitespace-nowrap">Waitrose</button>
-          <button type="button" onclick="setStore('Aldi')" class="bg-sky-50 text-sky-700 border border-sky-200 px-2.5 py-1 rounded-full whitespace-nowrap">Aldi</button>
-          <button type="button" onclick="setStore('Lidl')" class="bg-yellow-50 text-yellow-800 border border-yellow-300 px-2.5 py-1 rounded-full whitespace-nowrap">Lidl</button>
-          <button type="button" onclick="setStore('Asda')" class="bg-lime-50 text-lime-700 border border-lime-200 px-2.5 py-1 rounded-full whitespace-nowrap">Asda</button>
-          <button type="button" onclick="setStore('Morrisons')" class="bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 rounded-full whitespace-nowrap">Morrisons</button>
-          <button type="button" onclick="setStore('Boots')" class="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-full whitespace-nowrap">Boots</button>
-          <button type="button" onclick="setStore('中超/韓超')" class="bg-red-50 text-red-700 border border-red-200 px-2.5 py-1 rounded-full whitespace-nowrap">中超/韓超</button>
-        </div>
-
-        <!-- Rating -->
-        <div>
-          <label class="block text-xs font-bold text-gray-600 mb-1">好唔好食評價（防中伏標記）</label>
-          <div class="grid grid-cols-3 gap-2 text-xs font-bold">
-            <button type="button" onclick="setRating('unrated')" id="rate-unrated" class="rate-btn py-2 rounded-xl border-2 border-gray-300 bg-gray-100 text-gray-700">🤔 未試食</button>
-            <button type="button" onclick="setRating('good')" id="rate-good" class="rate-btn py-2 rounded-xl border border-gray-200 bg-white text-gray-600">😋 好食推介</button>
-            <button type="button" onclick="setRating('bad')" id="rate-bad" class="rate-btn py-2 rounded-xl border border-gray-200 bg-white text-gray-600">❌ 伏！唔好買</button>
-          </div>
-          <input type="hidden" id="itemRating" value="unrated" />
-        </div>
-
-        <!-- Note -->
-        <div>
-          <label class="block text-xs font-bold text-gray-600 mb-1">食評 / 產品備註</label>
-          <input type="text" id="itemNote" placeholder="例如：原味午餐肉 340g、減價先買、太鹹唔好食..."
-            class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-        </div>
-
-        <div class="pt-2 flex gap-2">
-          <button type="button" onclick="closeAddModal()" class="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-600 font-bold text-sm">取消</button>
-          <button type="submit" class="flex-[2] py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md">💾 儲存純文字紀錄</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Family Sync Modal -->
-  <div id="syncModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl">
-      <div class="flex justify-between items-center mb-3">
-        <h3 class="text-base font-bold text-gray-800">🔄 多部手機同步設定</h3>
-        <button onclick="closeSyncModal()" class="text-gray-400 font-bold text-lg">✕</button>
-      </div>
-      <div class="mb-3">
-        <label class="block text-xs font-bold text-gray-600 mb-1">家庭同步碼</label>
-        <div class="flex gap-2">
-          <input type="text" id="familyCodeInput" class="flex-1 border border-gray-300 rounded-xl px-3 py-2 text-sm font-mono uppercase font-bold" />
-          <button onclick="saveFamilyCode()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold">套用</button>
-        </div>
-      </div>
-      <div class="border-t pt-3 mt-3">
-        <p class="text-[11px] text-gray-500 mb-2">📲 傳送純文字同步碼給屋企人（WhatsApp 複製貼上）：</p>
-        <div class="flex gap-2">
-          <button onclick="exportDataString()" class="flex-1 bg-amber-500 text-white py-2 rounded-xl text-xs font-bold">📤 複製同步字串</button>
-          <button onclick="importDataString()" class="flex-1 bg-gray-700 text-white py-2 rounded-xl text-xs font-bold">📥 貼上匯入</button>
-        </div>
+      <div class="daily-progress-container" title="Daily 30 Goal Progress">
+        <div class="daily-progress-fill" id="daily-bar"></div>
       </div>
     </div>
+
+    <!-- NON-INTRUSIVE DAILY CELEBRATION TOAST -->
+    <div id="toast-banner" class="toast-banner">
+      🎉 Awesome stamina! You completed 30 questions today! +5 Bonus Coins! 🪙
+    </div>
+
+    <!-- 3. MAIN MENU VIEW -->
+    <div id="menu-view">
+      <div class="section-label">🇬🇧 UK Year 1 Foundation Worlds</div>
+      <div class="menu-grid">
+        <button class="menu-btn btn-group-add" onclick="showSubMenu('add')">➕ Addition World<br><small style="font-size: 11px; opacity: 0.9;">≤10, Make 10, Mixed</small></button>
+        <button class="menu-btn btn-group-sub" onclick="showSubMenu('sub')">➖ Subtraction World<br><small style="font-size: 11px; opacity: 0.9;">≤10, ≤20, Crossing 10, Mixed</small></button>
+      </div>
+
+      <div class="section-label">🎯 Foundation Modules (To 20)</div>
+      <div class="menu-grid">
+        <button class="menu-btn btn-c-4" onclick="startMode('bonds')">Number Bonds (10 & 20)</button>
+        <button class="menu-btn btn-c-5" onclick="startMode('doubles')">Doubles & Halves</button>
+        <button class="menu-btn btn-c-6" onclick="startMode('moreless')">More / Less (±1, ±2, ±10)</button>
+        <button class="menu-btn btn-c-7" onclick="startMode('skip')">Frog Skip (2, 5, 10)</button>
+        <button class="menu-btn btn-c-8" onclick="startMode('compare')">Compare ≤ 20 (&gt;, &lt;, =)</button>
+        <button class="menu-btn btn-c-9" onclick="startMode('mixed')">🔀 Mixed Revision (≤20)</button>
+      </div>
+
+      <!-- SCHOOL & NEXT-STEP CHALLENGES -->
+      <div class="section-label">🚀 School & Next-Step Challenges</div>
+      <div class="menu-grid">
+        <button class="menu-btn btn-adv-1" onclick="startMode('compare100')">🐊 Compare to 100 & Sums<br><small style="font-size: 10px; opacity: 0.9;">e.g. 46 [ ] 30+16, 88 [ ] 91</small></button>
+        <button class="menu-btn btn-adv-2" onclick="startMode('add100')">🔢 2-Digit Add (No Cross)<br><small style="font-size: 10px; opacity: 0.9;">e.g. 30+16, 47+10, 21+11</small></button>
+        <button class="menu-btn btn-adv-3" onclick="startMode('add100_cross')">⚡ 2-Digit Crossing 10<br><small style="font-size: 10px; opacity: 0.9;">e.g. 23 + 8, 19 + 5</small></button>
+        <button class="menu-btn btn-adv-4" onclick="startMode('mult_intro')">✖️ Intro Times Tables<br><small style="font-size: 10px; opacity: 0.9;">Equal Groups: 2s, 3s, 5s, 10s</small></button>
+      </div>
+
+      <div class="section-label">⚡ Time & Speed Challenges</div>
+      <div class="menu-grid">
+        <button class="menu-btn btn-challenge" onclick="startChallenge('bomb')">💣 10-Min Bomb Rush</button>
+        <button class="menu-btn btn-challenge" onclick="startChallenge('speed30')">🏁 30 Questions Speedrun</button>
+      </div>
+
+      <div class="bottom-tools">
+        <button class="btn-tool" style="background: #f39c12;" onclick="openShop()">🛒 Dino Shop</button>
+        <button class="btn-tool" style="background: #2980b9;" onclick="openAnalytics()">📊 Parent Report</button>
+      </div>
+    </div>
+
+    <!-- 3A. SUBMENU: ADDITION WORLD -->
+    <div id="submenu-add-view">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <button class="btn-back" onclick="backToMainMenu()">◀ Main Menu</button>
+        <h3 style="margin: 0; color: #2e7d32;">➕ Addition World</h3>
+        <div style="width: 70px;"></div>
+      </div>
+      <div class="menu-grid">
+        <button class="menu-btn btn-c-1" style="grid-column: span 2; padding: 14px;" onclick="startMode('add10')">1. Addition ≤ 10</button>
+        <button class="menu-btn btn-c-3" style="grid-column: span 2; padding: 14px;" onclick="startMode('make10')">2. Make 10 Addition (11-20)</button>
+        <button class="menu-btn" style="grid-column: span 2; padding: 15px; background: linear-gradient(135deg, #2e7d32, #1b5e20);" onclick="startMode('mixed_add')">3. 🔀 Mixed Addition (All Stages)</button>
+      </div>
+    </div>
+
+    <!-- 3B. SUBMENU: SUBTRACTION WORLD -->
+    <div id="submenu-sub-view">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <button class="btn-back" onclick="backToMainMenu()">◀ Main Menu</button>
+        <h3 style="margin: 0; color: #e65100;">➖ Subtraction World</h3>
+        <div style="width: 70px;"></div>
+      </div>
+      <div class="menu-grid">
+        <button class="menu-btn btn-c-2" style="grid-column: span 2; padding: 13px;" onclick="startMode('sub10')">1. Subtraction ≤ 10</button>
+        <button class="menu-btn btn-c-2b" style="grid-column: span 2; padding: 13px;" onclick="startMode('sub20_nocross')">2. Subtraction ≤ 20 (No Crossing 10)</button>
+        <button class="menu-btn btn-c-2c" style="grid-column: span 2; padding: 13px;" onclick="startMode('sub20_cross')">3. Subtraction ≤ 20 (Crossing 10)</button>
+        <button class="menu-btn" style="grid-column: span 2; padding: 15px; background: linear-gradient(135deg, #e65100, #bf360c);" onclick="startMode('mixed_sub')">4. 🔀 Mixed Subtraction (All Stages)</button>
+      </div>
+    </div>
+
+    <!-- 4. GAME VIEW -->
+    <div id="game-view">
+      <div class="top-bar">
+        <button class="btn-back" onclick="exitToMenu()">◀ Back</button>
+        <div class="mode-badge" id="mode-badge">Mode</div>
+        <div id="game-timer-container">
+          <div class="timer-banner" id="game-timer">Practice</div>
+        </div>
+        <button class="btn-back" id="btn-visual-toggle" onclick="toggleVisual()">👁️ Visual: ON</button>
+      </div>
+
+      <!-- Streak / Combo Flame -->
+      <div id="combo-badge" class="combo-badge">🔥 Combo x2 Streak!</div>
+
+      <div class="question-box" id="question-text">7 + 3 = ?</div>
+      <div class="instructions" id="hint-text">Instructions</div>
+
+      <div class="visual-area" id="visual-board"></div>
+
+      <!-- Clean Blank Input Preview Box -->
+      <div id="keyboard-preview-wrap">
+        <div class="keyboard-input-preview" id="keyboard-preview">&nbsp;</div>
+      </div>
+
+      <div id="options-box" class="options-grid"></div>
+      <div class="msg-area" id="msg-text"></div>
+    </div>
   </div>
+</div>
 
-  <script>
-    let currentTab = 'stock';
-    let currentFilter = 'all';
-    let familyCode = localStorage.getItem('wa14_family_code') || 'WA14';
-    let html5QrCode = null;
+<!-- SHOP MODAL -->
+<div id="shop-modal" class="modal-overlay">
+  <div class="modal-box">
+    <h2>🦖 Dino Hat Shop</h2>
+    <div>Equip purchased hats directly to your Dino!</div>
+    <div class="shop-grid" id="shop-grid"></div>
+    <button class="btn-back" style="width: 100%; padding: 10px;" onclick="closeModal('shop-modal')">Close Shop</button>
+  </div>
+</div>
 
-    const defaultItems = [
-      {
-        id: '1',
-        barcode: '5000112637922',
-        name: 'M&S 牛奶朱古力消化餅',
-        qty: 2,
-        expiry: getFutureDate(45),
-        price: '1.65',
-        store: 'M&S',
-        rating: 'good',
-        note: 'Altrincham 分店買，配茶一流，必回購'
-      },
-      {
-        id: '2',
-        barcode: '',
-        name: '特價茄汁豆罐頭',
-        qty: 1,
-        expiry: getFutureDate(5),
-        price: '0.45',
-        store: 'Aldi',
-        rating: 'bad',
-        note: '❌ 伏！汁太稀唔好食，下次買返 Heinz'
-      }
-    ];
+<!-- ANALYTICS MODAL -->
+<div id="analytics-modal" class="modal-overlay">
+  <div class="modal-box">
+    <h2>📊 Learning Analytics Report</h2>
+    <div class="stat-card">
+      <div>⏱ Total Time Spent: <span class="stat-highlight" id="an-time">0 min</span></div>
+      <div>✅ Total Correct: <span class="stat-highlight" id="an-correct">0</span> questions</div>
+      <div>❌ Total Mistakes: <span class="stat-highlight" id="an-wrong">0</span> times</div>
+      <div>⚡ Average Speed: <span class="stat-highlight" id="an-speed">0s</span> per question</div>
+    </div>
+    <div class="stat-card" style="border-left: 4px solid #4caf50;">
+      <div style="font-weight: bold; color: #2e7d32;">💪 Strongest Topic:</div>
+      <div id="an-strong" style="margin-top: 4px;">Answering more to calculate...</div>
+    </div>
+    <div class="stat-card" style="border-left: 4px solid #f44336;">
+      <div style="font-weight: bold; color: #c62828;">🎯 Needs Practice:</div>
+      <div id="an-weak" style="margin-top: 4px;">Answering more to calculate...</div>
+    </div>
+    <button class="btn-back" style="width: 100%; padding: 10px; margin-top: 10px;" onclick="closeModal('analytics-modal')">Close</button>
+  </div>
+</div>
 
-    function getStorageKey() { return `wa14_pantry_items_${familyCode}`; }
-    function getItems() {
-      const raw = localStorage.getItem(getStorageKey());
-      if (!raw) {
-        localStorage.setItem(getStorageKey(), JSON.stringify(defaultItems));
-        return defaultItems;
-      }
-      return JSON.parse(raw);
+<!-- CHALLENGE FINISH MODAL -->
+<div id="result-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div id="res-icon" style="font-size: 55px;">🏆</div>
+    <h2 id="res-title">Challenge Complete!</h2>
+    <div id="res-desc" style="margin: 15px 0; font-size: 16px; color: #444;"></div>
+    <button class="btn-back" style="width: 100%; padding: 12px; background: #4caf50; color: white;" onclick="closeModal('result-modal'); exitToMenu();">Back to Menu ➔</button>
+  </div>
+</div>
+
+<script>
+// --- AUDIO SYNTHESIS ENGINE ---
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let ctx;
+function initAudio() {
+  if (!ctx) ctx = new AudioCtx();
+  if (ctx.state === 'suspended') ctx.resume();
+}
+
+function playDinoChomp() {
+  initAudio();
+  const now = ctx.currentTime;
+  const jawOsc = ctx.createOscillator();
+  const jawGain = ctx.createGain();
+  jawOsc.type = 'sawtooth';
+  jawOsc.frequency.setValueAtTime(160, now);
+  jawOsc.frequency.exponentialRampToValueAtTime(30, now + 0.18);
+  const jawFilter = ctx.createBiquadFilter();
+  jawFilter.type = 'lowpass';
+  jawFilter.frequency.setValueAtTime(250, now);
+  jawGain.gain.setValueAtTime(0.9, now);
+  jawGain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+  jawOsc.connect(jawFilter);
+  jawFilter.connect(jawGain);
+  jawGain.connect(ctx.destination);
+  jawOsc.start(now);
+  jawOsc.stop(now + 0.22);
+
+  const bufferSize = ctx.sampleRate * 0.18;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+  const noise = ctx.createBufferSource();
+  noise.buffer = buffer;
+  const crunchFilter = ctx.createBiquadFilter();
+  crunchFilter.type = 'bandpass';
+  crunchFilter.frequency.setValueAtTime(500, now);
+  crunchFilter.Q.setValueAtTime(1.5, now);
+  const crunchGain = ctx.createGain();
+  crunchGain.gain.setValueAtTime(0.8, now);
+  crunchGain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+  noise.connect(crunchFilter);
+  crunchFilter.connect(crunchGain);
+  crunchGain.connect(ctx.destination);
+  noise.start(now);
+  noise.stop(now + 0.18);
+}
+
+function playPop() {
+  initAudio();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(320, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(650, ctx.currentTime + 0.08);
+  gain.gain.setValueAtTime(0.2, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + 0.08);
+}
+
+function playFrogJumpSound() {
+  initAudio();
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(220, now);
+  osc.frequency.exponentialRampToValueAtTime(580, now + 0.12);
+  gain.gain.setValueAtTime(0.28, now);
+  gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.15);
+}
+
+function playSuccess(comboLevel = 1) {
+  initAudio();
+  const baseMultiplier = 1 + Math.min(comboLevel - 1, 6) * 0.08;
+  const notes = [261.63, 329.63, 392.00, 523.25].map(f => f * baseMultiplier);
+  notes.forEach((freq, idx) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.08);
+    gain.gain.setValueAtTime(0.22, ctx.currentTime + idx * 0.08);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + idx * 0.08 + 0.16);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime + idx * 0.08);
+    osc.stop(ctx.currentTime + idx * 0.08 + 0.16);
+  });
+}
+
+function playWrongSound() {
+  initAudio();
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(140, now);
+  osc.frequency.exponentialRampToValueAtTime(75, now + 0.25);
+  gain.gain.setValueAtTime(0.35, now);
+  gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.25);
+}
+
+function playGrandCelebrationSound() {
+  initAudio();
+  const fanfare = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99];
+  fanfare.forEach((freq, idx) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.1);
+    gain.gain.setValueAtTime(0.25, ctx.currentTime + idx * 0.1);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + idx * 0.1 + 0.3);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime + idx * 0.1);
+    osc.stop(ctx.currentTime + idx * 0.1 + 0.3);
+  });
+}
+
+function playBombExplosion() {
+  initAudio();
+  const now = ctx.currentTime;
+  const bufferSize = ctx.sampleRate * 0.8;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.2));
+  const noise = ctx.createBufferSource();
+  noise.buffer = buffer;
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(150, now);
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(1.0, now);
+  gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+  noise.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  noise.start(now);
+  noise.stop(now + 0.8);
+}
+
+// --- CONFETTI ENGINE ---
+function triggerConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const cctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const pieces = [];
+  const colors = ['#f44336', '#e91e63', '#9c27b0', '#2196f3', '#4caf50', '#ffeb3b', '#ff9800'];
+  for (let i = 0; i < 90; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: -20 - Math.random() * 50,
+      r: Math.random() * 6 + 4,
+      d: Math.random() * 4 + 2,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      tilt: Math.floor(Math.random() * 10) - 10,
+      tiltAngleIncremental: (Math.random() * 0.07) + 0.05,
+      tiltAngle: 0
+    });
+  }
+
+  let animationFrame;
+  let framesCount = 0;
+
+  function draw() {
+    cctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.tiltAngle += p.tiltAngleIncremental;
+      p.y += (Math.cos(p.d) + 3 + p.r / 2) * 0.8;
+      p.x += Math.sin(p.d);
+      p.tilt = Math.sin(p.tiltAngle) * 15;
+
+      cctx.beginPath();
+      cctx.lineWidth = p.r;
+      cctx.strokeStyle = p.color;
+      cctx.moveTo(p.x + p.tilt + p.r / 4, p.y);
+      cctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 4);
+      cctx.stroke();
+    });
+
+    framesCount++;
+    if (framesCount < 160) {
+      animationFrame = requestAnimationFrame(draw);
+    } else {
+      cctx.clearRect(0, 0, canvas.width, canvas.height);
+      cancelAnimationFrame(animationFrame);
     }
-    function saveItemsToStorage(items) {
-      localStorage.setItem(getStorageKey(), JSON.stringify(items));
-      updateStorageSize();
-      renderList();
+  }
+  draw();
+}
+
+// --- USER & PERSISTENCE ---
+let currentUser = null;
+let userData = null;
+
+function getTodayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const lastUser = localStorage.getItem('dino_active_user');
+  if (lastUser) {
+    const raw = localStorage.getItem(`dino_user_${lastUser}`);
+    if (raw) {
+      currentUser = lastUser;
+      userData = JSON.parse(raw);
+      initLoadedUser();
     }
-    function getFutureDate(days) {
-      const d = new Date(); d.setDate(d.getDate() + days);
-      return d.toISOString().split('T')[0];
-    }
-    function updateStorageSize() {
-      const raw = localStorage.getItem(getStorageKey()) || '[]';
-      document.getElementById('storageSize').textContent = `${(new Blob([raw]).size / 1024).toFixed(2)} KB`;
-    }
+  }
+});
 
-    // --- 1. Free Barcode Scanner (Open Food Facts) ---
-    function toggleBarcodeBox() {
-      const box = document.getElementById('barcodeSection');
-      if (box.classList.contains('hidden')) {
-        box.classList.remove('hidden');
-        startBarcodeScanner();
-      } else {
-        stopBarcodeScanner();
-      }
-    }
+function handleLogin() {
+  initAudio();
+  playPop();
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value.trim();
+  if (!u || !p) { alert("Please enter both Name and Password"); return; }
 
-    function startBarcodeScanner() {
-      html5QrCode = new Html5Qrcode("barcodeReader");
-      html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: { width: 240, height: 100 } },
-        async (decodedText) => {
-          if (navigator.vibrate) navigator.vibrate(100);
-          document.getElementById('itemBarcode').value = decodedText;
-          checkPreviousHistory(decodedText);
-          stopBarcodeScanner();
+  currentUser = u;
+  const storeKey = `dino_user_${u}`;
+  const raw = localStorage.getItem(storeKey);
+  
+  if (raw) {
+    userData = JSON.parse(raw);
+    if (userData.pass !== p) { alert("Incorrect password for this student!"); return; }
+  } else {
+    userData = {
+      pass: p,
+      todayDate: getTodayStr(),
+      todayCoins: 0,
+      totalCoins: 0,
+      todayScore: 0,
+      totalScore: 0,
+      totalWrong: 0,
+      totalSeconds: 0,
+      equippedHat: 'none',
+      ownedHats: ['none'],
+      celebratedToday: false,
+      topicStats: {}
+    };
+  }
 
-          const localMatch = getItems().find(i => i.barcode === decodedText);
-          if (localMatch) {
-            document.getElementById('itemName').value = localMatch.name;
-            return;
-          }
+  localStorage.setItem('dino_active_user', currentUser);
+  initLoadedUser();
+}
 
-          document.getElementById('itemName').value = `查詢條碼 ${decodedText}...`;
-          try {
-            const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${decodedText}.json`);
-            const data = await res.json();
-            if (data.status === 1 && data.product && data.product.product_name) {
-              const brand = data.product.brands ? `${data.product.brands} ` : '';
-              const qty = data.product.quantity ? ` (${data.product.quantity})` : '';
-              document.getElementById('itemName').value = `${brand}${data.product.product_name}`;
-              if (qty && !document.getElementById('itemNote').value) {
-                document.getElementById('itemNote').value = qty.trim();
-              }
-            } else {
-              document.getElementById('itemName').value = '';
-              alert('⚠️ 免費條碼庫暫時未有呢款貨（可能係中超或新出零食），你可以用手機相機對住包裝複製文字，貼入下面紫色「智能貼上解析框」就自動填好！');
-            }
-          } catch {
-            document.getElementById('itemName').value = '';
-          }
-        },
-        () => {}
-      ).catch(() => {
-        document.getElementById('barcodeHint').textContent = '⚠️ 需透過 HTTPS 網址開相機，或直接用下方智能貼上';
-      });
-    }
+function initLoadedUser() {
+  if (userData.todayDate !== getTodayStr()) {
+    userData.todayDate = getTodayStr();
+    userData.todayScore = 0;
+    userData.todayCoins = 0;
+    userData.celebratedToday = false;
+  }
+  saveUserData();
 
-    async function stopBarcodeScanner() {
-      if (html5QrCode) {
-        try { await html5QrCode.stop(); html5QrCode.clear(); } catch (e) {}
-        html5QrCode = null;
-      }
-      document.getElementById('barcodeSection').classList.add('hidden');
-    }
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('app-content').style.display = 'block';
+  document.getElementById('menu-view').style.display = 'block';
+  document.getElementById('display-user').innerText = currentUser;
+  updateDashboardUI();
+}
 
-    // --- 2. Free Offline High-Contrast Date OCR (No API Key, No Cost) ---
-    function triggerOfflineDateCam() {
-      const input = document.getElementById('offlineDateCam');
-      input.value = '';
-      input.click();
-    }
+function handleLogout() {
+  playPop();
+  localStorage.removeItem('dino_active_user');
+  currentUser = null;
+  userData = null;
+  document.getElementById('app-content').style.display = 'none';
+  document.getElementById('login-view').style.display = 'flex';
+}
 
-    async function handleOfflineDatePhoto(event) {
-      const file = event.target.files[0];
-      if (!file) return;
+function saveUserData() {
+  if (!currentUser || !userData) return;
+  localStorage.setItem(`dino_user_${currentUser}`, JSON.stringify(userData));
+}
 
-      document.getElementById('globalLoading').classList.remove('hidden');
-      try {
-        const processedDataUrl = await enhanceMetalCanContrast(file);
-        event.target.value = '';
+function updateDashboardUI() {
+  document.getElementById('today-coins').innerText = userData.todayCoins;
+  document.getElementById('total-coins').innerText = userData.totalCoins;
+  document.getElementById('today-score').innerText = userData.todayScore;
+  document.getElementById('total-score').innerText = userData.totalScore;
+  
+  const percent = Math.min(100, Math.round((userData.todayScore / 30) * 100));
+  const bar = document.getElementById('daily-bar');
+  if (bar) bar.style.width = `${percent}%`;
 
-        const { data: { text } } = await Tesseract.recognize(processedDataUrl, 'eng');
-        const parsedDate = extractDateFromText(text);
+  const hatIcon = SHOP_ITEMS.find(h => h.id === userData.equippedHat)?.icon || '';
+  document.getElementById('equipped-hat').innerText = hatIcon;
+}
 
-        if (parsedDate) {
-          if (navigator.vibrate) navigator.vibrate([80, 50, 80]);
-          document.getElementById('itemExpiry').value = parsedDate;
-          document.getElementById('rawDateDetected').textContent = `✅ 離線讀到: ${parsedDate}`;
+// --- SUBMENU NAVIGATION ---
+let currentSubMenu = '';
+
+function showSubMenu(type) {
+  initAudio();
+  playPop();
+  document.getElementById('menu-view').style.display = 'none';
+  if (type === 'add') {
+    currentSubMenu = 'add';
+    document.getElementById('submenu-add-view').style.display = 'block';
+  } else if (type === 'sub') {
+    currentSubMenu = 'sub';
+    document.getElementById('submenu-sub-view').style.display = 'block';
+  }
+}
+
+function backToMainMenu() {
+  initAudio();
+  playPop();
+  document.getElementById('submenu-add-view').style.display = 'none';
+  document.getElementById('submenu-sub-view').style.display = 'none';
+  document.getElementById('menu-view').style.display = 'block';
+  currentSubMenu = '';
+}
+
+// --- SHOP ENGINE ---
+const SHOP_ITEMS = [
+  { id: 'crown', name: 'Royal Crown', icon: '👑', cost: 10 },
+  { id: 'shades', name: 'Cool Shades', icon: '😎', cost: 15 },
+  { id: 'tophat', name: 'Magic Top Hat', icon: '🎩', cost: 20 },
+  { id: 'rocket', name: 'Jetpack', icon: '🚀', cost: 25 },
+  { id: 'viking', name: 'Viking Horns', icon: '🪖', cost: 30 },
+  { id: 'wizard', name: 'Wizard Star Hat', icon: '🧙‍♂️', cost: 35 }
+];
+
+function openShop() {
+  initAudio();
+  playPop();
+  const grid = document.getElementById('shop-grid');
+  grid.innerHTML = '';
+
+  SHOP_ITEMS.forEach(item => {
+    const isOwned = userData.ownedHats.includes(item.id);
+    const isEquipped = (userData.equippedHat === item.id);
+    const card = document.createElement('div');
+    card.className = `shop-card ${isOwned ? 'owned' : ''}`;
+    card.innerHTML = `
+      <div style="font-size: 32px;">${item.icon}</div>
+      <div style="font-size: 13px; font-weight: bold;">${item.name}</div>
+      <div style="color: #e67e22; font-size: 12px; font-weight: bold;">🪙 ${item.cost} Coins</div>
+    `;
+
+    const btn = document.createElement('button');
+    btn.className = 'shop-btn';
+    if (isEquipped) {
+      btn.innerText = 'Equipped';
+      btn.disabled = true;
+    } else if (isOwned) {
+      btn.className += ' btn-wear';
+      btn.innerText = 'Wear';
+      btn.onclick = () => {
+        userData.equippedHat = item.id;
+        saveUserData();
+        updateDashboardUI();
+        openShop();
+      };
+    } else {
+      btn.className += ' btn-buy';
+      btn.innerText = 'Buy';
+      btn.onclick = () => {
+        if (userData.totalCoins >= item.cost) {
+          userData.totalCoins -= item.cost;
+          userData.ownedHats.push(item.id);
+          userData.equippedHat = item.id;
+          saveUserData();
+          updateDashboardUI();
+          playSuccess(1);
+          openShop();
         } else {
-          // Put whatever raw text was read into smart paste box so user can see/adjust
-          const cleanRaw = text.replace(/\s+/g, ' ').trim();
-          alert(`⚠️ 罐底反光太強未能自動轉成日期。\n\n離線引擎見到嘅字：「${cleanRaw || '無清晰文字'}」\n💡 建議小技巧：直接用你手機自帶相機/相簿長按罐底日期「複製文字」，再撳「📋 一鍵貼上」就會自動填好！`);
+          alert("Not enough coins! Solve more questions to earn coins!");
         }
-      } catch (err) {
-        alert('讀取失敗：' + err.message);
-      } finally {
-        document.getElementById('globalLoading').classList.add('hidden');
+      };
+    }
+    card.appendChild(btn);
+    grid.appendChild(card);
+  });
+  document.getElementById('shop-modal').style.display = 'flex';
+}
+
+function closeModal(id) {
+  playPop();
+  document.getElementById(id).style.display = 'none';
+}
+
+// --- LEARNING ANALYTICS ENGINE ---
+function openAnalytics() {
+  initAudio();
+  playPop();
+  const totalMins = Math.round(userData.totalSeconds / 60);
+  const totalAns = userData.totalScore + userData.totalWrong;
+  const avgSpeed = totalAns > 0 ? (userData.totalSeconds / totalAns).toFixed(1) : 0;
+
+  document.getElementById('an-time').innerText = `${totalMins} min`;
+  document.getElementById('an-correct').innerText = userData.totalScore;
+  document.getElementById('an-wrong').innerText = userData.totalWrong;
+  document.getElementById('an-speed').innerText = `${avgSpeed}s`;
+
+  let bestTopic = "None yet", worstTopic = "None yet";
+  let maxAcc = -1, minAcc = 999;
+
+  for (const [topic, st] of Object.entries(userData.topicStats)) {
+    const totalTopic = st.correct + st.wrong;
+    if (totalTopic >= 3) {
+      const acc = st.correct / totalTopic;
+      if (acc > maxAcc) { maxAcc = acc; bestTopic = `${topic} (${Math.round(acc*100)}% accuracy)`; }
+      if (acc < minAcc) { minAcc = acc; worstTopic = `${topic} (${Math.round(acc*100)}% accuracy)`; }
+    }
+  }
+
+  document.getElementById('an-strong').innerText = bestTopic;
+  document.getElementById('an-weak').innerText = worstTopic;
+  document.getElementById('analytics-modal').style.display = 'flex';
+}
+
+// --- GAME LOGIC & CURRICULUM GENERATOR ---
+let activeMode = '';
+let activeChallenge = '';
+let isChallenge = false;
+let challengeTimer = 0;
+let challengeInterval = null;
+let challengeQCount = 0;
+let questionStartTime = 0;
+let isAnswered = false;
+let correctAns = null;
+
+// ANTI-GUESSING & VISUAL STATES
+let showVisual = true;
+let manualVisualOff = false;
+let currentStreak = 0;
+let currentQuestionWrongAttempts = 0;
+let thinkLockTimer = null;
+let isSubmitLocked = false;
+
+let q_paramA = 0;
+let q_paramB = 0;
+let q_paramStep = 1;
+let q_type = '';
+let make10_moved = 0;
+
+// For Compare 100 / Expression Visuals
+let compLeftVal = 0;
+let compRightVal = 0;
+let compLeftStr = '';
+let compRightStr = '';
+
+let skip_step = 2;
+let skip_seq = [];
+let skip_blankIdx = 0;
+
+let half_sharedCount = 0;
+let isDoubleQuestion = true;
+
+let keyboardBuffer = '';
+
+const ALL_CURRICULUM_MODES = [
+  'add10', 'sub10', 'sub20_nocross', 'sub20_cross',
+  'make10', 'bonds', 'doubles', 'moreless', 'skip', 'compare'
+];
+
+function toggleVisual() {
+  initAudio();
+  playPop();
+  showVisual = !showVisual;
+  manualVisualOff = !showVisual;
+  updateVisualToggleBtn();
+  renderQuestionVisual();
+}
+
+function updateVisualToggleBtn() {
+  const b = document.getElementById('btn-visual-toggle');
+  b.innerText = showVisual ? '👁️ Visual: ON' : '🙈 Visual: OFF';
+}
+
+function startMode(mode) {
+  initAudio();
+  playPop();
+  activeMode = mode;
+  isChallenge = false;
+  currentStreak = 0;
+  showVisual = !manualVisualOff;
+  updateVisualToggleBtn();
+  updateStreakUI();
+  document.getElementById('menu-view').style.display = 'none';
+  document.getElementById('submenu-add-view').style.display = 'none';
+  document.getElementById('submenu-sub-view').style.display = 'none';
+  document.getElementById('game-view').style.display = 'block';
+  updateTimerBanner('Practice');
+  nextQuestion();
+}
+
+function startChallenge(chType) {
+  initAudio();
+  playPop();
+  activeChallenge = chType;
+  isChallenge = true;
+  challengeQCount = 0;
+  currentStreak = 0;
+  showVisual = !manualVisualOff;
+  updateVisualToggleBtn();
+  updateStreakUI();
+  document.getElementById('menu-view').style.display = 'none';
+  document.getElementById('submenu-add-view').style.display = 'none';
+  document.getElementById('submenu-sub-view').style.display = 'none';
+  document.getElementById('game-view').style.display = 'block';
+
+  clearInterval(challengeInterval);
+
+  if (chType === 'bomb') {
+    challengeTimer = 600;
+    updateTimerBanner('10:00');
+    challengeInterval = setInterval(() => {
+      challengeTimer--;
+      const m = Math.floor(challengeTimer / 60).toString().padStart(2, '0');
+      const s = (challengeTimer % 60).toString().padStart(2, '0');
+      updateTimerBanner(`${m}:${s}`);
+
+      if (challengeTimer <= 20) {
+        document.getElementById('game-view').classList.add('bomb-shake');
+      }
+
+      if (challengeTimer <= 0) {
+        clearInterval(challengeInterval);
+        document.getElementById('game-view').classList.remove('bomb-shake');
+        playBombExplosion();
+        showChallengeResult('💥 BOOM! Time Up!', `Awesome stamina! You completed <b>${challengeQCount}</b> questions in 10 minutes!`);
+      }
+    }, 1000);
+  } else if (chType === 'speed30') {
+    challengeTimer = 0;
+    updateTimerBanner(`⏱️ 00:00 (0/30)`);
+    challengeInterval = setInterval(() => {
+      challengeTimer++;
+      const m = Math.floor(challengeTimer / 60).toString().padStart(2, '0');
+      const s = (challengeTimer % 60).toString().padStart(2, '0');
+      updateTimerBanner(`⏱️ ${m}:${s} (${challengeQCount}/30)`);
+    }, 1000);
+  }
+  nextQuestion();
+}
+
+function updateStreakUI() {
+  const badge = document.getElementById('combo-badge');
+  const qBox = document.getElementById('question-text');
+  if (currentStreak >= 2) {
+    badge.innerText = `🔥 Combo x${currentStreak} Streak!`;
+    badge.style.display = 'block';
+    qBox.classList.add('flaming');
+  } else {
+    badge.style.display = 'none';
+    qBox.classList.remove('flaming');
+  }
+}
+
+function updateTimerBanner(txt) {
+  const container = document.getElementById('game-timer-container');
+  if (activeChallenge === 'bomb' && isChallenge) {
+    let widget = document.getElementById('bomb-widget');
+
+    if (!widget) {
+      container.innerHTML = `
+        <div id="bomb-widget" class="bomb-timer-widget">
+          <svg class="bomb-fuse-svg" viewBox="0 0 44 32">
+            <path d="M 4 2 Q 22 2, 22 26" class="bomb-fuse-track" />
+            <path id="bomb-fuse-path" d="M 4 2 Q 22 2, 22 26" class="bomb-fuse-burn" stroke-dasharray="52" stroke-dashoffset="0" />
+          </svg>
+          <div id="bomb-spark" class="bomb-sparkle">✨🔥</div>
+          <div class="bomb-cap"></div>
+          <div class="bomb-body">
+            <div id="bomb-digits" class="bomb-display-box">${txt}</div>
+          </div>
+        </div>
+      `;
+      widget = document.getElementById('bomb-widget');
+    }
+
+    const digits = document.getElementById('bomb-digits');
+    if (digits) digits.innerText = txt;
+
+    const totalSec = 600;
+    const fusePath = document.getElementById('bomb-fuse-path');
+    const spark = document.getElementById('bomb-spark');
+
+    if (fusePath && spark) {
+      const totalLen = fusePath.getTotalLength ? fusePath.getTotalLength() : 52;
+      const ratio = Math.max(0, Math.min(1, challengeTimer / totalSec));
+      const burnedLen = (1 - ratio) * totalLen;
+      fusePath.style.strokeDashoffset = burnedLen;
+
+      if (fusePath.getPointAtLength) {
+        const pt = fusePath.getPointAtLength(burnedLen);
+        spark.style.left = (pt.x + 14) + 'px';
+        spark.style.top = (pt.y - 6) + 'px';
       }
     }
 
-    // Black & White High-Contrast Binarization Filter for Metal Cans
-    function enhanceMetalCanContrast(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = e => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            // Crop center 70% where user aims the date
-            const cropW = img.width * 0.75;
-            const cropH = img.height * 0.45;
-            const startX = (img.width - cropW) / 2;
-            const startY = (img.height - cropH) / 2;
+    if (challengeTimer <= 20) {
+      widget.classList.add('bomb-critical');
+    } else {
+      widget.classList.remove('bomb-critical');
+    }
+  } else {
+    container.innerHTML = `<div class="timer-banner" id="game-timer">${txt}</div>`;
+  }
+}
 
-            const scale = Math.min(1, 1000 / cropW);
-            canvas.width = cropW * scale;
-            canvas.height = cropH * scale;
-            const ctx = canvas.getContext('2d');
-            ctx.filter = 'grayscale(100%) contrast(220%) brightness(110%)';
-            ctx.drawImage(img, startX, startY, cropW, cropH, 0, 0, canvas.width, canvas.height);
+function exitToMenu() {
+  playPop();
+  clearInterval(challengeInterval);
+  clearInterval(thinkLockTimer);
+  document.getElementById('game-timer-container').innerHTML = '';
+  document.getElementById('game-view').classList.remove('bomb-shake');
+  document.getElementById('game-view').style.display = 'none';
 
-            const out = canvas.toDataURL('image/jpeg', 0.85);
-            canvas.width = 0; canvas.height = 0;
-            resolve(out);
-          };
-          img.onerror = reject;
-          img.src = e.target.result;
+  if (currentSubMenu === 'add') {
+    document.getElementById('submenu-add-view').style.display = 'block';
+  } else if (currentSubMenu === 'sub') {
+    document.getElementById('submenu-sub-view').style.display = 'block';
+  } else {
+    document.getElementById('menu-view').style.display = 'block';
+  }
+  updateDashboardUI();
+}
+
+// Anti-Guessing 2-second Think Delay
+function startThinkDelay() {
+  clearInterval(thinkLockTimer);
+  isSubmitLocked = true;
+  let secLeft = 2;
+
+  const updateLockState = () => {
+    const submitBtns = document.querySelectorAll('.submit-guard-btn');
+    submitBtns.forEach(btn => {
+      if (secLeft > 0) {
+        btn.disabled = true;
+        if (btn.dataset.origText === 'OK ↵') {
+          btn.innerText = `⏳ ${secLeft}s`;
+        }
+      } else {
+        btn.disabled = false;
+        btn.innerText = btn.dataset.origText;
+      }
+    });
+  };
+
+  updateLockState();
+  thinkLockTimer = setInterval(() => {
+    secLeft--;
+    updateLockState();
+    if (secLeft <= 0) {
+      isSubmitLocked = false;
+      clearInterval(thinkLockTimer);
+    }
+  }, 1000);
+}
+
+function nextQuestion() {
+  isAnswered = false;
+  currentQuestionWrongAttempts = 0;
+  keyboardBuffer = '';
+  updateKeyboardPreview();
+  document.getElementById('msg-text').innerText = '';
+  questionStartTime = Date.now();
+
+  let mode = isChallenge ? ALL_CURRICULUM_MODES[Math.floor(Math.random() * ALL_CURRICULUM_MODES.length)] : activeMode;
+  
+  if (mode === 'mixed') {
+    mode = ALL_CURRICULUM_MODES[Math.floor(Math.random() * ALL_CURRICULUM_MODES.length)];
+  } else if (mode === 'mixed_add') {
+    const addChoices = ['add10', 'make10'];
+    mode = addChoices[Math.floor(Math.random() * addChoices.length)];
+  } else if (mode === 'mixed_sub') {
+    const subChoices = ['sub10', 'sub20_nocross', 'sub20_cross'];
+    mode = subChoices[Math.floor(Math.random() * subChoices.length)];
+  }
+
+  q_type = mode;
+
+  // Smart Fading: 連續答啱 3 題自動轉心算模式
+  if (!manualVisualOff && currentStreak >= 3 && showVisual) {
+    showVisual = false;
+    updateVisualToggleBtn();
+  }
+
+  const qBox = document.getElementById('question-text');
+  const hBox = document.getElementById('hint-text');
+  const kWrap = document.getElementById('keyboard-preview-wrap');
+  kWrap.style.display = (mode === 'compare' || mode === 'compare100') ? 'none' : 'block';
+
+  if (mode === 'add10') {
+    document.getElementById('mode-badge').innerText = (activeMode === 'mixed_add' ? '🔀 Mixed Add: ' : '') + 'Addition ≤ 10';
+    q_paramA = Math.floor(Math.random() * 5) + 1;
+    q_paramB = Math.floor(Math.random() * (10 - q_paramA)) + 1;
+    correctAns = q_paramA + q_paramB;
+    qBox.innerText = `${q_paramA} + ${q_paramB} = ?`;
+    hBox.innerText = `Count 5 in each row: 🍪 = ${q_paramA}, 🍓 = ${q_paramB}`;
+  } 
+  else if (mode === 'make10') {
+    document.getElementById('mode-badge').innerText = (activeMode === 'mixed_add' ? '🔀 Mixed Add: ' : '') + 'Make 10 Addition';
+    q_paramA = Math.floor(Math.random() * 3) + 7;
+    q_paramB = Math.floor(Math.random() * 5) + 3;
+    correctAns = q_paramA + q_paramB;
+    make10_moved = 0;
+    qBox.innerText = `${q_paramA} + ${q_paramB} = ?`;
+    hBox.innerText = `Move stars to make 10 in the Ten-Frame!`;
+  }
+  else if (mode === 'sub10') {
+    document.getElementById('mode-badge').innerText = (activeMode === 'mixed_sub' ? '🔀 Mixed Sub: ' : '') + 'Subtraction ≤ 10';
+    q_paramA = Math.floor(Math.random() * 7) + 4;
+    q_paramB = Math.floor(Math.random() * (q_paramA - 1)) + 1;
+    correctAns = q_paramA - q_paramB;
+    qBox.innerText = `${q_paramA} - ${q_paramB} = ?`;
+    hBox.innerText = `🦖 Dino chomps ${q_paramB} cookies! Tap or count remaining!`;
+  }
+  else if (mode === 'sub20_nocross') {
+    document.getElementById('mode-badge').innerText = (activeMode === 'mixed_sub' ? '🔀 Mixed Sub: ' : '') + 'Sub ≤ 20 (No Crossing)';
+    const onesA = Math.floor(Math.random() * 6) + 4;
+    q_paramA = 10 + onesA; 
+    q_paramB = Math.floor(Math.random() * (onesA - 1)) + 1;
+    correctAns = q_paramA - q_paramB;
+    qBox.innerText = `${q_paramA} - ${q_paramB} = ?`;
+    hBox.innerText = `💡 Keep the 10! Just subtract the ones: ${onesA} - ${q_paramB} = ${onesA - q_paramB}!`;
+  }
+  else if (mode === 'sub20_cross') {
+    document.getElementById('mode-badge').innerText = (activeMode === 'mixed_sub' ? '🔀 Mixed Sub: ' : '') + 'Sub ≤ 20 (Crossing 10)';
+    const onesA = Math.floor(Math.random() * 6) + 1; 
+    q_paramA = 10 + onesA; 
+    q_paramB = onesA + Math.floor(Math.random() * 3) + 2; 
+    if (q_paramB >= q_paramA) q_paramB = q_paramA - 1;
+    correctAns = q_paramA - q_paramB;
+    qBox.innerText = `${q_paramA} - ${q_paramB} = ?`;
+    hBox.innerText = `🦖 Dino chomps ${q_paramB} in total! Tap cookies & stars to chomp!`;
+  }
+  else if (mode === 'bonds') {
+    document.getElementById('mode-badge').innerText = 'Number Bonds';
+    const target = Math.random() > 0.5 ? 10 : 20;
+    q_paramA = Math.floor(Math.random() * (target - 2)) + 1;
+    correctAns = target - q_paramA;
+    qBox.innerText = `${q_paramA} + [ ? ] = ${target}`;
+    hBox.innerText = `What is the missing friend number to make ${target}?`;
+  }
+  else if (mode === 'doubles') {
+    document.getElementById('mode-badge').innerText = 'Doubles & Halves';
+    isDoubleQuestion = Math.random() > 0.5;
+    if (isDoubleQuestion) {
+      q_paramA = Math.floor(Math.random() * 6) + 1;
+      correctAns = q_paramA * 2;
+      qBox.innerText = `Double ${q_paramA} = ?`;
+      hBox.innerText = `🪞 Look in the mirror! Left has ${q_paramA}, Right has ${q_paramA}!`;
+    } else {
+      correctAns = Math.floor(Math.random() * 6) + 1;
+      q_paramA = correctAns * 2;
+      half_sharedCount = 0;
+      qBox.innerText = `Half of ${q_paramA} = ?`;
+      hBox.innerText = `👉 Tap strawberries to fair-share equally between the 2 dinos!`;
+    }
+  }
+  else if (mode === 'moreless') {
+    document.getElementById('mode-badge').innerText = 'More / Less';
+    const isMore = Math.random() > 0.5;
+    const stepChoices = [1, 1, 2, 10];
+    q_paramStep = stepChoices[Math.floor(Math.random() * stepChoices.length)];
+
+    if (q_paramStep === 10) {
+      q_paramA = Math.floor(Math.random() * 9) + 1;
+      correctAns = isMore ? q_paramA + 10 : q_paramA;
+      if (!isMore) {
+        q_paramA += 10;
+        correctAns = q_paramA - 10;
+      }
+    } else if (q_paramStep === 2) {
+      q_paramA = Math.floor(Math.random() * 16) + 2;
+      correctAns = isMore ? q_paramA + 2 : q_paramA - 2;
+    } else {
+      q_paramA = Math.floor(Math.random() * 18) + 2;
+      correctAns = isMore ? q_paramA + 1 : q_paramA - 1;
+    }
+
+    qBox.innerText = isMore ? `${q_paramStep} More than ${q_paramA} = ?` : `${q_paramStep} Less than ${q_paramA} = ?`;
+    hBox.innerText = isMore ? `Jump forward +${q_paramStep}!` : `Jump backward -${q_paramStep}!`;
+  }
+  else if (mode === 'skip') {
+    document.getElementById('mode-badge').innerText = 'Frog Skip Counting';
+    skip_step = [2, 5, 10][Math.floor(Math.random() * 3)];
+    const start = skip_step * (Math.floor(Math.random() * 3) + 1);
+    
+    skip_blankIdx = Math.floor(Math.random() * 4);
+    skip_seq = [start, start + skip_step, start + skip_step * 2, start + skip_step * 3];
+    correctAns = skip_seq[skip_blankIdx];
+
+    const displaySeq = skip_seq.map((num, idx) => idx === skip_blankIdx ? '[ ? ]' : num);
+    qBox.innerText = displaySeq.join(', ');
+    hBox.innerText = `🐸 Froggy jumps in +${skip_step}s! Which lily pad will froggy land on?`;
+    playFrogJumpSound();
+  }
+  else if (mode === 'compare') {
+    document.getElementById('mode-badge').innerText = 'Compare ≤ 20';
+    q_paramA = Math.floor(Math.random() * 18) + 1;
+    const same = Math.random() < 0.25;
+    q_paramB = same ? q_paramA : Math.floor(Math.random() * 18) + 1;
+
+    if (q_paramA > q_paramB) correctAns = '>';
+    else if (q_paramA < q_paramB) correctAns = '<';
+    else correctAns = '=';
+
+    qBox.innerText = `${q_paramA}  [ ? ]  ${q_paramB}`;
+    hBox.innerText = `🐊 Crocodile always eats the bigger number! Choose >, <, or =`;
+  }
+  else if (mode === 'compare100') {
+    document.getElementById('mode-badge').innerText = '🚀 Compare to 100';
+    const subType = Math.floor(Math.random() * 3);
+
+    if (subType === 0) {
+      const baseTen = (Math.floor(Math.random() * 8) + 1) * 10;
+      compLeftVal = baseTen + Math.floor(Math.random() * 9) + 1;
+      if (Math.random() < 0.5) {
+        compRightVal = baseTen + Math.floor(Math.random() * 9) + 1;
+      } else {
+        compRightVal = Math.floor(Math.random() * 88) + 11;
+      }
+      compLeftStr = `${compLeftVal}`;
+      compRightStr = `${compRightVal}`;
+    } 
+    else if (subType === 1) {
+      const tensPart = (Math.floor(Math.random() * 7) + 1) * 10;
+      const onesPart = Math.floor(Math.random() * 18) + 1;
+      const sumVal = tensPart + onesPart;
+      const delta = [-3, -2, 0, 0, 2, 4][Math.floor(Math.random() * 6)];
+      const otherVal = Math.max(10, Math.min(99, sumVal + delta));
+
+      if (Math.random() < 0.5) {
+        compLeftVal = sumVal;
+        compLeftStr = `${tensPart} + ${onesPart}`;
+        compRightVal = otherVal;
+        compRightStr = `${otherVal}`;
+      } else {
+        compLeftVal = otherVal;
+        compLeftStr = `${otherVal}`;
+        compRightVal = sumVal;
+        compRightStr = `${tensPart} + ${onesPart}`;
+      }
+    } 
+    else {
+      if (Math.random() < 0.4) {
+        const target = Math.floor(Math.random() * 12) + 11;
+        const a1 = 10;
+        const a2 = target - 10;
+        const b1 = Math.floor(Math.random() * 5) + 5;
+        const b2 = target - b1;
+        compLeftVal = target;
+        compRightVal = target;
+        compLeftStr = `${a1} + ${a2}`;
+        compRightStr = `${b1} + ${b2}`;
+      } else {
+        const l1 = (Math.floor(Math.random() * 4) + 1) * 10 + Math.floor(Math.random() * 5);
+        const l2 = Math.floor(Math.random() * 9) + 1;
+        const r1 = l1 + (Math.random() < 0.5 ? 0 : -2);
+        const r2 = Math.floor(Math.random() * 9) + 1;
+        compLeftVal = l1 + l2;
+        compRightVal = r1 + r2;
+        compLeftStr = `${l1} + ${l2}`;
+        compRightStr = `${r1} + ${r2}`;
+      }
+    }
+
+    if (compLeftVal > compRightVal) correctAns = '>';
+    else if (compLeftVal < compRightVal) correctAns = '<';
+    else correctAns = '=';
+
+    qBox.innerText = `${compLeftStr}   [ ? ]   ${compRightStr}`;
+    hBox.innerText = `🐊 Work out both sides first! Compare Tens, then Ones!`;
+  }
+  else if (mode === 'add100') {
+    document.getElementById('mode-badge').innerText = '🚀 2-Digit Add (No Cross)';
+    const pattern = Math.floor(Math.random() * 3);
+    if (pattern === 0) {
+      q_paramA = (Math.floor(Math.random() * 7) + 1) * 10;
+      q_paramB = Math.floor(Math.random() * 9) + 11;
+    } else if (pattern === 1) {
+      q_paramA = Math.floor(Math.random() * 75) + 12;
+      q_paramB = 10;
+    } else {
+      const t1 = Math.floor(Math.random() * 6) + 2;
+      const o1 = Math.floor(Math.random() * 5) + 1;
+      const t2 = Math.random() < 0.5 ? 0 : (Math.floor(Math.random() * 2) + 1);
+      const o2 = Math.floor(Math.random() * (9 - o1)) + 1;
+      q_paramA = t1 * 10 + o1;
+      q_paramB = t2 * 10 + o2;
+    }
+    correctAns = q_paramA + q_paramB;
+    qBox.innerText = `${q_paramA} + ${q_paramB} = ?`;
+    hBox.innerText = `🟩 Add the Tens together, 🟡 add the Ones together!`;
+  }
+  // NEW MODULE 3: 2-DIGIT CROSSING 10 ADDITION (School TV style: e.g. 23 + 8, 19 + 5)
+  else if (mode === 'add100_cross') {
+    document.getElementById('mode-badge').innerText = '⚡ 2-Digit Crossing 10';
+    const tens = (Math.floor(Math.random() * 6) + 1) * 10; // 10 to 60
+    const onesA = Math.floor(Math.random() * 6) + 4; // 4 to 9 (e.g., 19, 23, 37)
+    q_paramA = tens + onesA;
+    const neededToNextTen = 10 - onesA;
+    const extraOnes = Math.floor(Math.random() * 4) + 1; // 1 to 4
+    q_paramB = neededToNextTen + extraOnes; // ensures crossing next 10!
+    correctAns = q_paramA + q_paramB;
+
+    const nextTen = tens + 10;
+    qBox.innerText = `${q_paramA} + ${q_paramB} = ?`;
+    hBox.innerText = `💡 Make ${nextTen}! ${q_paramA} needs ${neededToNextTen} from ${q_paramB} (leaves ${extraOnes}) ➔ ${nextTen} + ${extraOnes}`;
+  }
+  // NEW MODULE 4: INTRO MULTIPLICATION (Equal Groups: 2s, 3s, 5s, 10s)
+  else if (mode === 'mult_intro') {
+    document.getElementById('mode-badge').innerText = '✖️ Intro Times Tables';
+    const tables = [2, 2, 3, 5, 5, 10, 10];
+    q_paramB = tables[Math.floor(Math.random() * tables.length)]; // items per group
+    q_paramA = Math.floor(Math.random() * 5) + 2; // 2 to 6 groups
+    correctAns = q_paramA * q_paramB;
+    qBox.innerText = `${q_paramA} × ${q_paramB} = ?`;
+    hBox.innerText = `🍽️ ${q_paramA} groups of ${q_paramB}! Skip count by ${q_paramB}s!`;
+  }
+
+  if (!showVisual) {
+    hBox.style.color = '#5e35b1';
+    hBox.innerText = `🧠 Brain Power Challenge: Picture the numbers in your head!`;
+  } else {
+    hBox.style.color = '#43a047';
+  }
+
+  renderQuestionVisual();
+  renderKeypad();
+  startThinkDelay();
+}
+
+// Helper to build Base-10 Tens Rods & Ones Cubes HTML
+function buildBase10HTML(num) {
+  const tens = Math.floor(num / 10);
+  const ones = num % 10;
+  let html = `<div class="base10-blocks-row">`;
+  for (let t = 0; t < tens; t++) {
+    html += `<div class="ten-rod" title="10">`;
+    for (let k = 0; k < 4; k++) html += `<div class="ten-rod-line"></div>`;
+    html += `</div>`;
+  }
+  if (ones > 0) {
+    html += `<div class="ones-grid">`;
+    for (let o = 0; o < ones; o++) {
+      html += `<div class="one-cube" title="1"></div>`;
+    }
+    html += `</div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function renderQuestionVisual() {
+  const board = document.getElementById('visual-board');
+  board.innerHTML = '';
+
+  if (!showVisual) {
+    board.innerHTML = `
+      <div class="mental-box">
+        <div style="font-size: 34px;">🧠💭✨</div>
+        <div style="font-size: 15px; margin-top: 4px;">Brain Power Mode Active!</div>
+        <div style="font-size: 11.5px; opacity: 0.85; margin-top: 2px;">Calculate carefully in your head before pressing OK!</div>
+      </div>
+    `;
+    return;
+  }
+
+  if (q_type === 'mult_intro') {
+    const wrap = document.createElement('div');
+    wrap.className = 'mult-plates-wrap';
+    const icon = q_paramB === 2 ? '🍓' : (q_paramB === 3 ? '🍪' : (q_paramB === 5 ? '⭐' : '🪙'));
+
+    for (let g = 1; g <= q_paramA; g++) {
+      const plate = document.createElement('div');
+      plate.className = 'mult-plate';
+      let itemsStr = '';
+      for (let item = 0; item < q_paramB; item++) itemsStr += icon;
+      plate.innerHTML = `
+        <div class="mult-plate-title">Group ${g} (${q_paramB})</div>
+        <div class="mult-plate-items">${itemsStr}</div>
+      `;
+      wrap.appendChild(plate);
+    }
+    board.appendChild(wrap);
+  }
+  else if (q_type === 'compare100') {
+    const wrap = document.createElement('div');
+    wrap.className = 'base10-wrap';
+    wrap.innerHTML = `
+      <div class="base10-side">
+        <div class="base10-label">${compLeftStr} (${Math.floor(compLeftVal/10)} Tens, ${compLeftVal%10} Ones)</div>
+        ${buildBase10HTML(compLeftVal)}
+      </div>
+      <div class="base10-side">
+        <div class="base10-label">${compRightStr} (${Math.floor(compRightVal/10)} Tens, ${compRightVal%10} Ones)</div>
+        ${buildBase10HTML(compRightVal)}
+      </div>
+    `;
+    board.appendChild(wrap);
+  }
+  else if (q_type === 'add100' || q_type === 'add100_cross') {
+    const wrap = document.createElement('div');
+    wrap.className = 'base10-wrap';
+    wrap.innerHTML = `
+      <div class="base10-side">
+        <div class="base10-label">${q_paramA} (${Math.floor(q_paramA/10)} Tens, ${q_paramA%10} Ones)</div>
+        ${buildBase10HTML(q_paramA)}
+      </div>
+      <div style="font-size: 26px; font-weight: bold; color: #2e7d32; align-self: center;">+</div>
+      <div class="base10-side">
+        <div class="base10-label">${q_paramB} (${Math.floor(q_paramB/10)} Tens, ${q_paramB%10} Ones)</div>
+        ${buildBase10HTML(q_paramB)}
+      </div>
+    `;
+    board.appendChild(wrap);
+  }
+  else if (q_type === 'sub10') {
+    const grid = document.createElement('div');
+    grid.className = 'grid-5-group';
+    for (let i = 0; i < q_paramA; i++) {
+      const c = document.createElement('div');
+      c.className = 'grid-item-cell';
+      c.innerText = '🍪';
+      c.onclick = function() {
+        if (!isAnswered) {
+          this.classList.toggle('eaten');
+          playDinoChomp();
+        }
+      };
+      grid.appendChild(c);
+    }
+    board.appendChild(grid);
+  }
+  else if (q_type === 'sub20_nocross') {
+    const ones = q_paramA - 10;
+    const wrap = document.createElement('div');
+    wrap.className = 'sub-crossing-wrap';
+
+    const topBox = document.createElement('div');
+    topBox.className = 'sub-group-box';
+    topBox.innerHTML = `<div class="sub-group-title" style="color: #2e7d32;">🔒 Safe (10 cookies) - Untouched:</div>`;
+    const g10 = document.createElement('div');
+    g10.className = 'grid-5-group';
+    for (let i = 0; i < 10; i++) {
+      const c = document.createElement('div');
+      c.className = 'grid-item-cell';
+      c.innerText = '🍪';
+      g10.appendChild(c);
+    }
+    topBox.appendChild(g10);
+
+    const botBox = document.createElement('div');
+    botBox.className = 'sub-group-box';
+    botBox.innerHTML = `<div class="sub-group-title" style="color: #e65100;">🎯 Subtract ${q_paramB} from these ${ones} stars:</div>`;
+    const gOnes = document.createElement('div');
+    gOnes.className = 'grid-5-group';
+    for (let i = 0; i < ones; i++) {
+      const c = document.createElement('div');
+      c.className = 'grid-item-cell';
+      c.innerText = '⭐';
+      c.onclick = function() {
+        if (!isAnswered) {
+          this.classList.toggle('eaten');
+          playDinoChomp();
+        }
+      };
+      gOnes.appendChild(c);
+    }
+    botBox.appendChild(gOnes);
+
+    wrap.appendChild(topBox);
+    wrap.appendChild(botBox);
+    board.appendChild(wrap);
+  }
+  else if (q_type === 'sub20_cross') {
+    const ones = q_paramA - 10;
+    const wrap = document.createElement('div');
+    wrap.className = 'sub-crossing-wrap';
+
+    const tenBox = document.createElement('div');
+    tenBox.className = 'sub-group-box';
+    tenBox.innerHTML = `<div class="sub-group-title" style="color: #2e7d32;">🍪 10 Cookies (Tap to chomp):</div>`;
+
+    const g10 = document.createElement('div');
+    g10.className = 'grid-5-group';
+    for (let i = 0; i < 10; i++) {
+      const c = document.createElement('div');
+      c.className = 'grid-item-cell';
+      c.innerText = '🍪';
+      c.onclick = function() {
+        if (!isAnswered) {
+          this.classList.toggle('eaten');
+          playDinoChomp();
+        }
+      };
+      g10.appendChild(c);
+    }
+    tenBox.appendChild(g10);
+
+    const onesBox = document.createElement('div');
+    onesBox.className = 'sub-group-box';
+    onesBox.innerHTML = `<div class="sub-group-title" style="color: #e65100;">⭐ ${ones} Loose Stars (Tap to chomp):</div>`;
+
+    const gOnes = document.createElement('div');
+    gOnes.className = 'grid-5-group';
+    for (let i = 0; i < ones; i++) {
+      const c = document.createElement('div');
+      c.className = 'grid-item-cell';
+      c.innerText = '⭐';
+      c.onclick = function() {
+        if (!isAnswered) {
+          this.classList.toggle('eaten');
+          playDinoChomp();
+        }
+      };
+      gOnes.appendChild(c);
+    }
+    onesBox.appendChild(gOnes);
+
+    wrap.appendChild(tenBox);
+    wrap.appendChild(onesBox);
+    board.appendChild(wrap);
+  }
+  else if (q_type === 'skip') {
+    const wrap = document.createElement('div');
+    wrap.className = 'frog-numberline-box';
+    const xCoords = [55, 155, 255, 355];
+    const yAxis = 88;
+
+    let svgHtml = `
+      <svg class="frog-svg-wrap" viewBox="0 0 410 120">
+        <line x1="25" y1="${yAxis}" x2="385" y2="${yAxis}" class="nl-axis-line" />
+        <polygon points="385,${yAxis - 6} 397,${yAxis} 385,${yAxis + 6}" fill="#2e7d32" />
+    `;
+
+    for (let i = 0; i < 3; i++) {
+      const x1 = xCoords[i];
+      const x2 = xCoords[i + 1];
+      const mx = (x1 + x2) / 2;
+      const my = 32;
+      svgHtml += `
+        <path d="M ${x1} ${yAxis - 8} Q ${mx} ${my}, ${x2} ${yAxis - 8}" class="nl-arc-jump" />
+        <text x="${mx}" y="${my - 3}" class="nl-jump-label">+${skip_step}</text>
+      `;
+    }
+
+    skip_seq.forEach((num, idx) => {
+      const cx = xCoords[idx];
+      svgHtml += `<line x1="${cx}" y1="${yAxis - 8}" x2="${cx}" y2="${yAxis + 8}" class="nl-tick-line" />`;
+      if (idx === skip_blankIdx) {
+        svgHtml += `
+          <circle cx="${cx}" cy="${yAxis + 20}" r="14" class="nl-question-circle" />
+          <text x="${cx}" y="${yAxis + 25}" class="nl-question-text">?</text>
+        `;
+      } else {
+        svgHtml += `<text x="${cx}" y="${yAxis + 25}" class="nl-number-text">${num}</text>`;
+      }
+    });
+
+    let frogX = (skip_blankIdx === 0) ? 35 : (xCoords[skip_blankIdx - 1] - 16);
+    svgHtml += `
+      <g transform="translate(${frogX}, 6)">
+        <text class="frog-avatar-icon">🐸</text>
+      </g>
+      </svg>
+    `;
+
+    wrap.innerHTML = svgHtml;
+    board.appendChild(wrap);
+  }
+  else if (q_type === 'add10') {
+    const grid = document.createElement('div');
+    grid.className = 'grid-5-group';
+    for (let i = 0; i < q_paramA; i++) {
+      const c = document.createElement('div');
+      c.className = 'grid-item-cell';
+      c.innerText = '🍪';
+      grid.appendChild(c);
+    }
+    for (let i = 0; i < q_paramB; i++) {
+      const c = document.createElement('div');
+      c.className = 'grid-item-cell';
+      c.innerText = '🍓';
+      grid.appendChild(c);
+    }
+    board.appendChild(grid);
+  }
+  else if (q_type === 'make10') {
+    const container = document.createElement('div');
+    container.className = 'ten-frame-container';
+    const frame = document.createElement('div');
+    frame.className = 'ten-frame';
+
+    for (let i = 0; i < 10; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'frame-cell';
+      if (i < q_paramA) {
+        cell.classList.add('filled');
+        cell.innerText = '🍪';
+      } else if (i < q_paramA + make10_moved) {
+        cell.classList.add('filled');
+        cell.innerText = '⭐';
+        cell.onclick = () => {
+          if (!isAnswered) { playPop(); make10_moved--; renderQuestionVisual(); }
         };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      }
+      frame.appendChild(cell);
     }
 
-    // --- 3. Smart Paste Parser (Works with iPhone Live Text / Google Lens / Free Gemini App) ---
-    async function pasteFromClipboard() {
-      try {
-        const text = await navigator.clipboard.readText();
-        if (!text) {
-          alert('剪貼簿入面暫時無文字，請先喺手機相簿或 Gemini App 複製文字再撳！');
-          return;
+    const remainingInTray = q_paramB - make10_moved;
+    const tray = document.createElement('div');
+    tray.className = 'outside-tray-grid';
+    for (let i = 0; i < remainingInTray; i++) {
+      const st = document.createElement('div');
+      st.className = 'clickable-star';
+      st.innerText = '⭐';
+      st.onclick = () => {
+        if (!isAnswered && (q_paramA + make10_moved < 10)) {
+          playPop();
+          make10_moved++;
+          renderQuestionVisual();
         }
-        document.getElementById('smartPasteInput').value = text;
-        parseSmartText(text);
-      } catch {
-        alert('請直接長按下面輸入框揀「貼上」即可自動解析！');
-      }
+      };
+      tray.appendChild(st);
     }
+    container.appendChild(frame);
+    container.appendChild(tray);
+    board.appendChild(container);
+  }
+  else if (q_type === 'doubles') {
+    if (isDoubleQuestion) {
+      const mWrap = document.createElement('div');
+      mWrap.className = 'mirror-container';
 
-    function parseSmartText(raw) {
-      if (!raw || !raw.trim()) return;
+      const pLeft = document.createElement('div');
+      pLeft.className = 'mirror-panel';
+      pLeft.innerHTML = `<div style="font-size: 12px; font-weight: bold; color: #00796b;">Left: ${q_paramA}</div>`;
+      const gL = document.createElement('div');
+      gL.className = 'grid-5-group';
+      for (let i = 0; i < q_paramA; i++) {
+        const c = document.createElement('div');
+        c.className = 'grid-item-cell';
+        c.innerText = '🍪';
+        gL.appendChild(c);
+      }
+      pLeft.appendChild(gL);
 
-      // 1. Extract Date if present
-      const detectedDate = extractDateFromText(raw);
-      if (detectedDate) {
-        document.getElementById('itemExpiry').value = detectedDate;
-        document.getElementById('rawDateDetected').textContent = `✅ 已自動抽出日期`;
+      const pMid = document.createElement('div');
+      pMid.className = 'mirror-divider';
+      pMid.innerHTML = `<span>🪞</span><span style="font-size: 11px;">Mirror</span>`;
+
+      const pRight = document.createElement('div');
+      pRight.className = 'mirror-panel';
+      pRight.innerHTML = `<div style="font-size: 12px; font-weight: bold; color: #00796b;">Twin: ${q_paramA}</div>`;
+      const gR = document.createElement('div');
+      gR.className = 'grid-5-group';
+      for (let i = 0; i < q_paramA; i++) {
+        const c = document.createElement('div');
+        c.className = 'grid-item-cell';
+        c.innerText = '🍪';
+        gR.appendChild(c);
+      }
+      pRight.appendChild(gR);
+
+      mWrap.appendChild(pLeft);
+      mWrap.appendChild(pMid);
+      mWrap.appendChild(pRight);
+      board.appendChild(mWrap);
+    } else {
+      const hWrap = document.createElement('div');
+      hWrap.className = 'halves-container';
+      const unshared = q_paramA - half_sharedCount;
+      const leftShare = Math.ceil(half_sharedCount / 2);
+      const rightShare = Math.floor(half_sharedCount / 2);
+
+      const poolTitle = document.createElement('div');
+      poolTitle.style.fontSize = '12px';
+      poolTitle.style.fontWeight = 'bold';
+      poolTitle.style.color = '#c2185b';
+      poolTitle.innerText = `🍓 Total to Share: ${unshared} left`;
+
+      const pool = document.createElement('div');
+      pool.className = 'halves-pool';
+      for (let i = 0; i < unshared; i++) {
+        const item = document.createElement('div');
+        item.style.fontSize = '26px';
+        item.style.cursor = 'pointer';
+        item.innerText = '🍓';
+        item.onclick = () => {
+          if (!isAnswered && half_sharedCount < q_paramA) {
+            playPop();
+            half_sharedCount++;
+            renderQuestionVisual();
+            if (half_sharedCount === q_paramA) {
+              document.getElementById('hint-text').innerText = `🎉 Fair Share! Each dino gets ${correctAns}! So Half of ${q_paramA} is ${correctAns}!`;
+            }
+          }
+        };
+        pool.appendChild(item);
       }
 
-      // 2. Extract UK Price (£1.50 or 1.50)
-      const priceMatch = raw.match(/£\s*(\d+(?:\.\d{1,2})?)/);
-      if (priceMatch) {
-        document.getElementById('itemPrice').value = priceMatch[1];
-      }
+      const traysWrap = document.createElement('div');
+      traysWrap.className = 'halves-trays-wrap';
+      const tray1 = document.createElement('div');
+      tray1.className = 'halves-tray';
+      tray1.innerHTML = `<div style="font-weight: bold; font-size: 13px;">🦖 Dino Rex (${leftShare})</div>`;
+      const t1Items = document.createElement('div');
+      t1Items.className = 'halves-tray-items';
+      for (let i = 0; i < leftShare; i++) t1Items.innerHTML += '<span style="font-size: 22px;">🍓</span>';
+      tray1.appendChild(t1Items);
 
-      // 3. Extract UK Store name if mentioned
-      const stores = ['Tesco', 'Sainsbury', 'M&S', 'Waitrose', 'Aldi', 'Lidl', 'Asda', 'Morrisons', 'Boots'];
-      for (const s of stores) {
-        if (raw.toLowerCase().includes(s.toLowerCase())) {
-          document.getElementById('itemStore').value = s === 'Sainsbury' ? "Sainsbury's" : s;
-          break;
+      const tray2 = document.createElement('div');
+      tray2.className = 'halves-tray';
+      tray2.innerHTML = `<div style="font-weight: bold; font-size: 13px;">🦕 Dino Tri (${rightShare})</div>`;
+      const t2Items = document.createElement('div');
+      t2Items.className = 'halves-tray-items';
+      for (let i = 0; i < rightShare; i++) t2Items.innerHTML += '<span style="font-size: 22px;">🍓</span>';
+      tray2.appendChild(t2Items);
+
+      traysWrap.appendChild(tray1);
+      traysWrap.appendChild(tray2);
+      hWrap.appendChild(poolTitle);
+      hWrap.appendChild(pool);
+      hWrap.appendChild(traysWrap);
+      board.appendChild(hWrap);
+    }
+  }
+  else if (q_type === 'compare') {
+    const cWrap = document.createElement('div');
+    cWrap.className = 'compare-container';
+
+    const pLeft = document.createElement('div');
+    pLeft.className = 'compare-panel';
+    pLeft.innerHTML = `<div class="compare-panel-title">Left (${q_paramA})</div>`;
+    const gL = document.createElement('div');
+    gL.className = 'grid-5-group';
+    for (let i = 0; i < Math.min(10, q_paramA); i++) {
+      const c = document.createElement('div');
+      c.className = 'grid-item-cell';
+      c.innerText = '🍪';
+      gL.appendChild(c);
+    }
+    pLeft.appendChild(gL);
+
+    const pRight = document.createElement('div');
+    pRight.className = 'compare-panel';
+    pRight.innerHTML = `<div class="compare-panel-title">Right (${q_paramB})</div>`;
+    const gR = document.createElement('div');
+    gR.className = 'grid-5-group';
+    for (let i = 0; i < Math.min(10, q_paramB); i++) {
+      const c = document.createElement('div');
+      c.className = 'grid-item-cell';
+      c.innerText = '🍓';
+      gR.appendChild(c);
+    }
+    pRight.appendChild(gR);
+
+    cWrap.appendChild(pLeft);
+    cWrap.appendChild(pRight);
+    board.appendChild(cWrap);
+  }
+  else {
+    board.innerHTML = `<div style="font-size: 36px; padding: 10px;">🦖 ✨ 🔢</div>`;
+  }
+}
+
+function updateKeyboardPreview() {
+  const el = document.getElementById('keyboard-preview');
+  if (keyboardBuffer.length > 0) {
+    el.innerText = keyboardBuffer;
+    el.classList.add('active');
+  } else {
+    el.innerHTML = '&nbsp;';
+    el.classList.remove('active');
+  }
+}
+
+function renderKeypad() {
+  const box = document.getElementById('options-box');
+  box.innerHTML = '';
+  
+  if (q_type === 'compare' || q_type === 'compare100') {
+    box.className = 'options-grid compare-mode';
+    const symbols = ['>', '=', '<'];
+    symbols.forEach(sym => {
+      const b = document.createElement('button');
+      b.className = 'btn-opt btn-compare submit-guard-btn';
+      b.innerText = sym;
+      b.dataset.origText = sym;
+      b.onclick = () => checkAnswer(sym);
+      box.appendChild(b);
+    });
+    return;
+  }
+
+  box.className = 'options-grid';
+  const keypadLayout = [
+    '1', '2', '3', '4',
+    '5', '6', '7', '8',
+    '9', '0', '⌫', 'OK ↵'
+  ];
+
+  keypadLayout.forEach(key => {
+    const b = document.createElement('button');
+    b.className = 'btn-opt';
+    b.innerText = key;
+
+    if (key === '⌫') {
+      b.style.background = '#ffb74d';
+      b.style.boxShadow = '0 3px 0 #f57c00';
+      b.onclick = () => {
+        playPop();
+        keyboardBuffer = keyboardBuffer.slice(0, -1);
+        updateKeyboardPreview();
+      };
+    } else if (key === 'OK ↵') {
+      b.classList.add('submit-guard-btn');
+      b.dataset.origText = 'OK ↵';
+      b.style.background = '#2e7d32';
+      b.style.boxShadow = '0 3px 0 #1b5e20';
+      b.style.fontSize = '16px';
+      b.onclick = () => {
+        if (isSubmitLocked) return;
+        playPop();
+        submitKeyboardAnswer();
+      };
+    } else {
+      b.onclick = () => {
+        playPop();
+        if (keyboardBuffer.length < 3) {
+          keyboardBuffer += key;
+          updateKeyboardPreview();
         }
-      }
+      };
+    }
 
-      // 4. Extract Product Name (First meaningful line that isn't just a date or price)
-      const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(l => l.length >= 2);
-      for (const line of lines) {
-        // Skip lines that are purely dates or store names
-        if (/^(best before|use by|exp|bb|bbe|\d+[\/\-\.]\d+)/i.test(line)) continue;
-        if (!document.getElementById('itemName').value) {
-          document.getElementById('itemName').value = line.slice(0, 45);
-          checkPreviousHistory(line);
-          break;
-        }
+    box.appendChild(b);
+  });
+}
+
+function checkAnswer(chosen) {
+  if (isAnswered || isSubmitLocked) return;
+  const timeTaken = (Date.now() - questionStartTime) / 1000;
+  userData.totalSeconds += Math.round(timeTaken);
+
+  if (!userData.topicStats[q_type]) userData.topicStats[q_type] = { correct: 0, wrong: 0, time: 0 };
+  userData.topicStats[q_type].time += timeTaken;
+
+  if (chosen === correctAns) {
+    isAnswered = true;
+    clearInterval(thinkLockTimer);
+
+    const earnedCoin = (currentQuestionWrongAttempts === 0) ? 1 : 0;
+
+    if (earnedCoin > 0) {
+      currentStreak++;
+      playSuccess(currentStreak);
+    } else {
+      currentStreak = 0;
+      playSuccess(1);
+    }
+    updateStreakUI();
+
+    userData.todayScore++;
+    userData.totalScore++;
+    userData.todayCoins += earnedCoin;
+    userData.totalCoins += earnedCoin;
+    userData.topicStats[q_type].correct++;
+    
+    if (userData.todayScore >= 30 && !userData.celebratedToday) {
+      userData.celebratedToday = true;
+      triggerConfetti();
+      playGrandCelebrationSound();
+      userData.todayCoins += 5;
+      userData.totalCoins += 5;
+
+      const toast = document.getElementById('toast-banner');
+      if (toast) {
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 6000);
       }
     }
 
-    function extractDateFromText(rawText) {
-      const text = rawText.toUpperCase().replace(/\s+/g, ' ');
-      const months = { JAN: '01', FEB: '02', MAR: '03', APR: '04', MAY: '05', JUN: '06', JUL: '07', AUG: '08', SEP: '09', OCT: '10', NOV: '11', DEC: '12' };
+    saveUserData();
+    updateDashboardUI();
 
-      // 1. YYYY-MM-DD or YYYY/MM/DD or YYYY.MM.DD
-      let m = text.match(/(202[5-9]|203[0-5])[\/\-\.\s](0[1-9]|1[0-2])[\/\-\.\s](0[1-9]|[12][0-9]|3[01])/);
-      if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+    const streakMsg = currentStreak >= 3 ? ` 🔥 ${currentStreak} In a Row!` : '';
+    const coinMsg = earnedCoin > 0 ? `+1 Coin!` : `+0 Coin (Retry)`;
+    document.getElementById('msg-text').className = 'msg-area success';
+    document.getElementById('msg-text').innerText = `🎉 Correct! ${coinMsg}${streakMsg}`;
 
-      // 2. DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY or DD MM YYYY (UK format)
-      m = text.match(/(0[1-9]|[12][0-9]|3[01])[\/\-\.\s](0[1-9]|1[0-2])[\/\-\.\s](202[5-9]|203[0-5])/);
-      if (m) return `${m[3]}-${m[2]}-${m[1]}`;
-
-      // 3. DD/MM/YY (e.g. 15/06/27 or 15 06 27)
-      m = text.match(/(0[1-9]|[12][0-9]|3[01])[\/\-\.\s](0[1-9]|1[0-2])[\/\-\.\s](2[5-9]|3[0-5])\b/);
-      if (m) return `20${m[3]}-${m[2]}-${m[1]}`;
-
-      // 4. DD MMM YYYY or MMM YYYY or MMM YY (e.g. 12 OCT 2027, OCT 2027, OCT 27)
-      m = text.match(/(?:(0[1-9]|[12][0-9]|3[01])\s*)?(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\s*(202[5-9]|203[0-5]|2[5-9]|3[0-5])\b/);
-      if (m) {
-        const day = m[1] || '28';
-        const yr = m[3].length === 2 ? `20${m[3]}` : m[3];
-        return `${yr}-${months[m[2]]}-${day}`;
-      }
-
-      // 5. MM/YYYY or MM/YY (e.g. 08/2027 or 08/27)
-      m = text.match(/(0[1-9]|1[0-2])[\/\-\.](202[5-9]|203[0-5]|2[5-9]|3[0-5])\b/);
-      if (m) {
-        const yr = m[2].length === 2 ? `20${m[2]}` : m[2];
-        return `${yr}-${m[1]}-28`;
-      }
-
-      return null;
-    }
-
-    // --- UI & Form Helpers ---
-    function switchTab(tab) {
-      currentTab = tab;
-      document.getElementById('tabStock').className = tab === 'stock' ? 'flex-1 py-1.5 rounded-lg bg-white text-emerald-700 shadow-sm transition' : 'flex-1 py-1.5 rounded-lg text-gray-600 transition';
-      document.getElementById('tabHistory').className = tab === 'history' ? 'flex-1 py-1.5 rounded-lg bg-white text-emerald-700 shadow-sm transition' : 'flex-1 py-1.5 rounded-lg text-gray-600 transition';
-      document.getElementById('filterPills').style.display = tab === 'stock' ? 'flex' : 'none';
-      renderList();
-    }
-    function setFilter(filter) {
-      currentFilter = filter;
-      document.querySelectorAll('.filter-pill').forEach(btn => {
-        btn.className = btn.dataset.filter === filter
-          ? 'filter-pill bg-emerald-600 text-white px-3 py-1 rounded-full whitespace-nowrap font-medium'
-          : 'filter-pill bg-white text-gray-600 border px-3 py-1 rounded-full whitespace-nowrap';
-      });
-      renderList();
-    }
-    function clearSearch() {
-      document.getElementById('searchInput').value = '';
-      document.getElementById('clearSearchBtn').classList.add('hidden');
-      renderList();
-    }
-    function getDaysLeft(expiryStr) {
-      if (!expiryStr) return 999;
-      const today = new Date(); today.setHours(0, 0, 0, 0);
-      return Math.ceil((new Date(expiryStr) - today) / (1000 * 60 * 60 * 24));
-    }
-    function renderList() {
-      const items = getItems();
-      const query = document.getElementById('searchInput').value.trim().toLowerCase();
-      document.getElementById('clearSearchBtn').classList.toggle('hidden', !query);
-
-      const stockItems = items.filter(i => Number(i.qty) > 0);
-      const historyItems = items.filter(i => Number(i.qty) <= 0);
-      document.getElementById('countStock').textContent = stockItems.length;
-      document.getElementById('countHistory').textContent = historyItems.length;
-
-      let displayList = currentTab === 'stock' ? stockItems : historyItems;
-      if (currentTab === 'stock') {
-        displayList.sort((a, b) => new Date(a.expiry) - new Date(b.expiry));
-        if (currentFilter === 'expiring') displayList = displayList.filter(i => { const d = getDaysLeft(i.expiry); return d >= 0 && d <= 14; });
-        if (currentFilter === 'expired') displayList = displayList.filter(i => getDaysLeft(i.expiry) < 0);
-        if (currentFilter === 'bad') displayList = displayList.filter(i => i.rating === 'bad');
-      }
-      if (query) {
-        displayList = displayList.filter(i =>
-          (i.name && i.name.toLowerCase().includes(query)) ||
-          (i.store && i.store.toLowerCase().includes(query)) ||
-          (i.note && i.note.toLowerCase().includes(query)) ||
-          (query === '伏' && i.rating === 'bad')
-        );
-      }
-
-      const container = document.getElementById('itemList');
-      if (displayList.length === 0) {
-        container.innerHTML = `<div class="text-center py-10 text-gray-400 text-sm">暫時未有相關紀錄，撳下面「📷 免費掃碼 / 照日期」試下！</div>`;
+    if (isChallenge) {
+      challengeQCount++;
+      if (activeChallenge === 'speed30' && challengeQCount >= 30) {
+        clearInterval(challengeInterval);
+        triggerConfetti();
+        const m = Math.floor(challengeTimer / 60);
+        const s = challengeTimer % 60;
+        showChallengeResult('🏁 SPEEDRUN CHAMPION!', `You crushed 30 questions in <b>${m}m ${s}s</b>! Speed: ${(challengeTimer/30).toFixed(1)}s/question!`);
         return;
       }
-
-      container.innerHTML = displayList.map(item => {
-        const days = getDaysLeft(item.expiry);
-        let badgeHtml = '';
-        let cardBorder = 'border-gray-200';
-        if (currentTab === 'stock') {
-          if (days < 0) {
-            badgeHtml = `<span class="bg-red-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-md">🚨 已過期 ${Math.abs(days)} 日</span>`;
-            cardBorder = 'border-red-400 bg-red-50/40';
-          } else if (days <= 14) {
-            badgeHtml = `<span class="bg-amber-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-md">⚠️ 剩 ${days} 日過期</span>`;
-            cardBorder = 'border-amber-300 bg-amber-50/30';
-          } else {
-            badgeHtml = `<span class="bg-emerald-100 text-emerald-800 text-[11px] font-medium px-2 py-0.5 rounded-md">剩 ${days} 日 (${item.expiry})</span>`;
-          }
-        } else {
-          badgeHtml = `<span class="bg-gray-200 text-gray-600 text-[11px] px-2 py-0.5 rounded-md">已食完歸檔</span>`;
-        }
-
-        let ratingBadge = item.rating === 'bad'
-          ? `<span class="bg-red-100 text-red-700 border border-red-300 text-[11px] font-bold px-2 py-0.5 rounded-md">❌ 伏！唔好買</span>`
-          : (item.rating === 'good' ? `<span class="bg-emerald-100 text-emerald-700 text-[11px] font-bold px-2 py-0.5 rounded-md">😋 好食</span>` : '');
-
-        return `
-          <div class="bg-white rounded-2xl p-3.5 shadow-sm border ${cardBorder}">
-            <div class="flex justify-between items-start gap-2">
-              <div class="flex-1 min-w-0">
-                <div class="flex flex-wrap items-center gap-1.5 mb-1">${badgeHtml}${ratingBadge}</div>
-                <h3 class="font-bold text-gray-900 text-base truncate">${escapeHtml(item.name)}</h3>
-                <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500 mt-1">
-                  ${item.store ? `<span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-medium">📍 ${escapeHtml(item.store)}</span>` : ''}
-                  ${item.price ? `<span class="font-mono font-bold text-gray-700">💷 £${escapeHtml(item.price)}</span>` : ''}
-                  ${item.expiry ? `<span>📅 ${item.expiry}</span>` : ''}
-                </div>
-                ${item.note ? `<p class="mt-1.5 text-xs ${item.rating === 'bad' ? 'text-red-600 font-medium' : 'text-gray-600'} bg-gray-50 px-2.5 py-1.5 rounded-lg">💬 ${escapeHtml(item.note)}</p>` : ''}
-              </div>
-              <div class="flex flex-col items-end justify-between gap-2">
-                <div class="flex items-center bg-gray-100 rounded-xl p-0.5 border">
-                  <button onclick="changeQty('${item.id}', -1)" class="w-7 h-7 flex items-center justify-center font-bold text-gray-600">−</button>
-                  <span class="w-7 text-center font-bold text-sm">${item.qty}</span>
-                  <button onclick="changeQty('${item.id}', 1)" class="w-7 h-7 flex items-center justify-center font-bold text-emerald-700">+</button>
-                </div>
-                <div class="flex gap-2 text-xs text-gray-400">
-                  <button onclick="editItem('${item.id}')" class="hover:text-emerald-600 underline">編輯</button>
-                  <button onclick="deleteItem('${item.id}')" class="hover:text-red-600 underline">刪除</button>
-                </div>
-              </div>
-            </div>
-          </div>`;
-      }).join('');
-    }
-    function escapeHtml(str) {
-      return str ? String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])) : '';
-    }
-    function changeQty(id, delta) {
-      const items = getItems();
-      const idx = items.findIndex(i => i.id === id);
-      if (idx !== -1) { items[idx].qty = Math.max(0, Number(items[idx].qty) + delta); saveItemsToStorage(items); }
-    }
-    function deleteItem(id) {
-      if (confirm('確定徹底刪除？')) saveItemsToStorage(getItems().filter(i => i.id !== id));
     }
 
-    function openAddModal(autoBarcode = false) {
-      document.getElementById('itemForm').reset();
-      document.getElementById('smartPasteInput').value = '';
-      document.getElementById('editId').value = '';
-      document.getElementById('itemBarcode').value = '';
-      document.getElementById('itemQty').value = '1';
-      document.getElementById('itemExpiry').value = getFutureDate(90);
-      document.getElementById('rawDateDetected').textContent = '';
-      setRating('unrated');
-      document.getElementById('historyWarningBanner').classList.add('hidden');
-      document.getElementById('itemModal').classList.remove('hidden');
+    setTimeout(() => { nextQuestion(); }, 1100);
+  } else {
+    playWrongSound();
+    currentQuestionWrongAttempts++;
+    currentStreak = 0;
+    updateStreakUI();
 
-      if (autoBarcode) {
-        document.getElementById('barcodeSection').classList.remove('hidden');
-        startBarcodeScanner();
-      } else {
-        document.getElementById('barcodeSection').classList.add('hidden');
-      }
-    }
-    function editItem(id) {
-      const item = getItems().find(i => i.id === id);
-      if (!item) return;
-      openAddModal(false);
-      document.getElementById('editId').value = item.id;
-      document.getElementById('itemBarcode').value = item.barcode || '';
-      document.getElementById('itemName').value = item.name;
-      document.getElementById('itemQty').value = item.qty;
-      document.getElementById('itemExpiry').value = item.expiry;
-      document.getElementById('itemPrice').value = item.price || '';
-      document.getElementById('itemStore').value = item.store || '';
-      document.getElementById('itemNote').value = item.note || '';
-      setRating(item.rating || 'unrated');
-    }
-    function closeAddModal() {
-      stopBarcodeScanner();
-      document.getElementById('itemModal').classList.add('hidden');
-    }
-    function setStore(s) { document.getElementById('itemStore').value = s; }
-    function setRating(r) {
-      document.getElementById('itemRating').value = r;
-      document.querySelectorAll('.rate-btn').forEach(b => b.className = 'rate-btn py-2 rounded-xl border border-gray-200 bg-white text-gray-600');
-      const el = document.getElementById(`rate-${r}`);
-      if (r === 'unrated') el.className = 'rate-btn py-2 rounded-xl border-2 border-gray-400 bg-gray-100 text-gray-800';
-      if (r === 'good') el.className = 'rate-btn py-2 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-700';
-      if (r === 'bad') el.className = 'rate-btn py-2 rounded-xl border-2 border-red-500 bg-red-50 text-red-700';
-    }
-    function addDaysToExpiry(d) { document.getElementById('itemExpiry').value = getFutureDate(d); }
-    function addMonthsToExpiry(m) {
-      const d = new Date(); d.setMonth(d.getMonth() + m);
-      document.getElementById('itemExpiry').value = d.toISOString().split('T')[0];
-    }
-    function checkPreviousHistory(val) {
-      const banner = document.getElementById('historyWarningBanner');
-      if (!val || val.length < 2) { banner.classList.add('hidden'); return; }
-      const q = val.toLowerCase();
-      const match = getItems().find(i => (i.barcode && i.barcode === val) || (i.name && i.name.toLowerCase().includes(q)));
-      if (match) {
-        banner.classList.remove('hidden');
-        banner.className = match.rating === 'bad'
-          ? 'mb-3 p-3 rounded-xl border-2 border-red-500 bg-red-50 text-red-800 text-xs'
-          : 'mb-3 p-3 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs';
-        banner.innerHTML = match.rating === 'bad'
-          ? `🚨 <b>防伏警報！你以前標記過呢款中伏！</b><br>上次 <b>${match.store || '未知'}</b> 買 <b>£${match.price || '?'}</b>｜評價：${escapeHtml(match.note || '唔好食')}`
-          : `💡 <b>歷史參考：</b>上次 <b>${match.store || '未知'}</b> 買 <b>£${match.price || '?'}</b>｜評價：${escapeHtml(match.note || '')}`;
-      } else {
-        banner.classList.add('hidden');
-      }
-    }
-    function saveItem(e) {
-      e.preventDefault();
-      const items = getItems();
-      const editId = document.getElementById('editId').value;
-      const newItem = {
-        id: editId || Date.now().toString(),
-        barcode: document.getElementById('itemBarcode').value.trim(),
-        name: document.getElementById('itemName').value.trim(),
-        qty: Number(document.getElementById('itemQty').value),
-        expiry: document.getElementById('itemExpiry').value,
-        price: document.getElementById('itemPrice').value.trim(),
-        store: document.getElementById('itemStore').value.trim(),
-        rating: document.getElementById('itemRating').value,
-        note: document.getElementById('itemNote').value.trim()
-      };
-      if (editId) {
-        const idx = items.findIndex(i => i.id === editId);
-        if (idx !== -1) items[idx] = newItem;
-      } else {
-        items.unshift(newItem);
-      }
-      saveItemsToStorage(items);
-      closeAddModal();
+    if (!showVisual && !manualVisualOff) {
+      showVisual = true;
+      updateVisualToggleBtn();
+      renderQuestionVisual();
     }
 
-    function openSyncModal() {
-      document.getElementById('familyCodeInput').value = familyCode;
-      document.getElementById('syncModal').classList.remove('hidden');
-    }
-    function closeSyncModal() { document.getElementById('syncModal').classList.add('hidden'); }
-    function saveFamilyCode() {
-      const code = document.getElementById('familyCodeInput').value.trim().toUpperCase();
-      if (!code) return;
-      familyCode = code;
-      localStorage.setItem('wa14_family_code', familyCode);
-      document.getElementById('headerFamilyCode').textContent = familyCode;
-      closeSyncModal();
-      renderList();
-      updateStorageSize();
-    }
-    function exportDataString() {
-      navigator.clipboard.writeText(btoa(encodeURIComponent(JSON.stringify(getItems())))).then(() => {
-        alert('✅ 已複製純文字同步碼！貼上 WhatsApp 發俾屋企人即可。');
-      });
-    }
-    function importDataString() {
-      const str = prompt('請貼上屋企人發過嚟嘅同步字串：');
-      if (!str) return;
-      try {
-        const parsed = JSON.parse(decodeURIComponent(atob(str.trim())));
-        if (Array.isArray(parsed)) { saveItemsToStorage(parsed); closeSyncModal(); alert(`✅ 成功同步 ${parsed.length} 項紀錄！`); }
-      } catch { alert('❌ 格式錯誤'); }
-    }
+    userData.totalWrong++;
+    userData.topicStats[q_type].wrong++;
+    saveUserData();
+    document.getElementById('msg-text').className = 'msg-area retry';
+    document.getElementById('msg-text').innerText = 'Almost! Think carefully and try again (No coin for retry)';
+  }
+}
 
-    document.getElementById('headerFamilyCode').textContent = familyCode;
-    updateStorageSize();
-    renderList();
-  </script>
+function showChallengeResult(title, desc) {
+  playSuccess(1);
+  document.getElementById('res-title').innerHTML = title;
+  document.getElementById('res-desc').innerHTML = desc;
+  document.getElementById('result-modal').style.display = 'flex';
+}
+
+window.addEventListener('keydown', (e) => {
+  const gameView = document.getElementById('game-view');
+  if (!gameView || gameView.style.display !== 'block' || isAnswered || isSubmitLocked) return;
+
+  if (q_type === 'compare' || q_type === 'compare100') {
+    if (e.key === '>' || e.key === '.' || e.key === 'ArrowRight') {
+      checkAnswer('>');
+    } else if (e.key === '<' || e.key === ',' || e.key === 'ArrowLeft') {
+      checkAnswer('<');
+    } else if (e.key === '=' || e.key === 'Enter') {
+      checkAnswer('=');
+    }
+    return;
+  }
+
+  if (e.key >= '0' && e.key <= '9') {
+    if (keyboardBuffer.length < 3) {
+      keyboardBuffer += e.key;
+      updateKeyboardPreview();
+    }
+  } 
+  else if (e.key === 'Enter') {
+    if (keyboardBuffer.length > 0) {
+      submitKeyboardAnswer();
+    }
+  } 
+  else if (e.key === 'Backspace') {
+    keyboardBuffer = keyboardBuffer.slice(0, -1);
+    updateKeyboardPreview();
+  }
+});
+
+function submitKeyboardAnswer() {
+  if (!keyboardBuffer || isSubmitLocked) return;
+  const val = parseInt(keyboardBuffer, 10);
+  keyboardBuffer = '';
+  updateKeyboardPreview();
+  checkAnswer(val);
+}
+</script>
+
 </body>
 </html>
