@@ -200,6 +200,8 @@
   .btn-adv-2 { background: linear-gradient(135deg, #1565c0, #0d47a1); font-size: 13.5px; padding: 12px 6px; }
   .btn-adv-3 { background: linear-gradient(135deg, #00838f, #006064); font-size: 13.5px; padding: 12px 6px; }
   .btn-adv-4 { background: linear-gradient(135deg, #ad1457, #880e4f); font-size: 13.5px; padding: 12px 6px; }
+  .btn-adv-5 { background: linear-gradient(135deg, #2e7d32, #004d40); font-size: 13.5px; padding: 12px 6px; }
+  .btn-adv-6 { background: linear-gradient(135deg, #ef6c00, #bf360c); font-size: 13.5px; padding: 12px 6px; }
 
   .btn-c-1 { background: #4caf50; }
   .btn-c-2 { background: #ff9800; }
@@ -286,7 +288,7 @@
   }
 
   .question-box {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
     color: #1b5e20;
     margin: 4px 0 6px 0;
@@ -390,7 +392,7 @@
 
   /* Visual Board */
   .visual-area {
-    min-height: 120px;
+    min-height: 140px;
     margin: 8px 0;
     padding: 10px;
     background: #fffde7;
@@ -743,7 +745,7 @@
     box-shadow: 0 0 8px rgba(46, 125, 50, 0.25);
   }
 
-  /* Keypad */
+  /* Keypad & Choice Grids */
   .options-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -752,6 +754,8 @@
     gap: 6px;
   }
   .options-grid.compare-mode { grid-template-columns: repeat(3, 1fr); }
+  .options-grid.choice-mode { grid-template-columns: repeat(2, 1fr); max-width: 420px; gap: 8px; }
+  
   .btn-opt {
     font-size: 20px;
     font-weight: bold;
@@ -765,6 +769,7 @@
     transition: opacity 0.2s;
   }
   .btn-opt.btn-compare { font-size: 30px; padding: 12px 0; background: #0288d1; box-shadow: 0 4px 0 #0277bd; }
+  .btn-opt.btn-choice { font-size: 16px; padding: 12px 8px; background: #5c6bc0; box-shadow: 0 3px 0 #3949ab; }
   .btn-opt:active:not(:disabled) { transform: translateY(2px); box-shadow: none; }
   .btn-opt:disabled { opacity: 0.45; cursor: not-allowed; }
   .msg-area { min-height: 28px; font-size: 16px; font-weight: bold; margin-top: 4px; }
@@ -878,12 +883,14 @@
       </div>
 
       <!-- SCHOOL & NEXT-STEP CHALLENGES -->
-      <div class="section-label">🚀 School & Next-Step Challenges</div>
+      <div class="section-label">🚀 School & Next-Step Topics</div>
       <div class="menu-grid">
         <button class="menu-btn btn-adv-1" onclick="startMode('compare100')">🐊 Compare to 100 & Sums<br><small style="font-size: 10px; opacity: 0.9;">e.g. 46 [ ] 30+16, 88 [ ] 91</small></button>
         <button class="menu-btn btn-adv-2" onclick="startMode('add100')">🔢 2-Digit Add (No Cross)<br><small style="font-size: 10px; opacity: 0.9;">e.g. 30+16, 47+10, 21+11</small></button>
         <button class="menu-btn btn-adv-3" onclick="startMode('add100_cross')">⚡ 2-Digit Crossing 10<br><small style="font-size: 10px; opacity: 0.9;">e.g. 23 + 8, 19 + 5</small></button>
         <button class="menu-btn btn-adv-4" onclick="startMode('mult_intro')">✖️ Intro Times Tables<br><small style="font-size: 10px; opacity: 0.9;">Equal Groups: 2s, 3s, 5s, 10s</small></button>
+        <button class="menu-btn btn-adv-5" onclick="startMode('shapes')">🔷 2D & 3D Shapes<br><small style="font-size: 10px; opacity: 0.9;">Sides, Vertices, Cube, Cone</small></button>
+        <button class="menu-btn btn-adv-6" onclick="startMode('time')">🕒 Telling the Time<br><small style="font-size: 10px; opacity: 0.9;">O'clock, Half & Quarter</small></button>
       </div>
 
       <div class="section-label">⚡ Time & Speed Challenges</div>
@@ -1427,6 +1434,88 @@ function openAnalytics() {
   document.getElementById('analytics-modal').style.display = 'flex';
 }
 
+// --- SHAPES & TIME DATA BANKS ---
+const SHAPES_BANK = [
+  {
+    id: 'circle', name: 'Circle', dim: '2D', sides: 0, vertices: 0,
+    hint: 'A round 2D shape with 1 curved side and 0 corners!',
+    svg: `<svg width="110" height="110" viewBox="0 0 110 110"><circle cx="55" cy="55" r="42" fill="#4fc3f7" stroke="#0277bd" stroke-width="4"/></svg>`
+  },
+  {
+    id: 'triangle', name: 'Triangle', dim: '2D', sides: 3, vertices: 3,
+    hint: 'A 2D shape with 3 straight sides and 3 vertices (corners)!',
+    svg: `<svg width="110" height="110" viewBox="0 0 110 110"><polygon points="55,15 15,92 95,92" fill="#ffb74d" stroke="#ef6c00" stroke-width="4" stroke-linejoin="round"/></svg>`
+  },
+  {
+    id: 'square', name: 'Square', dim: '2D', sides: 4, vertices: 4,
+    hint: 'A 2D shape with 4 equal straight sides and 4 vertices!',
+    svg: `<svg width="110" height="110" viewBox="0 0 110 110"><rect x="20" y="20" width="70" height="70" rx="4" fill="#81c784" stroke="#2e7d32" stroke-width="4"/></svg>`
+  },
+  {
+    id: 'rectangle', name: 'Rectangle', dim: '2D', sides: 4, vertices: 4,
+    hint: 'A 2D shape with 2 long sides, 2 short sides, and 4 vertices!',
+    svg: `<svg width="130" height="100" viewBox="0 0 130 100"><rect x="15" y="22" width="100" height="56" rx="4" fill="#ba68c8" stroke="#6a1b9a" stroke-width="4"/></svg>`
+  },
+  {
+    id: 'pentagon', name: 'Pentagon', dim: '2D', sides: 5, vertices: 5,
+    hint: 'Penta means 5! It has 5 straight sides and 5 vertices!',
+    svg: `<svg width="110" height="110" viewBox="0 0 110 110"><polygon points="55,12 96,42 80,92 30,92 14,42" fill="#f06292" stroke="#ad1457" stroke-width="4" stroke-linejoin="round"/></svg>`
+  },
+  {
+    id: 'hexagon', name: 'Hexagon', dim: '2D', sides: 6, vertices: 6,
+    hint: 'Hexa means 6 (like a honeycomb)! 6 sides and 6 vertices!',
+    svg: `<svg width="110" height="110" viewBox="0 0 110 110"><polygon points="55,12 93,34 93,76 55,98 17,76 17,34" fill="#ffd54f" stroke="#f57f17" stroke-width="4" stroke-linejoin="round"/></svg>`
+  },
+  {
+    id: 'cube', name: 'Cube', dim: '3D', faces: 6,
+    hint: 'A 3D box shape (like a dice) with 6 flat square faces!',
+    svg: `<svg width="115" height="115" viewBox="0 0 115 115">
+      <polygon points="30,38 75,38 75,85 30,85" fill="#4db6ac" stroke="#00695c" stroke-width="3"/>
+      <polygon points="30,38 50,20 95,20 75,38" fill="#80cbc4" stroke="#00695c" stroke-width="3"/>
+      <polygon points="75,38 95,20 95,67 75,85" fill="#26a69a" stroke="#00695c" stroke-width="3"/>
+    </svg>`
+  },
+  {
+    id: 'sphere', name: 'Sphere', dim: '3D', faces: 0,
+    hint: 'A round 3D ball shape with 1 curved surface and 0 corners!',
+    svg: `<svg width="110" height="110" viewBox="0 0 110 110">
+      <defs><radialGradient id="sph" cx="35%" cy="30%" r="65%"><stop offset="0%" stop-color="#fff"/><stop offset="40%" stop-color="#ff7043"/><stop offset="100%" stop-color="#bf360c"/></radialGradient></defs>
+      <circle cx="55" cy="55" r="42" fill="url(#sph)" stroke="#bf360c" stroke-width="2"/>
+    </svg>`
+  },
+  {
+    id: 'cylinder', name: 'Cylinder', dim: '3D', faces: 2,
+    hint: 'A 3D tin-can shape with 2 flat circular faces and 1 curved face!',
+    svg: `<svg width="110" height="115" viewBox="0 0 110 115">
+      <path d="M 28 30 L 28 85 A 27 11 0 0 0 82 85 L 82 30 Z" fill="#64b5f6" stroke="#1565c0" stroke-width="3"/>
+      <ellipse cx="55" cy="30" rx="27" ry="11" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+    </svg>`
+  },
+  {
+    id: 'cone', name: 'Cone', dim: '3D', faces: 1,
+    hint: 'Like an ice-cream cone! 1 flat circular face and 1 point!',
+    svg: `<svg width="110" height="115" viewBox="0 0 110 115">
+      <polygon points="55,15 25,88 85,88" fill="#ffb74d" stroke="#e65100" stroke-width="3"/>
+      <ellipse cx="55" cy="88" rx="30" ry="10" fill="#ffe0b2" stroke="#e65100" stroke-width="3"/>
+    </svg>`
+  },
+  {
+    id: 'pyramid', name: 'Pyramid', dim: '3D', faces: 5,
+    hint: 'A 3D Egyptian pyramid with triangular sides meeting at a point!',
+    svg: `<svg width="115" height="115" viewBox="0 0 115 115">
+      <polygon points="55,15 20,82 65,95" fill="#ffd54f" stroke="#f57f17" stroke-width="3" stroke-linejoin="round"/>
+      <polygon points="55,15 65,95 96,74" fill="#ffb300" stroke="#f57f17" stroke-width="3" stroke-linejoin="round"/>
+    </svg>`
+  }
+];
+
+let currentShapeObj = null;
+let shapeQuestionMode = 'name'; // 'name' or 'count'
+let choiceOptions = [];
+
+let timeHour = 3;
+let timeMinute = 0; // 0, 15, 30, 45
+
 // --- GAME LOGIC & CURRICULUM GENERATOR ---
 let activeMode = '';
 let activeChallenge = '';
@@ -1452,7 +1541,6 @@ let q_paramStep = 1;
 let q_type = '';
 let make10_moved = 0;
 
-// For Compare 100 / Expression Visuals
 let compLeftVal = 0;
 let compRightVal = 0;
 let compLeftStr = '';
@@ -1492,7 +1580,12 @@ function startMode(mode) {
   activeMode = mode;
   isChallenge = false;
   currentStreak = 0;
-  showVisual = !manualVisualOff;
+  // Shapes & Time require visuals by default
+  if (mode === 'shapes' || mode === 'time') {
+    showVisual = true;
+  } else {
+    showVisual = !manualVisualOff;
+  }
   updateVisualToggleBtn();
   updateStreakUI();
   document.getElementById('menu-view').style.display = 'none';
@@ -1636,7 +1729,6 @@ function exitToMenu() {
   updateDashboardUI();
 }
 
-// Anti-Guessing 2-second Think Delay
 function startThinkDelay() {
   clearInterval(thinkLockTimer);
   isSubmitLocked = true;
@@ -1668,6 +1760,15 @@ function startThinkDelay() {
   }, 1000);
 }
 
+function formatTimeWords(h, m) {
+  const nextH = (h === 12) ? 1 : h + 1;
+  if (m === 0) return `${h} o'clock`;
+  if (m === 15) return `Quarter past ${h}`;
+  if (m === 30) return `Half past ${h}`;
+  if (m === 45) return `Quarter to ${nextH}`;
+  return `${h}:00`;
+}
+
 function nextQuestion() {
   isAnswered = false;
   currentQuestionWrongAttempts = 0;
@@ -1690,16 +1791,22 @@ function nextQuestion() {
 
   q_type = mode;
 
-  // Smart Fading: 連續答啱 3 題自動轉心算模式
-  if (!manualVisualOff && currentStreak >= 3 && showVisual) {
-    showVisual = false;
+  // Smart Fading: 連續答啱 3 題自動轉心算模式（圖形與時鐘題除外，必須有圖）
+  if (mode !== 'shapes' && mode !== 'time') {
+    if (!manualVisualOff && currentStreak >= 3 && showVisual) {
+      showVisual = false;
+      updateVisualToggleBtn();
+    }
+  } else {
+    showVisual = true;
     updateVisualToggleBtn();
   }
 
   const qBox = document.getElementById('question-text');
   const hBox = document.getElementById('hint-text');
   const kWrap = document.getElementById('keyboard-preview-wrap');
-  kWrap.style.display = (mode === 'compare' || mode === 'compare100') ? 'none' : 'block';
+  const isChoiceInput = (mode === 'compare' || mode === 'compare100' || mode === 'time' || (mode === 'shapes' && shapeQuestionMode === 'name'));
+  kWrap.style.display = isChoiceInput ? 'none' : 'block';
 
   if (mode === 'add10') {
     document.getElementById('mode-badge').innerText = (activeMode === 'mixed_add' ? '🔀 Mixed Add: ' : '') + 'Addition ≤ 10';
@@ -1905,30 +2012,83 @@ function nextQuestion() {
     qBox.innerText = `${q_paramA} + ${q_paramB} = ?`;
     hBox.innerText = `🟩 Add the Tens together, 🟡 add the Ones together!`;
   }
-  // NEW MODULE 3: 2-DIGIT CROSSING 10 ADDITION (School TV style: e.g. 23 + 8, 19 + 5)
   else if (mode === 'add100_cross') {
     document.getElementById('mode-badge').innerText = '⚡ 2-Digit Crossing 10';
-    const tens = (Math.floor(Math.random() * 6) + 1) * 10; // 10 to 60
-    const onesA = Math.floor(Math.random() * 6) + 4; // 4 to 9 (e.g., 19, 23, 37)
+    const tens = (Math.floor(Math.random() * 6) + 1) * 10;
+    const onesA = Math.floor(Math.random() * 6) + 4;
     q_paramA = tens + onesA;
     const neededToNextTen = 10 - onesA;
-    const extraOnes = Math.floor(Math.random() * 4) + 1; // 1 to 4
-    q_paramB = neededToNextTen + extraOnes; // ensures crossing next 10!
+    const extraOnes = Math.floor(Math.random() * 4) + 1;
+    q_paramB = neededToNextTen + extraOnes;
     correctAns = q_paramA + q_paramB;
 
     const nextTen = tens + 10;
     qBox.innerText = `${q_paramA} + ${q_paramB} = ?`;
     hBox.innerText = `💡 Make ${nextTen}! ${q_paramA} needs ${neededToNextTen} from ${q_paramB} (leaves ${extraOnes}) ➔ ${nextTen} + ${extraOnes}`;
   }
-  // NEW MODULE 4: INTRO MULTIPLICATION (Equal Groups: 2s, 3s, 5s, 10s)
   else if (mode === 'mult_intro') {
     document.getElementById('mode-badge').innerText = '✖️ Intro Times Tables';
     const tables = [2, 2, 3, 5, 5, 10, 10];
-    q_paramB = tables[Math.floor(Math.random() * tables.length)]; // items per group
-    q_paramA = Math.floor(Math.random() * 5) + 2; // 2 to 6 groups
+    q_paramB = tables[Math.floor(Math.random() * tables.length)];
+    q_paramA = Math.floor(Math.random() * 5) + 2;
     correctAns = q_paramA * q_paramB;
     qBox.innerText = `${q_paramA} × ${q_paramB} = ?`;
     hBox.innerText = `🍽️ ${q_paramA} groups of ${q_paramB}! Skip count by ${q_paramB}s!`;
+  }
+  // NEW MODULE 5: 2D & 3D SHAPES
+  else if (mode === 'shapes') {
+    document.getElementById('mode-badge').innerText = '🔷 2D & 3D Shapes';
+    currentShapeObj = SHAPES_BANK[Math.floor(Math.random() * SHAPES_BANK.length)];
+    // Decide whether to ask Name or Properties (sides/vertices/faces)
+    shapeQuestionMode = (Math.random() < 0.65) ? 'name' : 'count';
+
+    if (shapeQuestionMode === 'name') {
+      kWrap.style.display = 'none';
+      correctAns = currentShapeObj.name;
+      qBox.innerText = `What ${currentShapeObj.dim} shape is this?`;
+      hBox.innerText = `💡 ${currentShapeObj.hint}`;
+
+      // Build 4 distinct name choices
+      const sameDim = SHAPES_BANK.filter(s => s.dim === currentShapeObj.dim && s.name !== currentShapeObj.name);
+      const shuffled = sameDim.sort(() => 0.5 - Math.random()).slice(0, 3).map(s => s.name);
+      choiceOptions = [currentShapeObj.name, ...shuffled].sort(() => 0.5 - Math.random());
+    } else {
+      kWrap.style.display = 'block';
+      if (currentShapeObj.dim === '2D') {
+        const askSides = Math.random() > 0.5;
+        correctAns = askSides ? currentShapeObj.sides : currentShapeObj.vertices;
+        qBox.innerText = askSides 
+          ? `How many SIDES does a ${currentShapeObj.name} have?`
+          : `How many VERTICES (corners) on a ${currentShapeObj.name}?`;
+        hBox.innerText = `Count carefully around the ${currentShapeObj.name}!`;
+      } else {
+        correctAns = currentShapeObj.faces;
+        qBox.innerText = `How many FLAT FACES on a ${currentShapeObj.name}?`;
+        hBox.innerText = `💡 ${currentShapeObj.hint}`;
+      }
+    }
+  }
+  // NEW MODULE 6: TELLING THE TIME
+  else if (mode === 'time') {
+    document.getElementById('mode-badge').innerText = '🕒 Telling the Time';
+    kWrap.style.display = 'none';
+    timeHour = Math.floor(Math.random() * 12) + 1;
+    const minChoices = [0, 0, 30, 30, 15, 45]; // Focus heavily on o'clock & half past, plus quarter past/to
+    timeMinute = minChoices[Math.floor(Math.random() * minChoices.length)];
+    correctAns = formatTimeWords(timeHour, timeMinute);
+
+    qBox.innerText = `What time is on the clock?`;
+    hBox.innerText = `🔴 Short Red Hand = Hour | 🔵 Long Blue Hand = Minutes`;
+
+    // Generate 3 plausible distractors
+    const distractors = new Set();
+    while (distractors.size < 3) {
+      const rh = Math.floor(Math.random() * 12) + 1;
+      const rm = minChoices[Math.floor(Math.random() * minChoices.length)];
+      const cand = formatTimeWords(rh, rm);
+      if (cand !== correctAns) distractors.add(cand);
+    }
+    choiceOptions = [correctAns, ...Array.from(distractors)].sort(() => 0.5 - Math.random());
   }
 
   if (!showVisual) {
@@ -1943,7 +2103,6 @@ function nextQuestion() {
   startThinkDelay();
 }
 
-// Helper to build Base-10 Tens Rods & Ones Cubes HTML
 function buildBase10HTML(num) {
   const tens = Math.floor(num / 10);
   const ones = num % 10;
@@ -1964,11 +2123,39 @@ function buildBase10HTML(num) {
   return html;
 }
 
+function buildClockSVG(hour, minute) {
+  const cx = 75, cy = 75, r = 64;
+  // Angles in degrees (0 deg = 12 o'clock)
+  const minAngle = minute * 6;
+  const hourAngle = ((hour % 12) + minute / 60) * 30;
+
+  let numbersHtml = '';
+  for (let n = 1; n <= 12; n++) {
+    const rad = (n * 30 - 90) * (Math.PI / 180);
+    const nx = cx + (r - 15) * Math.cos(rad);
+    const ny = cy + (r - 15) * Math.sin(rad) + 4;
+    numbersHtml += `<text x="${nx}" y="${ny}" font-size="12" font-weight="bold" fill="#222" text-anchor="middle">${n}</text>`;
+  }
+
+  return `
+    <svg width="150" height="150" viewBox="0 0 150 150">
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="#ffffff" stroke="#ef6c00" stroke-width="5"/>
+      <circle cx="${cx}" cy="${cy}" r="${r - 4}" fill="none" stroke="#ffe0b2" stroke-width="1.5"/>
+      ${numbersHtml}
+      <!-- Minute Hand (Long Blue) -->
+      <line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - 44}" stroke="#1565c0" stroke-width="4" stroke-linecap="round" transform="rotate(${minAngle} ${cx} ${cy})"/>
+      <!-- Hour Hand (Short Red) -->
+      <line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - 29}" stroke="#d32f2f" stroke-width="5.5" stroke-linecap="round" transform="rotate(${hourAngle} ${cx} ${cy})"/>
+      <circle cx="${cx}" cy="${cy}" r="5" fill="#333"/>
+    </svg>
+  `;
+}
+
 function renderQuestionVisual() {
   const board = document.getElementById('visual-board');
   board.innerHTML = '';
 
-  if (!showVisual) {
+  if (!showVisual && q_type !== 'shapes' && q_type !== 'time') {
     board.innerHTML = `
       <div class="mental-box">
         <div style="font-size: 34px;">🧠💭✨</div>
@@ -1979,7 +2166,20 @@ function renderQuestionVisual() {
     return;
   }
 
-  if (q_type === 'mult_intro') {
+  if (q_type === 'shapes') {
+    board.innerHTML = `
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="background: #e0f2f1; color: #00695c; font-size: 11px; font-weight: bold; padding: 2px 10px; border-radius: 10px; margin-bottom: 4px;">
+          ${currentShapeObj.dim} Shape
+        </div>
+        ${currentShapeObj.svg}
+      </div>
+    `;
+  }
+  else if (q_type === 'time') {
+    board.innerHTML = buildClockSVG(timeHour, timeMinute);
+  }
+  else if (q_type === 'mult_intro') {
     const wrap = document.createElement('div');
     wrap.className = 'mult-plates-wrap';
     const icon = q_paramB === 2 ? '🍓' : (q_paramB === 3 ? '🍪' : (q_paramB === 5 ? '⭐' : '🪙'));
@@ -2407,6 +2607,19 @@ function renderKeypad() {
     return;
   }
 
+  if (q_type === 'time' || (q_type === 'shapes' && shapeQuestionMode === 'name')) {
+    box.className = 'options-grid choice-mode';
+    choiceOptions.forEach(optText => {
+      const b = document.createElement('button');
+      b.className = 'btn-opt btn-choice submit-guard-btn';
+      b.innerText = optText;
+      b.dataset.origText = optText;
+      b.onclick = () => checkAnswer(optText);
+      box.appendChild(b);
+    });
+    return;
+  }
+
   box.className = 'options-grid';
   const keypadLayout = [
     '1', '2', '3', '4',
@@ -2555,6 +2768,10 @@ window.addEventListener('keydown', (e) => {
     } else if (e.key === '=' || e.key === 'Enter') {
       checkAnswer('=');
     }
+    return;
+  }
+
+  if (q_type === 'time' || (q_type === 'shapes' && shapeQuestionMode === 'name')) {
     return;
   }
 
