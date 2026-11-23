@@ -41,7 +41,7 @@
     border-radius: 24px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     position: relative;
-    min-height: 580px;
+    min-height: 540px;
   }
   h1 { font-size: 24px; color: #2e7d32; margin: 0 0 8px 0; }
 
@@ -84,7 +84,7 @@
     background: #e8f5e9;
     padding: 8px 12px;
     border-radius: 16px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-size: 13px;
     font-weight: bold;
     color: #1b5e20;
@@ -162,35 +162,55 @@
   }
 
   /* =========================================
-     4. MENUS & SUBMENUS
+     4. HOME YEAR CARDS & SUB-WORLDS
      ========================================= */
-  #menu-view, #submenu-add-view, #submenu-sub-view { display: none; }
+  #menu-view, #year1-view, #year2-view, #submenu-add-view, #submenu-sub-view { display: none; }
+
+  .year-hero-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 10px 0 14px 0;
+  }
+  .year-hero-card {
+    padding: 20px 16px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    color: white;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.14);
+    transition: transform 0.1s;
+  }
+  .year-hero-card:active { transform: translateY(3px); box-shadow: none; }
+  .hero-y1 { background: linear-gradient(135deg, #43a047, #1b5e20); }
+  .hero-y2 { background: linear-gradient(135deg, #7b1fa2, #4a148c); }
+  .hero-title { font-size: 21px; font-weight: 900; margin-bottom: 4px; }
+  .hero-sub { font-size: 12.5px; opacity: 0.92; line-height: 1.3; }
+  .hero-icon { font-size: 46px; margin-left: 10px; }
+
+  .world-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #f0f0f0;
+  }
+
   .section-label {
     text-align: left;
     font-size: 12px;
     font-weight: bold;
-    color: #2e7d32;
-    margin: 12px 0 5px 4px;
+    color: #555;
+    margin: 10px 0 5px 4px;
     text-transform: uppercase;
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
-  .year-tag-y1 {
-    background: #e8f5e9;
-    color: #2e7d32;
-    border: 1px solid #a5d6a7;
-    padding: 1px 7px;
-    border-radius: 8px;
-    font-size: 10.5px;
-  }
-  .year-tag-y2 {
-    background: #f3e5f5;
-    color: #6a1b9a;
-    border: 1px solid #ce93d8;
-    padding: 1px 7px;
-    border-radius: 8px;
-    font-size: 10.5px;
   }
   .menu-grid {
     display: grid;
@@ -198,7 +218,7 @@
     gap: 8px;
   }
   .menu-btn {
-    padding: 11px 6px;
+    padding: 12px 6px;
     font-size: 13.5px;
     font-weight: bold;
     border: none;
@@ -226,12 +246,14 @@
   .btn-group-add { background: linear-gradient(135deg, #43a047, #2e7d32); font-size: 15px; padding: 14px 8px; }
   .btn-group-sub { background: linear-gradient(135deg, #fb8c00, #e65100); font-size: 15px; padding: 14px 8px; }
   
-  .btn-adv-1 { background: linear-gradient(135deg, #6a1b9a, #4a148c); font-size: 13px; padding: 12px 6px; }
-  .btn-adv-2 { background: linear-gradient(135deg, #1565c0, #0d47a1); font-size: 13px; padding: 12px 6px; }
-  .btn-adv-3 { background: linear-gradient(135deg, #00838f, #006064); font-size: 13px; padding: 12px 6px; }
-  .btn-adv-4 { background: linear-gradient(135deg, #ad1457, #880e4f); font-size: 13px; padding: 12px 6px; }
-  .btn-adv-5 { background: linear-gradient(135deg, #2e7d32, #004d40); font-size: 13px; padding: 12px 6px; }
-  .btn-adv-6 { background: linear-gradient(135deg, #ef6c00, #bf360c); font-size: 13px; padding: 12px 6px; }
+  .btn-adv-1 { background: linear-gradient(135deg, #6a1b9a, #4a148c); font-size: 13.5px; padding: 13px 6px; }
+  .btn-adv-2 { background: linear-gradient(135deg, #1565c0, #0d47a1); font-size: 13.5px; padding: 13px 6px; }
+  .btn-adv-3 { background: linear-gradient(135deg, #00838f, #006064); font-size: 13.5px; padding: 13px 6px; }
+  .btn-adv-4 { background: linear-gradient(135deg, #ad1457, #880e4f); font-size: 13.5px; padding: 13px 6px; }
+  .btn-adv-5 { background: linear-gradient(135deg, #2e7d32, #004d40); font-size: 13.5px; padding: 13px 6px; }
+  .btn-adv-6 { background: linear-gradient(135deg, #ef6c00, #bf360c); font-size: 13.5px; padding: 13px 6px; }
+  .btn-wp-y1 { background: linear-gradient(135deg, #00897b, #004d40); grid-column: span 2; padding: 13px; font-size: 14.5px; }
+  .btn-wp-y2 { background: linear-gradient(135deg, #3949ab, #1a237e); grid-column: span 2; padding: 13px; font-size: 14.5px; }
 
   .btn-c-1 { background: #4caf50; }
   .btn-c-1b { background: #388e3c; }
@@ -245,10 +267,9 @@
   .btn-c-7 { background: #9c27b0; }
   .btn-c-8 { background: #0288d1; }
   .btn-c-9 { background: #607d8b; }
-  .btn-c-money { background: #fbc02d; color: #3e2723; }
   .btn-c-frac { background: #ec407a; }
   .btn-challenge { background: #d32f2f; }
-  .btn-allstar { background: linear-gradient(135deg, #8e24aa, #5e35b1); grid-column: span 2; padding: 12px; font-size: 14px; }
+  .btn-speed-full { grid-column: span 2; padding: 13px; font-size: 14.5px; }
 
   .bottom-tools {
     display: flex;
@@ -258,7 +279,7 @@
   }
   .btn-tool {
     flex: 1;
-    padding: 10px 0;
+    padding: 11px 0;
     font-size: 14px;
     font-weight: bold;
     border: none;
@@ -331,6 +352,15 @@
     border-radius: 14px;
     display: inline-block;
     transition: all 0.3s ease;
+    line-height: 1.35;
+  }
+  .question-box.word-problem-mode {
+    font-size: 18px;
+    text-align: left;
+    display: block;
+    background: #f1f8e9;
+    border-left: 5px solid #2e7d32;
+    padding: 12px 14px;
   }
   .question-box.flaming {
     border: 2px solid #ff5722;
@@ -426,7 +456,7 @@
 
   /* Visual Board */
   .visual-area {
-    min-height: 140px;
+    min-height: 130px;
     margin: 8px 0;
     padding: 10px;
     background: #fffde7;
@@ -440,28 +470,6 @@
     position: relative;
     overflow: hidden;
   }
-
-  /* UK Coins Visual */
-  .uk-coins-wrap {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    padding: 6px;
-  }
-  .uk-coin {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 900;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-    border: 2.5px solid rgba(0,0,0,0.25);
-  }
-  .coin-copper { background: radial-gradient(circle at 30% 30%, #e69d6c, #b86b35); color: #fff; border-radius: 50%; }
-  .coin-silver { background: radial-gradient(circle at 30% 30%, #f5f5f5, #bdbdbd); color: #212121; border-radius: 50%; }
-  .coin-heptagon { background: radial-gradient(circle at 30% 30%, #f5f5f5, #b0bec5); color: #212121; border-radius: 28%; }
-  .coin-pound { background: radial-gradient(circle at 30% 30%, #fff59d, #fbc02d); color: #3e2723; border: 4px solid #9e9e9e; border-radius: 50%; }
 
   .grid-5-group {
     display: grid;
@@ -927,48 +935,31 @@
       🎉 Awesome stamina! You completed 30 questions today! +5 Bonus Coins! 🪙
     </div>
 
-    <!-- 3. MAIN MENU VIEW -->
+    <!-- 3. CLEAN HOME MENU VIEW (CHOOSE YEAR) -->
     <div id="menu-view">
-      <!-- TIER 1: UK YEAR 1 CORE CURRICULUM -->
-      <div class="section-label">
-        <span>🇬🇧 Year 1 Core Curriculum</span>
-        <span class="year-tag-y1">Year 1</span>
-      </div>
-      <div class="menu-grid">
-        <button class="menu-btn btn-group-add" onclick="showSubMenu('add')">➕ Addition World<br><small style="font-size: 11px; opacity: 0.9;">≤10, Make 10, ≤20, Mixed</small></button>
-        <button class="menu-btn btn-group-sub" onclick="showSubMenu('sub')">➖ Subtraction World<br><small style="font-size: 11px; opacity: 0.9;">≤10, ≤20, Crossing 10, Mixed</small></button>
-        <button class="menu-btn btn-c-4" onclick="startMode('bonds')">Number Bonds (10 & 20)</button>
-        <button class="menu-btn btn-c-5" onclick="startMode('doubles')">Doubles & Halves</button>
-        <button class="menu-btn btn-c-6" onclick="startMode('moreless')">More / Less (±1, ±2, ±10)</button>
-        <button class="menu-btn btn-c-7" onclick="startMode('skip')">Frog Skip (2, 5, 10)</button>
-        <button class="menu-btn btn-c-8" onclick="startMode('compare')">Compare (≤100 & ≤20 Sums)</button>
-        <button class="menu-btn btn-c-money" onclick="startMode('money')">💷 UK Money (Coins)</button>
-        <button class="menu-btn btn-c-frac" onclick="startMode('fractions')">🍕 Fractions (1/2 & 1/4)</button>
-        <button class="menu-btn btn-c-9" onclick="startMode('mixed')">🔀 Year 1 Mixed Revision</button>
+      <div class="section-label">📚 Select Your Learning World</div>
+      
+      <div class="year-hero-grid">
+        <button class="year-hero-card hero-y1" onclick="openYearWorld('y1')">
+          <div>
+            <div class="hero-title">🇬🇧 Year 1 World</div>
+            <div class="hero-sub">Add & Sub ≤ 20, Bonds, Doubles, Halves, Skip Counting, Compare, Fractions & Word Problems</div>
+          </div>
+          <div class="hero-icon">🦕</div>
+        </button>
+
+        <button class="year-hero-card hero-y2" onclick="openYearWorld('y2')">
+          <div>
+            <div class="hero-title">🚀 Year 2 World</div>
+            <div class="hero-sub">Numbers to 100, 2-Digit Crossing 10, Times Tables, 2D/3D Shapes, Time & Word Problems</div>
+          </div>
+          <div class="hero-icon">🦖</div>
+        </button>
       </div>
 
-      <!-- TIER 2: SPEED & ENDURANCE -->
-      <div class="section-label">
-        <span>⚡ Time & Speed Challenges</span>
-      </div>
+      <div class="section-label">⚡ Quick Endurance</div>
       <div class="menu-grid">
-        <button class="menu-btn btn-challenge" onclick="startChallenge('bomb')">💣 10-Min Bomb Rush</button>
-        <button class="menu-btn btn-challenge" onclick="startChallenge('speed30')">🏁 Year 1 Speedrun (30 Qs)</button>
-        <button class="menu-btn btn-allstar" onclick="startChallenge('allstar30')">🚀 Year 2 All-Star Speedrun (30 Qs)</button>
-      </div>
-
-      <!-- TIER 3: YEAR 2 / GREATER DEPTH CHALLENGES -->
-      <div class="section-label" style="color: #6a1b9a;">
-        <span>🚀 Year 2 / Greater Depth</span>
-        <span class="year-tag-y2">Year 2 Level</span>
-      </div>
-      <div class="menu-grid">
-        <button class="menu-btn btn-adv-1" onclick="startMode('compare100')"><span class="y2-pill">Y2</span>🐊 Compare 100 & Sums<br><small style="font-size: 10px; opacity: 0.9;">e.g. 46 [ ] 30+16, 88 [ ] 91</small></button>
-        <button class="menu-btn btn-adv-2" onclick="startMode('add100')"><span class="y2-pill">Y2</span>🔢 2-Digit Add (No Cross)<br><small style="font-size: 10px; opacity: 0.9;">e.g. 30+16, 47+10, 21+11</small></button>
-        <button class="menu-btn btn-adv-3" onclick="startMode('add100_cross')"><span class="y2-pill">Y2</span>⚡ 2-Digit Crossing 10<br><small style="font-size: 10px; opacity: 0.9;">e.g. 23 + 8, 19 + 5</small></button>
-        <button class="menu-btn btn-adv-4" onclick="startMode('mult_intro')"><span class="y2-pill">Y2</span>✖️ Times Tables (2,3,5,10)<br><small style="font-size: 10px; opacity: 0.9;">Equal Groups & Arrays</small></button>
-        <button class="menu-btn btn-adv-5" onclick="startMode('shapes')"><span class="y2-pill">Y2</span>🔷 2D & 3D Shapes<br><small style="font-size: 10px; opacity: 0.9;">Sides, Vertices, Faces</small></button>
-        <button class="menu-btn btn-adv-6" onclick="startMode('time')"><span class="y2-pill">Y2</span>🕒 Telling the Time<br><small style="font-size: 10px; opacity: 0.9;">O'clock, Half & Quarter</small></button>
+        <button class="menu-btn btn-challenge" style="grid-column: span 2; padding: 13px;" onclick="startChallenge('bomb')">💣 10-Min Bomb Rush (Year 1 Mix)</button>
       </div>
 
       <div class="bottom-tools">
@@ -977,12 +968,55 @@
       </div>
     </div>
 
-    <!-- 3A. SUBMENU: ADDITION WORLD -->
+    <!-- 3A. YEAR 1 WORLD VIEW -->
+    <div id="year1-view">
+      <div class="world-header">
+        <button class="btn-back" onclick="backToHome()">◀ Home</button>
+        <h3 style="margin: 0; color: #2e7d32;">🇬🇧 Year 1 World</h3>
+        <div style="width: 65px;"></div>
+      </div>
+
+      <div class="menu-grid">
+        <button class="menu-btn btn-group-add" onclick="showSubMenu('add')">➕ Addition World<br><small style="font-size: 11px; opacity: 0.9;">≤10, Make 10, ≤20, Mixed</small></button>
+        <button class="menu-btn btn-group-sub" onclick="showSubMenu('sub')">➖ Subtraction World<br><small style="font-size: 11px; opacity: 0.9;">≤10, ≤20, Crossing 10, Mixed</small></button>
+        <button class="menu-btn btn-c-4" onclick="startMode('bonds')">Number Bonds (10 & 20)</button>
+        <button class="menu-btn btn-c-5" onclick="startMode('doubles')">Doubles & Halves</button>
+        <button class="menu-btn btn-c-6" onclick="startMode('moreless')">More / Less (±1, ±2, ±10)</button>
+        <button class="menu-btn btn-c-7" onclick="startMode('skip')">Frog Skip (2, 5, 10)</button>
+        <button class="menu-btn btn-c-8" onclick="startMode('compare')">Compare (≤100 & ≤20 Sums)</button>
+        <button class="menu-btn btn-c-frac" onclick="startMode('fractions')">🍕 Fractions (1/2 & 1/4)</button>
+        <button class="menu-btn btn-wp-y1" onclick="startMode('wp_y1')">📖 Year 1 Word Problems<br><small style="font-size: 10.5px; opacity: 0.9;">Add, Sub, Halves, Doubles & Comparing Stories</small></button>
+        <button class="menu-btn btn-c-9" style="grid-column: span 2; padding: 12px;" onclick="startMode('mixed')">🔀 Year 1 Mixed Revision</button>
+        <button class="menu-btn btn-challenge btn-speed-full" onclick="startChallenge('speed30')">🏁 Year 1 Speedrun (30 Questions)</button>
+      </div>
+    </div>
+
+    <!-- 3B. YEAR 2 WORLD VIEW -->
+    <div id="year2-view">
+      <div class="world-header">
+        <button class="btn-back" onclick="backToHome()">◀ Home</button>
+        <h3 style="margin: 0; color: #6a1b9a;">🚀 Year 2 World</h3>
+        <div style="width: 65px;"></div>
+      </div>
+
+      <div class="menu-grid">
+        <button class="menu-btn btn-adv-1" onclick="startMode('compare100')"><span class="y2-pill">Y2</span>🐊 Compare 100 & Sums<br><small style="font-size: 10px; opacity: 0.9;">e.g. 46 [ ] 30+16, 88 [ ] 91</small></button>
+        <button class="menu-btn btn-adv-2" onclick="startMode('add100')"><span class="y2-pill">Y2</span>🔢 2-Digit Add (No Cross)<br><small style="font-size: 10px; opacity: 0.9;">e.g. 30+16, 47+10, 21+11</small></button>
+        <button class="menu-btn btn-adv-3" onclick="startMode('add100_cross')"><span class="y2-pill">Y2</span>⚡ 2-Digit Crossing 10<br><small style="font-size: 10px; opacity: 0.9;">e.g. 23 + 8, 19 + 5</small></button>
+        <button class="menu-btn btn-adv-4" onclick="startMode('mult_intro')"><span class="y2-pill">Y2</span>✖️ Times Tables (2,3,5,10)<br><small style="font-size: 10px; opacity: 0.9;">Equal Groups & Arrays</small></button>
+        <button class="menu-btn btn-adv-5" onclick="startMode('shapes')"><span class="y2-pill">Y2</span>🔷 2D & 3D Shapes<br><small style="font-size: 10px; opacity: 0.9;">Sides, Vertices, Faces</small></button>
+        <button class="menu-btn btn-adv-6" onclick="startMode('time')"><span class="y2-pill">Y2</span>🕒 Telling the Time<br><small style="font-size: 10px; opacity: 0.9;">O'clock, Half & Quarter</small></button>
+        <button class="menu-btn btn-wp-y2" onclick="startMode('wp_y2')"><span class="y2-pill">Y2</span>📖 Year 2 Word Problems<br><small style="font-size: 10.5px; opacity: 0.9;">2-Step Reasoning, Quarters, Groups & Comparing</small></button>
+        <button class="menu-btn btn-speed-full" style="background: linear-gradient(135deg, #8e24aa, #4a148c);" onclick="startChallenge('allstar30')">🏆 Year 2 All-Star Speedrun (30 Questions)</button>
+      </div>
+    </div>
+
+    <!-- 3C. SUBMENU: ADDITION WORLD -->
     <div id="submenu-add-view">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-        <button class="btn-back" onclick="backToMainMenu()">◀ Main Menu</button>
+      <div class="world-header">
+        <button class="btn-back" onclick="backFromSubMenu()">◀ Year 1</button>
         <h3 style="margin: 0; color: #2e7d32;">➕ Addition World</h3>
-        <div style="width: 70px;"></div>
+        <div style="width: 65px;"></div>
       </div>
       <div class="menu-grid">
         <button class="menu-btn btn-c-1" style="grid-column: span 2; padding: 13px;" onclick="startMode('add10')">1. Addition ≤ 10</button>
@@ -992,12 +1026,12 @@
       </div>
     </div>
 
-    <!-- 3B. SUBMENU: SUBTRACTION WORLD -->
+    <!-- 3D. SUBMENU: SUBTRACTION WORLD -->
     <div id="submenu-sub-view">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-        <button class="btn-back" onclick="backToMainMenu()">◀ Main Menu</button>
+      <div class="world-header">
+        <button class="btn-back" onclick="backFromSubMenu()">◀ Year 1</button>
         <h3 style="margin: 0; color: #e65100;">➖ Subtraction World</h3>
-        <div style="width: 70px;"></div>
+        <div style="width: 65px;"></div>
       </div>
       <div class="menu-grid">
         <button class="menu-btn btn-c-2" style="grid-column: span 2; padding: 13px;" onclick="startMode('sub10')">1. Subtraction ≤ 10</button>
@@ -1406,13 +1440,46 @@ function updateDashboardUI() {
   document.getElementById('equipped-hat').innerText = hatIcon;
 }
 
-// --- SUBMENU NAVIGATION ---
-let currentSubMenu = '';
+// --- HIERARCHICAL NAVIGATION (HOME -> YEAR 1 / YEAR 2 -> SUBMENUS) ---
+let currentWorld = '';   // '', 'y1', 'y2'
+let currentSubMenu = ''; // '', 'add', 'sub'
+
+function hideAllViews() {
+  document.getElementById('menu-view').style.display = 'none';
+  document.getElementById('year1-view').style.display = 'none';
+  document.getElementById('year2-view').style.display = 'none';
+  document.getElementById('submenu-add-view').style.display = 'none';
+  document.getElementById('submenu-sub-view').style.display = 'none';
+  document.getElementById('game-view').style.display = 'none';
+}
+
+function openYearWorld(year) {
+  initAudio();
+  playPop();
+  hideAllViews();
+  currentWorld = year;
+  currentSubMenu = '';
+  if (year === 'y1') {
+    document.getElementById('year1-view').style.display = 'block';
+  } else if (year === 'y2') {
+    document.getElementById('year2-view').style.display = 'block';
+  }
+}
+
+function backToHome() {
+  initAudio();
+  playPop();
+  hideAllViews();
+  currentWorld = '';
+  currentSubMenu = '';
+  document.getElementById('menu-view').style.display = 'block';
+}
 
 function showSubMenu(type) {
   initAudio();
   playPop();
-  document.getElementById('menu-view').style.display = 'none';
+  hideAllViews();
+  currentWorld = 'y1';
   if (type === 'add') {
     currentSubMenu = 'add';
     document.getElementById('submenu-add-view').style.display = 'block';
@@ -1422,13 +1489,13 @@ function showSubMenu(type) {
   }
 }
 
-function backToMainMenu() {
+function backFromSubMenu() {
   initAudio();
   playPop();
-  document.getElementById('submenu-add-view').style.display = 'none';
-  document.getElementById('submenu-sub-view').style.display = 'none';
-  document.getElementById('menu-view').style.display = 'block';
+  hideAllViews();
   currentSubMenu = '';
+  currentWorld = 'y1';
+  document.getElementById('year1-view').style.display = 'block';
 }
 
 // --- SHOP ENGINE ---
@@ -1513,14 +1580,15 @@ const TOPIC_LABELS = {
   moreless: '[Y1] More / Less',
   skip: '[Y1] Frog Skip Counting',
   compare: '[Y1] Compare (≤100 & ≤20 Sums)',
-  money: '[Y1] UK Money (Coins)',
   fractions: '[Y1] Fractions (1/2 & 1/4)',
+  wp_y1: '[Y1] Word Problems',
   compare100: '[Y2] Compare 100 & Sums',
   add100: '[Y2] 2-Digit Add',
   add100_cross: '[Y2] 2-Digit Crossing 10',
   mult_intro: '[Y2] Times Tables (2,3,5,10)',
   shapes: '[Y2] 2D & 3D Shapes',
-  time: '[Y2] Telling the Time'
+  time: '[Y2] Telling the Time',
+  wp_y2: '[Y2] Word Problems'
 };
 
 function getSpeedVerdictBadge(avgSec, totalQs) {
@@ -1595,22 +1663,172 @@ function openAnalytics() {
   document.getElementById('analytics-modal').style.display = 'flex';
 }
 
-// --- UK MONEY & FRACTIONS DATA BANKS ---
-const UK_COINS = [
-  { val: 1, label: '1p', cls: 'coin-copper', size: 40, font: 14 },
-  { val: 2, label: '2p', cls: 'coin-copper', size: 48, font: 16 },
-  { val: 5, label: '5p', cls: 'coin-silver', size: 38, font: 13 },
-  { val: 10, label: '10p', cls: 'coin-silver', size: 46, font: 15 },
-  { val: 20, label: '20p', cls: 'coin-heptagon', size: 44, font: 14 },
-  { val: 50, label: '50p', cls: 'coin-heptagon', size: 52, font: 15 },
-  { val: 100, label: '£1', cls: 'coin-pound', size: 50, font: 16 },
-  { val: 200, label: '£2', cls: 'coin-pound', size: 56, font: 17 }
-];
+// --- WORD PROBLEMS GENERATOR (YEAR 1 & YEAR 2) ---
+let wpIsChoice = false;
+let wpVisualHTML = '';
 
-let currentCoinsList = [];
-let moneyIsIdentify = false;
+function generateYear1WordProblem(qBox, hBox) {
+  document.getElementById('mode-badge').innerText = '[Y1] 📖 Word Problem';
+  qBox.classList.add('word-problem-mode');
+  const names = ['Rex', 'Mia', 'Leo', 'Sam', 'Lily', 'Ben'];
+  const n1 = names[Math.floor(Math.random() * names.length)];
+  let n2 = names[Math.floor(Math.random() * names.length)];
+  if (n2 === n1) n2 = 'Toby';
 
-let fractionType = 'pizza'; // 'pizza', 'grid', 'quantity'
+  const type = Math.floor(Math.random() * 6); // 6 diverse types!
+  wpIsChoice = false;
+
+  if (type === 0) {
+    // 1. Simple Subtraction / Leftover (Easy)
+    const total = Math.floor(Math.random() * 8) + 7; // 7..14
+    const eaten = Math.floor(Math.random() * 5) + 2; // 2..6
+    correctAns = total - eaten;
+    qBox.innerText = `🍪 ${n1} baked ${total} cookies and ate ${eaten} of them. How many cookies are left?`;
+    hBox.innerText = `Subtract: ${total} - ${eaten}`;
+    wpVisualHTML = `<div style="font-size:28px;">🍪 × ${total} &nbsp;➖&nbsp; 😋 ${eaten}</div>`;
+    return `wp1_sub:${total}-${eaten}`;
+  } 
+  else if (type === 1) {
+    // 2. Addition Crossing 10 (Medium)
+    const a = Math.floor(Math.random() * 4) + 7; // 7..10
+    const b = Math.floor(Math.random() * 6) + 4; // 4..9
+    correctAns = a + b;
+    qBox.innerText = `🍓 ${n1} picked ${a} strawberries in the morning and ${b} in the afternoon. How many altogether?`;
+    hBox.innerText = `Add them together: ${a} + ${b}`;
+    wpVisualHTML = `<div style="font-size:26px;">🌅 ${a} 🍓 &nbsp;+&nbsp; 🌇 ${b} 🍓</div>`;
+    return `wp1_add:${a}+${b}`;
+  }
+  else if (type === 2) {
+    // 3. Half of a Quantity (Sharing equally between 2)
+    const halfVal = Math.floor(Math.random() * 7) + 3; // 3..9
+    const total = halfVal * 2; // 6..18
+    correctAns = halfVal;
+    qBox.innerText = `🦖 ${n1} and ${n2} share ${total} stars equally. How many stars does each dino get?`;
+    hBox.innerText = `Find HALF of ${total}!`;
+    wpVisualHTML = `<div style="font-size:26px;">⭐ ${total} stars ➔ 🦖 & 🦕 (Half each)</div>`;
+    return `wp1_half:${total}`;
+  }
+  else if (type === 3) {
+    // 4. Double a Number
+    const base = Math.floor(Math.random() * 7) + 3; // 3..9
+    correctAns = base * 2;
+    qBox.innerText = `🚗 ${n1} has ${base} toy cars. ${n2} has DOUBLE that amount. How many toy cars does ${n2} have?`;
+    hBox.innerText = `Double ${base} means ${base} + ${base}!`;
+    wpVisualHTML = `<div style="font-size:26px;">🚗 ${base} &nbsp;🪞&nbsp; 🚗 ${base}</div>`;
+    return `wp1_dbl:${base}`;
+  }
+  else if (type === 4) {
+    // 5. Difference / How many MORE (Challenging Year 1)
+    const big = Math.floor(Math.random() * 7) + 11; // 11..17
+    const small = Math.floor(Math.random() * 5) + 4; // 4..8
+    correctAns = big - small;
+    qBox.innerText = `🌟 ${n1} has ${big} gold stickers. ${n2} has ${small} gold stickers. How many MORE stickers does ${n1} have than ${n2}?`;
+    hBox.innerText = `Find the difference: ${big} - ${small}`;
+    wpVisualHTML = `<div style="font-size:22px; font-weight:bold; color:#1565c0;">${n1}: ${big} 🌟 &nbsp;vs&nbsp; ${n2}: ${small} 🌟</div>`;
+    return `wp1_diff:${big}-${small}`;
+  }
+  else {
+    // 6. Comparing Two People (Choice Mode!)
+    wpIsChoice = true;
+    const v1 = Math.floor(Math.random() * 14) + 6; // 6..19
+    let v2 = v1 + (Math.random() > 0.5 ? (Math.floor(Math.random() * 4) + 1) : -(Math.floor(Math.random() * 4) + 1));
+    if (v2 < 2) v2 = v1 + 2;
+    const askMore = Math.random() > 0.5;
+    qBox.innerText = askMore
+      ? `🏆 ${n1} collected ${v1} shells. ${n2} collected ${v2} shells. Who has MORE shells?`
+      : `🐢 ${n1} has ${v1} marbles. ${n2} has ${v2} marbles. Who has FEWER marbles?`;
+    hBox.innerText = `Compare ${v1} and ${v2}!`;
+
+    const winner = askMore ? (v1 > v2 ? `${n1} (${v1})` : `${n2} (${v2})`) : (v1 < v2 ? `${n1} (${v1})` : `${n2} (${v2})`);
+    correctAns = winner;
+    choiceOptions = [`${n1} (${v1})`, `${n2} (${v2})`];
+    wpVisualHTML = `<div style="font-size:24px; font-weight:bold; color:#2e7d32;">${n1}: ${v1} &nbsp;🆚&nbsp; ${n2}: ${v2}</div>`;
+    return `wp1_comp:${v1}vs${v2}_${askMore?'M':'F'}`;
+  }
+}
+
+function generateYear2WordProblem(qBox, hBox) {
+  document.getElementById('mode-badge').innerText = '[Y2] 📖 Word Problem';
+  qBox.classList.add('word-problem-mode');
+  const names = ['Oliver', 'Amelia', 'Noah', 'Isla', 'George', 'Ava'];
+  const n1 = names[Math.floor(Math.random() * names.length)];
+  let n2 = names[Math.floor(Math.random() * names.length)];
+  if (n2 === n1) n2 = 'Leo';
+
+  const type = Math.floor(Math.random() * 6); // 6 challenging Year 2 types!
+  wpIsChoice = false;
+
+  if (type === 0) {
+    // 1. 2-Digit Crossing 10 Word Problem
+    const start = (Math.floor(Math.random() * 5) + 1) * 10 + (Math.floor(Math.random() * 5) + 5); // e.g. 26, 38
+    const add = Math.floor(Math.random() * 5) + 5; // 5..9
+    correctAns = start + add;
+    qBox.innerText = `🚌 A red bus has ${start} passengers. ${add} more people get on at the station. How many people are on the bus now?`;
+    hBox.innerText = `Bridge to the next ten: ${start} + ${add}`;
+    wpVisualHTML = `<div style="font-size:26px;">🚌 ${start} people &nbsp;➕&nbsp; 🧍 ${add} more</div>`;
+    return `wp2_bus:${start}+${add}`;
+  }
+  else if (type === 1) {
+    // 2. Two-Step Subtraction Problem (Year 2 Classic!)
+    const start = (Math.floor(Math.random() * 3) + 2) * 10; // 20, 30, 40
+    const g1 = Math.floor(Math.random() * 5) + 3;
+    const g2 = Math.floor(Math.random() * 5) + 2;
+    correctAns = start - g1 - g2;
+    qBox.innerText = `🎈 ${n1} had ${start} balloons. ${g1} popped and ${n2} took ${g2} balloons. How many balloons are left?`;
+    hBox.innerText = `2-Step: First ${start} - ${g1}, then subtract ${g2}!`;
+    wpVisualHTML = `<div style="font-size:22px; font-weight:bold; color:#d32f2f;">🎈 ${start} &nbsp;➖&nbsp; 💥 ${g1} &nbsp;➖&nbsp; 🎁 ${g2}</div>`;
+    return `wp2_2step:${start}-${g1}-${g2}`;
+  }
+  else if (type === 2) {
+    // 3. Equal Groups / Multiplication
+    const groups = Math.floor(Math.random() * 4) + 3; // 3..6
+    const perGroup = [2, 3, 5, 10][Math.floor(Math.random() * 4)];
+    correctAns = groups * perGroup;
+    qBox.innerText = `🍎 There are ${groups} baskets with ${perGroup} apples in each basket. How many apples are there altogether?`;
+    hBox.innerText = `Multiply: ${groups} × ${perGroup} (Count in ${perGroup}s!)`;
+    wpVisualHTML = `<div style="font-size:24px;">🧺 ${groups} baskets × ${perGroup} 🍎 each</div>`;
+    return `wp2_mult:${groups}x${perGroup}`;
+  }
+  else if (type === 3) {
+    // 4. Quarter (1/4) or Sharing into 4 Groups
+    const ans = Math.floor(Math.random() * 5) + 3; // 3..7
+    const total = ans * 4; // 12..28
+    correctAns = ans;
+    qBox.innerText = `🧁 ${n1} baked ${total} cupcakes and put an equal number into 4 boxes (one quarter in each). How many cupcakes in each box?`;
+    hBox.innerText = `Find 1/4 of ${total} (Share into 4 equal groups)`;
+    wpVisualHTML = `<div style="font-size:24px;">🧁 ${total} cupcakes ➔ 📦 📦 📦 📦</div>`;
+    return `wp2_qtr:${total}`;
+  }
+  else if (type === 4) {
+    // 5. Missing Addend to 100 / Next Ten
+    const tens = (Math.floor(Math.random() * 6) + 2) * 10; // 20..70
+    const target = tens + 10; // 30..80
+    const have = tens + (Math.floor(Math.random() * 7) + 2); // e.g. 46 -> target 50
+    correctAns = target - have;
+    qBox.innerText = `📚 ${n1} wants to read ${target} pages. ${n1} has already read ${have} pages. How many more pages to reach ${target}?`;
+    hBox.innerText = `${have} + [ ? ] = ${target}`;
+    wpVisualHTML = `<div style="font-size:22px; font-weight:bold; color:#1565c0;">📖 Read: ${have} &nbsp;➔&nbsp; Goal: ${target}</div>`;
+    return `wp2_miss:${have}_to_${target}`;
+  }
+  else {
+    // 6. Comparing Expressions in a Story (Choice Mode!)
+    wpIsChoice = true;
+    const t1 = (Math.floor(Math.random() * 5) + 2) * 10;
+    const o1 = Math.floor(Math.random() * 9) + 1;
+    const sum1 = t1 + o1;
+    const val2 = sum1 + (Math.random() > 0.5 ? 3 : -3);
+
+    qBox.innerText = `💎 ${n1} found ${t1} + ${o1} gems. ${n2} found ${val2} gems. Who found MORE gems?`;
+    hBox.innerText = `First calculate ${t1} + ${o1}, then compare with ${val2}!`;
+    correctAns = (sum1 > val2) ? `${n1} (${t1}+${o1})` : `${n2} (${val2})`;
+    choiceOptions = [`${n1} (${t1}+${o1})`, `${n2} (${val2})`];
+    wpVisualHTML = `<div style="font-size:22px; font-weight:bold; color:#6a1b9a;">${n1}: ${t1} + ${o1} &nbsp;🆚&nbsp; ${n2}: ${val2}</div>`;
+    return `wp2_comp:${t1}+${o1}vs${val2}`;
+  }
+}
+
+// --- FRACTIONS DATA ---
+let fractionType = 'pizza';
 let fracShaded = 1;
 let fracTotal = 2;
 let fracChoiceOpts = [];
@@ -1729,14 +1947,14 @@ const YEAR1_MODES = [
   'add10', 'make10', 'add20',
   'sub10', 'sub20_nocross', 'sub20_cross',
   'bonds', 'doubles', 'moreless', 'skip', 'compare',
-  'money', 'fractions'
+  'fractions', 'wp_y1'
 ];
 
 const YEAR2_MODES = [
-  'compare100', 'add100', 'add100_cross', 'mult_intro', 'shapes', 'time'
+  'compare100', 'add100', 'add100_cross', 'mult_intro', 'shapes', 'time', 'wp_y2'
 ];
 
-const ALWAYS_VISUAL_MODES = ['shapes', 'time', 'money', 'fractions'];
+const ALWAYS_VISUAL_MODES = ['shapes', 'time', 'fractions', 'wp_y1', 'wp_y2'];
 
 function toggleVisual() {
   initAudio();
@@ -1765,9 +1983,7 @@ function startMode(mode) {
   }
   updateVisualToggleBtn();
   updateStreakUI();
-  document.getElementById('menu-view').style.display = 'none';
-  document.getElementById('submenu-add-view').style.display = 'none';
-  document.getElementById('submenu-sub-view').style.display = 'none';
+  hideAllViews();
   document.getElementById('game-view').style.display = 'block';
   updateTimerBanner('Practice');
   nextQuestion();
@@ -1783,9 +1999,7 @@ function startChallenge(chType) {
   showVisual = !manualVisualOff;
   updateVisualToggleBtn();
   updateStreakUI();
-  document.getElementById('menu-view').style.display = 'none';
-  document.getElementById('submenu-add-view').style.display = 'none';
-  document.getElementById('submenu-sub-view').style.display = 'none';
+  hideAllViews();
   document.getElementById('game-view').style.display = 'block';
 
   clearInterval(challengeInterval);
@@ -1894,12 +2108,16 @@ function exitToMenu() {
   clearInterval(challengeInterval);
   document.getElementById('game-timer-container').innerHTML = '';
   document.getElementById('game-view').classList.remove('bomb-shake');
-  document.getElementById('game-view').style.display = 'none';
+  hideAllViews();
 
   if (currentSubMenu === 'add') {
     document.getElementById('submenu-add-view').style.display = 'block';
   } else if (currentSubMenu === 'sub') {
     document.getElementById('submenu-sub-view').style.display = 'block';
+  } else if (currentWorld === 'y1') {
+    document.getElementById('year1-view').style.display = 'block';
+  } else if (currentWorld === 'y2') {
+    document.getElementById('year2-view').style.display = 'block';
   } else {
     document.getElementById('menu-view').style.display = 'block';
   }
@@ -1940,9 +2158,16 @@ function buildCandidateQuestion() {
 
   const qBox = document.getElementById('question-text');
   const hBox = document.getElementById('hint-text');
+  qBox.classList.remove('word-problem-mode');
   let sig = '';
 
-  if (mode === 'add10') {
+  if (mode === 'wp_y1') {
+    return generateYear1WordProblem(qBox, hBox);
+  }
+  else if (mode === 'wp_y2') {
+    return generateYear2WordProblem(qBox, hBox);
+  }
+  else if (mode === 'add10') {
     document.getElementById('mode-badge').innerText = '[Y1] Addition ≤ 10';
     q_paramA = Math.floor(Math.random() * 5) + 1;
     q_paramB = Math.floor(Math.random() * (10 - q_paramA)) + 1;
@@ -2143,48 +2368,11 @@ function buildCandidateQuestion() {
     hBox.innerText = `🐊 Work out both sides first! Crocodile eats the bigger value!`;
     sig = `compF:${compLeftStr}vs${compRightStr}`;
   }
-  // NEW YEAR 1 MODULE: UK MONEY (COINS)
-  else if (mode === 'money') {
-    document.getElementById('mode-badge').innerText = '[Y1] 💷 UK Money';
-    moneyIsIdentify = Math.random() < 0.35;
-
-    if (moneyIsIdentify) {
-      // Identify a single UK coin (1p to £2)
-      const chosenCoin = UK_COINS[Math.floor(Math.random() * UK_COINS.length)];
-      currentCoinsList = [chosenCoin];
-      correctAns = chosenCoin.label;
-      qBox.innerText = `What coin is this?`;
-      hBox.innerText = `Look at the colour, shape, and number on the UK coin!`;
-
-      const others = UK_COINS.filter(c => c.label !== chosenCoin.label).sort(() => 0.5 - Math.random()).slice(0, 3).map(c => c.label);
-      choiceOptions = [chosenCoin.label, ...others].sort(() => 0.5 - Math.random());
-      sig = `money_id:${chosenCoin.label}`;
-    } else {
-      // Count pence coins (1p, 2p, 5p, 10p, 20p) up to ~50p
-      const penceCoins = UK_COINS.filter(c => c.val <= 20);
-      const numCoins = Math.floor(Math.random() * 3) + 2; // 2 to 4 coins
-      currentCoinsList = [];
-      let totalP = 0;
-      for (let i = 0; i < numCoins; i++) {
-        const c = penceCoins[Math.floor(Math.random() * penceCoins.length)];
-        currentCoinsList.push(c);
-        totalP += c.val;
-      }
-      // Sort biggest coin first (good UK teaching practice!)
-      currentCoinsList.sort((a, b) => b.val - a.val);
-      correctAns = totalP;
-      qBox.innerText = `How many pence (p) in total?`;
-      hBox.innerText = `💡 Start counting from the biggest coin first!`;
-      sig = `money_sum:${currentCoinsList.map(c=>c.val).join('+')}`;
-    }
-  }
-  // NEW YEAR 1 MODULE: FRACTIONS (1/2 & 1/4)
   else if (mode === 'fractions') {
     document.getElementById('mode-badge').innerText = '[Y1] 🍕 Fractions (1/2 & 1/4)';
     const pattern = Math.random();
 
     if (pattern < 0.65) {
-      // Visual Pizza / Shape Fraction identification
       fractionType = (Math.random() > 0.5) ? 'pizza' : 'grid';
       const fracPool = [
         { shaded: 1, total: 2, label: 'One Half (1/2)' },
@@ -2202,10 +2390,9 @@ function buildCandidateQuestion() {
       fracChoiceOpts = fracPool.map(f => f.label).sort(() => 0.5 - Math.random());
       sig = `frac_vis:${fractionType}_${fracShaded}/${fracTotal}`;
     } else {
-      // Quarter of a small quantity (e.g., Quarter of 4, 8, 12, 16)
       fractionType = 'quantity';
-      const quarterVal = Math.floor(Math.random() * 4) + 1; // 1..4
-      q_paramA = quarterVal * 4; // 4, 8, 12, 16
+      const quarterVal = Math.floor(Math.random() * 4) + 1;
+      q_paramA = quarterVal * 4;
       correctAns = quarterVal;
       qBox.innerText = `One Quarter (1/4) of ${q_paramA} = ?`;
       hBox.innerText = `🍕 Share ${q_paramA} cookies equally onto 4 plates!`;
@@ -2419,8 +2606,8 @@ function nextQuestion() {
     q_type === 'compare100' ||
     q_type === 'time' ||
     (q_type === 'shapes' && shapeQuestionMode === 'name') ||
-    (q_type === 'money' && moneyIsIdentify) ||
-    (q_type === 'fractions' && fractionType !== 'quantity')
+    (q_type === 'fractions' && fractionType !== 'quantity') ||
+    ((q_type === 'wp_y1' || q_type === 'wp_y2') && wpIsChoice)
   );
   kWrap.style.display = isChoiceInput ? 'none' : 'block';
 
@@ -2493,7 +2680,6 @@ function buildFractionVisualHTML() {
         </svg>
       `;
     } else {
-      // 4 Quarters Pizza
       const q1 = fracShaded >= 1 ? '#ff7043' : '#fff8e1';
       const q2 = fracShaded >= 2 ? '#ff7043' : '#fff8e1';
       const q3 = fracShaded >= 3 ? '#ff7043' : '#fff8e1';
@@ -2508,7 +2694,7 @@ function buildFractionVisualHTML() {
       `;
     }
   } else if (fractionType === 'grid') {
-    const cols = fracTotal === 2 ? 2 : 2;
+    const cols = 2;
     let html = `<div style="display:grid; grid-template-columns: repeat(${cols}, 54px); gap:4px; background:#fff; padding:6px; border:3px solid #ec407a; border-radius:12px;">`;
     for (let i = 0; i < fracTotal; i++) {
       const bg = i < fracShaded ? '#f06292' : '#fce4ec';
@@ -2517,7 +2703,6 @@ function buildFractionVisualHTML() {
     html += `</div>`;
     return html;
   } else {
-    // 4 plates with equal cookies for 1/4 of quantity
     const perPlate = q_paramA / 4;
     let html = `<div class="mult-plates-wrap">`;
     for (let p = 1; p <= 4; p++) {
@@ -2550,19 +2735,8 @@ function renderQuestionVisual() {
     return;
   }
 
-  if (q_type === 'money') {
-    const wrap = document.createElement('div');
-    wrap.className = 'uk-coins-wrap';
-    currentCoinsList.forEach(c => {
-      const coinEl = document.createElement('div');
-      coinEl.className = `uk-coin ${c.cls}`;
-      coinEl.style.width = `${c.size}px`;
-      coinEl.style.height = `${c.size}px`;
-      coinEl.style.fontSize = `${c.font}px`;
-      coinEl.innerText = c.label;
-      wrap.appendChild(coinEl);
-    });
-    board.appendChild(wrap);
+  if (q_type === 'wp_y1' || q_type === 'wp_y2') {
+    board.innerHTML = wpVisualHTML;
   }
   else if (q_type === 'fractions') {
     board.innerHTML = buildFractionVisualHTML();
@@ -3064,8 +3238,8 @@ function renderKeypad() {
   if (
     q_type === 'time' ||
     (q_type === 'shapes' && shapeQuestionMode === 'name') ||
-    (q_type === 'money' && moneyIsIdentify) ||
-    (q_type === 'fractions' && fractionType !== 'quantity')
+    (q_type === 'fractions' && fractionType !== 'quantity') ||
+    ((q_type === 'wp_y1' || q_type === 'wp_y2') && wpIsChoice)
   ) {
     box.className = 'options-grid choice-mode';
     const opts = (q_type === 'fractions') ? fracChoiceOpts : choiceOptions;
@@ -3240,8 +3414,8 @@ window.addEventListener('keydown', (e) => {
   const isChoiceInput = (
     q_type === 'time' ||
     (q_type === 'shapes' && shapeQuestionMode === 'name') ||
-    (q_type === 'money' && moneyIsIdentify) ||
-    (q_type === 'fractions' && fractionType !== 'quantity')
+    (q_type === 'fractions' && fractionType !== 'quantity') ||
+    ((q_type === 'wp_y1' || q_type === 'wp_y2') && wpIsChoice)
   );
   if (isChoiceInput) return;
 
